@@ -10,6 +10,7 @@ const fs = require('file-system');
 const accessControl = require('./middleware/access-controls');
 const errorHandler = require('./middleware/error-handler');
 const errorMessage = require('./middleware/error-message');
+const authRoute = require('./routes/auth.route');
 
 app.use(cors());
 app.use(accessControl);
@@ -27,15 +28,14 @@ try {
 } catch (error) {
   console.log(`mongoDB cannot connected on ${process.env.THERALEARN_DB_URL}(app.js)`)
 }
-// fs.readdirSync(__dirname + "/models").forEach(function(file) {
-//   require(__dirname+"/models/"+file);
-// });
+
 app.get('/api', function (req, res) {
   res.status(200).send({
     message: 'Express backend server'
   });
 });
 
+app.use("/auth",authRoute);
 
 app.use(errorHandler);
 app.use(errorMessage);
