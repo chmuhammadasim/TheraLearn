@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { logInUser } from '../../services/authService'; // Import the login function
-import Loading from '../../components/Loading'; // Import the Loading component
+import { logInUser } from '../../services/authService';
+import Loading from '../../components/Loading';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const [loggingIn, setLoggingIn] = useState(false); // Separate state for login process
+  const [loggingIn, setLoggingIn] = useState(false);
 
   useEffect(() => {
-    // Simulate an initialization delay
     setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the delay as needed
+    }, 2000);
   }, []);
 
   const handleLogin = async (e) => {
@@ -25,10 +24,7 @@ function LoginPage() {
       const credentials = { email, password };
       const data = await logInUser(credentials);
       setMessage('Login successful');
-
-      // Store the token in local storage or any state management solution
       localStorage.setItem('authToken', data.token);
-      // Redirect or update the UI accordingly
     } catch (error) {
       setMessage(error.message);
     } finally {

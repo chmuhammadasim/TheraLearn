@@ -54,7 +54,7 @@ function SignupPage() {
     e.preventDefault();
     if (validate()) {
       try {
-        const data = await signUpUser(formData);
+         await signUpUser(formData);
         setMessage('Signup successful');
         // Redirect or reset form
       } catch (error) {
