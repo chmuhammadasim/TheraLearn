@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { logInUser } from '../../services/authService'; // Import the login function
+import Loading from '../../components/Loading'; // Import the Loading component
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loggingIn, setLoggingIn] = useState(false); // Separate state for login process
+
+  useEffect(() => {
+    // Simulate an initialization delay
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the delay as needed
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoggingIn(true);
     setMessage('');
 
     try {
@@ -23,9 +32,13 @@ function LoginPage() {
     } catch (error) {
       setMessage(error.message);
     } finally {
-      setLoading(false);
+      setLoggingIn(false);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="login-container">
@@ -50,8 +63,8 @@ function LoginPage() {
             required
           />
         </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
+        <button type="submit" disabled={loggingIn}>
+          {loggingIn ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </div>

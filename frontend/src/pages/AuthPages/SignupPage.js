@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signUpUser } from '../../services/authService'; // Import the signup function
+import Loading from '../../components/Loading'; // Import the Loading component
 import './SignupPage.css';
 
 function SignupPage() {
@@ -21,6 +22,14 @@ function SignupPage() {
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate an initialization delay
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the delay as needed
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +45,6 @@ function SignupPage() {
     if (!formData.firstName) newErrors.firstName = 'First name is required';
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -54,6 +62,10 @@ function SignupPage() {
       }
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="signup-container">
