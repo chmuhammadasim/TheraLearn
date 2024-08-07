@@ -35,7 +35,7 @@ app.get('/api', function (req, res) {
   });
 });
 
-app.use("/auth",authRoute);
+app.use("/api/auth",authRoute);
 
 app.use(errorHandler);
 app.use(errorMessage);
