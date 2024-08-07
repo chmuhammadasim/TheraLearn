@@ -23,9 +23,9 @@ app.use(bodyParser.json());
 
 try {
   mongoose.connect(process.env.THERALEARN_DB_URL);
-  console.log(`mongoDB connected successfully on ${THERALEARN_DB_URL}(app.js)`);
+  console.log(`mongoDB connected successfully on ${process.env.THERALEARN_DB_URL}(app.js)`);
 } catch (error) {
-  console.log("Error occured while connecting with mongoDB")
+  console.log(`mongoDB cannot connected on ${process.env.THERALEARN_DB_URL}(app.js)`)
 }
 app.get('/api', function (req, res) {
   res.status(200).send({
@@ -37,7 +37,7 @@ app.get('/api', function (req, res) {
 app.use(errorHandler);
 app.use(errorMessage);
 try {
-  server.listen(process.env.PORT_URL);
+  server.listen(process.env.PORT_URL || 5000);
   console.log(`Connect with the port ${process.env.PORT_URL}`);
 } catch (error) {
   console.log(`Cannot Connect with the port ${process.env.PORT_URL}`);
