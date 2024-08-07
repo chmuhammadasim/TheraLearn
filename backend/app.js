@@ -6,7 +6,7 @@ const server = http.createServer(app);
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const fs = require('fs');
+const fs = require('file-system');
 const accessControl = require('./middleware/access-controls');
 const errorHandler = require('./middleware/error-handler');
 const errorMessage = require('./middleware/error-message');
@@ -27,6 +27,9 @@ try {
 } catch (error) {
   console.log(`mongoDB cannot connected on ${process.env.THERALEARN_DB_URL}(app.js)`)
 }
+// fs.readdirSync(__dirname + "/models").forEach(function(file) {
+//   require(__dirname+"/models/"+file);
+// });
 app.get('/api', function (req, res) {
   res.status(200).send({
     message: 'Express backend server'
