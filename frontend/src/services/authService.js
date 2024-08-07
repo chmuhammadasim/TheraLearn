@@ -22,7 +22,6 @@ export const signUpUser = async (userData) => {
     }
   };
   
-  // Function to handle user login
   export const logInUser = async (credentials) => {
     try {
       const response = await fetch(`${API_URL}/login`, {

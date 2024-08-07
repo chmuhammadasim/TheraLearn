@@ -1,20 +1,38 @@
 import React, { useState } from 'react';
+import { logInUser } from '../../services/authService'; // Import the login function
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login:', { email, password });
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const credentials = { email, password };
+      const data = await logInUser(credentials);
+      setMessage('Login successful');
+
+      // Store the token in local storage or any state management solution
+      localStorage.setItem('authToken', data.token);
+      // Redirect or update the UI accordingly
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h1>Login</h1>
+      {message && <p className="message">{message}</p>}
       <form onSubmit={handleLogin}>
-        <div>
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
@@ -23,7 +41,7 @@ function LoginPage() {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -32,7 +50,9 @@ function LoginPage() {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </div>
   );

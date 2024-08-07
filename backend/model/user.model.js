@@ -20,16 +20,32 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'user', 'superadmin'],
     default: 'user'
   },
-  profile: {
-    firstName: String,
-    lastName: String,
-    address: String,
-    city: String,
-    country: String,
-    contact: String,
-    bio: String,
-    profilePictureUrl: String,
-    dateOfBirth: Date
+  firstName : {
+    type: String,
+  },
+  lastName : {
+    type: String,
+  },
+  address : {
+    type: String,
+  },
+  city : {
+    type: String,
+  },
+  country : {
+    type: String,
+  },
+  contact : {
+    type: String,
+  },
+  bio : {
+    type: String,
+  },
+  profilePictureUrl : {
+    type: String,
+  },
+  dateOfBirth : {
+    type: Date,
   },
   createdAt: {
     type: Date,
