@@ -10,7 +10,6 @@ AuthController.Checkapi = (req, res) => {
     });
 };
 
-// Signup function
 AuthController.SignUpUser = async (req, res) => {
     try {
         const errors = validationResult(req);
