@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { signUpUser } from '../../services/authService'; // Import the signup function
 import Loading from '../../components/Loading'; // Import the Loading component
-import './SignupPage.css';
+import { motion } from 'framer-motion';
 
 function SignupPage() {
   const [formData, setFormData] = useState({
@@ -54,7 +54,7 @@ function SignupPage() {
     e.preventDefault();
     if (validate()) {
       try {
-         await signUpUser(formData);
+        await signUpUser(formData);
         setMessage('Signup successful');
         // Redirect or reset form
       } catch (error) {
@@ -68,142 +68,237 @@ function SignupPage() {
   }
 
   return (
-    <div className="signup-container">
-      <h1>Signup</h1>
-      {message && <p className="message">{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-          {errors.username && <span className="error">{errors.username}</span>}
-        </div>
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          {errors.email && <span className="error">{errors.email}</span>}
-        </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          {errors.password && <span className="error">{errors.password}</span>}
-        </div>
-        <div className="form-group">
-          <label>Confirm Password:</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-          {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
-        </div>
-        <div className="form-group">
-          <label>First Name:</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-          {errors.firstName && <span className="error">{errors.firstName}</span>}
-        </div>
-        <div className="form-group">
-          <label>Last Name:</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-          {errors.lastName && <span className="error">{errors.lastName}</span>}
-        </div>
-        <div className="form-group">
-          <label>Address:</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>City:</label>
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Country:</label>
-          <input
-            type="text"
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Contact:</label>
-          <input
-            type="text"
-            name="contact"
-            value={formData.contact}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Bio:</label>
-          <textarea
-            name="bio"
-            value={formData.bio}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Profile Picture URL:</label>
-          <input
-            type="text"
-            name="profilePictureUrl"
-            value={formData.profilePictureUrl}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-            required
-          />
-          {errors.dateOfBirth && <span className="error">{errors.dateOfBirth}</span>}
-        </div>
-        <button type="submit">Signup</button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#f9b248] to-[#f8c731] relative overflow-hidden">
+      {/* Animated Background */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-full bg-[#0e2431] opacity-20"
+        initial={{ opacity: 0.1 }}
+        animate={{ opacity: 0.3 }}
+        transition={{ duration: 8, ease: 'easeInOut', repeat: Infinity }}
+      />
+      {/* Fun Illustration */}
+      <motion.img
+        src="https://via.placeholder.com/150x150?text=Cartoon+Icon"
+        alt="Cartoon Icon"
+        className="absolute top-[-50px] left-[-50px] w-32 h-32"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: 'easeInOut' }}
+      />
+      <div className="relative bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl text-center overflow-hidden">
+        {/* Logo */}
+        <motion.img
+          src="https://via.placeholder.com/100x100?text=Logo"
+          alt="Logo"
+          className="mx-auto mb-6"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+        />
+        <motion.h1
+          className="text-4xl font-bold text-[#0e2431] mb-4"
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-[#fc3a52]">Join Us!</span>
+        </motion.h1>
+        {message && (
+          <motion.p
+            className={`mb-4 text-lg ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            {message}
+          </motion.p>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Username and Email */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Username:</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
+            </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Email:</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+            </div>
+          </div>
+
+          {/* Password and Confirm Password */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Password:</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
+            </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Confirm Password:</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword}</span>}
+            </div>
+          </div>
+
+          {/* First Name and Last Name */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">First Name:</label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName}</span>}
+            </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Last Name:</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
+            </div>
+          </div>
+
+          {/* Address and Contact */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Address:</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              />
+            </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Contact:</label>
+              <input
+                type="text"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              />
+            </div>
+          </div>
+
+          {/* City and Country */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">City:</label>
+              <input
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              />
+            </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Country:</label>
+              <input
+                type="text"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              />
+            </div>
+          </div>
+
+          {/* Profile Picture and Date of Birth */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Profile Picture URL:</label>
+              <input
+                type="text"
+                name="profilePictureUrl"
+                value={formData.profilePictureUrl}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              />
+            </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Date of Birth:</label>
+              <input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#0e2431]">Bio:</label>
+            <textarea
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 bg-[#fc3a52] text-white rounded-lg hover:bg-[#f8c731] transition-transform transform hover:scale-105"
+          >
+            Signup
+          </button>
+        </form>
+        <motion.p
+          className="mt-4 text-[#0e2431] text-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          Already a member? <a href="/login" className="text-[#fc3a52] hover:underline">Login here</a>
+        </motion.p>
+      </div>
     </div>
   );
 }

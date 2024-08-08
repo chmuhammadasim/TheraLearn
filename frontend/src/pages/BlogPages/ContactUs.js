@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Loading from '../../components/Loading';
+import { motion } from 'framer-motion';
 import './ContactUs.css';
+import Loading from '../../components/Loading';
 
 function ContactUsPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -73,58 +74,106 @@ function ContactUsPage() {
 
   if (submitted) {
     return (
-      <div>
-        <h1>Thank you for contacting us!</h1>
-        <p>We have received your message and will get back to you soon.</p>
-        <button onClick={handleReset}>Send Another Message</button>
+      <div className="submitted">
+        <motion.h1
+          className="text-4xl font-bold mb-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          Thank you for contacting us!
+        </motion.h1>
+        <motion.p
+          className="text-lg mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          We have received your message and will get back to you soon.
+        </motion.p>
+        <motion.button
+          onClick={handleReset}
+          className="bg-[#61d4b3] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#4daa8b] transition"
+          initial={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          transition={{ duration: 0.3 }}
+        >
+          Send Another Message
+        </motion.button>
       </div>
     );
   }
 
   return (
-    <div className='background'>
-      <h1>Contact Us</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          {errors.name && <p className="error">{errors.name}</p>}
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          {errors.email && <p className="error">{errors.email}</p>}
-        </div>
-        <div>
-          <label htmlFor="message">Message:</label>
-          <textarea
-            id="message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            required
-          />
-          {errors.message && <p className="error">{errors.message}</p>}
-        </div>
-        <div className="button-group">
-          <button type="submit">Submit</button>
-          <button type="button" onClick={handleReset}>Reset</button>
-        </div>
-      </form>
+    <div className="contact-container">
+      <motion.h1
+        className="text-4xl font-bold mb-12 text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        Contact Us
+      </motion.h1>
+      <div className="contact-form-container">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`form-input ${errors.name ? 'error-input' : ''}`}
+            />
+            {errors.name && <p className="error-text">{errors.name}</p>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`form-input ${errors.email ? 'error-input' : ''}`}
+            />
+            {errors.email && <p className="error-text">{errors.email}</p>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="message">Message:</label>
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              className={`form-input ${errors.message ? 'error-input' : ''}`}
+            />
+            {errors.message && <p className="error-text">{errors.message}</p>}
+          </div>
+          <div className="form-buttons">
+            <motion.button
+              type="submit"
+              className="bg-[#61d4b3] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#4daa8b] transition"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+            >
+              Submit
+            </motion.button>
+            <motion.button
+              type="button"
+              onClick={handleReset}
+              className="bg-[#ff347f] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#c9356c] transition"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+            >
+              Reset
+            </motion.button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
