@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/NavBar';
+import Navbar from './components/Navbar/NavBar';
+import Footer from './components/Footer/Footer';
 import LandingPage from './pages/landingPages/LandingPage';
 import ContactUsPage from './pages/BlogPages/ContactUs';
 import AboutUsPage from './pages/BlogPages/AboutUs';
@@ -12,7 +13,7 @@ function App() {
   return (
     <Router>
       <div>
-        <Navbar />
+        <Navbar  isLoggedIn={false} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -21,6 +22,7 @@ function App() {
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="*" element={<NotFound404 />} />
         </Routes>
+        <Footer />
       </div>
     </Router>
   );
