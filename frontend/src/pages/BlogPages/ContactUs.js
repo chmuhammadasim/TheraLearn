@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { GiPartyPopper } from 'react-icons/gi';
 import './ContactUs.css';
 import Loading from '../../components/Loading';
 
@@ -81,7 +83,7 @@ function ContactUsPage() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          Thank you for contacting us!
+          🎉 Thank you for contacting us!
         </motion.h1>
         <motion.p
           className="text-lg mb-8"
@@ -105,15 +107,57 @@ function ContactUsPage() {
   }
 
   return (
-    <div className="contact-container">
+    <div className="contact-container mt-10 p-6">
       <motion.h1
         className="text-4xl font-bold mb-12 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        Contact Us
+        📧 Contact Us
       </motion.h1>
+
+      {/* Contact Information */}
+      <div className="flex flex-col  md:flex-row justify-around items-center mb-12">
+        <motion.div
+          className="flex m-5 items-center mb-6 md:mb-0"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <FaEnvelope className="text-[#fc3a52]  text-6xl mr-4" />
+          <div>
+            <h2 className="text-2xl font-bold">Email Us</h2>
+            <p className="text-lg">contact@kidssite.com</p>
+          </div>
+        </motion.div>
+        <motion.div
+          className="flex m-5 items-center mb-6 md:mb-0"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <FaPhone className="text-[#48e4f9] text-6xl mr-4" />
+          <div>
+            <h2 className="text-2xl font-bold">Call Us</h2>
+            <p className="text-lg">+123 456 7890</p>
+          </div>
+        </motion.div>
+        <motion.div
+          className="flex m-5 items-center mb-6 md:mb-0"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <FaMapMarkerAlt className="text-[#f8c731] text-6xl mr-4" />
+          <div>
+            <h2 className="text-2xl font-bold">Visit Us</h2>
+            <p className="text-lg">123 Kids St, Fun City</p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Contact Form */}
       <div className="contact-form-container">
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -126,7 +170,7 @@ function ContactUsPage() {
               onChange={handleChange}
               className={`form-input ${errors.name ? 'error-input' : ''}`}
             />
-            {errors.name && <p className="error-text">{errors.name}</p>}
+            {errors.name && <p className="error-text">{errors.name} 😟</p>}
           </div>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -138,7 +182,7 @@ function ContactUsPage() {
               onChange={handleChange}
               className={`form-input ${errors.email ? 'error-input' : ''}`}
             />
-            {errors.email && <p className="error-text">{errors.email}</p>}
+            {errors.email && <p className="error-text">{errors.email} 😟</p>}
           </div>
           <div className="form-group">
             <label htmlFor="message">Message:</label>
@@ -149,7 +193,7 @@ function ContactUsPage() {
               onChange={handleChange}
               className={`form-input ${errors.message ? 'error-input' : ''}`}
             />
-            {errors.message && <p className="error-text">{errors.message}</p>}
+            {errors.message && <p className="error-text">{errors.message} 😟</p>}
           </div>
           <div className="form-buttons">
             <motion.button
@@ -159,7 +203,7 @@ function ContactUsPage() {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
-              Submit
+              Submit 🚀
             </motion.button>
             <motion.button
               type="button"
@@ -169,7 +213,7 @@ function ContactUsPage() {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
-              Reset
+              Reset 🔄
             </motion.button>
           </div>
         </form>

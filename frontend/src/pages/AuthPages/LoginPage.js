@@ -42,9 +42,9 @@ function LoginPage() {
       {/* Background Animation */}
       <motion.div
         className="absolute top-0 left-0 w-full h-full bg-[#0e2431] opacity-40"
-        initial={{ opacity: 0.2 }}
-        animate={{ opacity: 0.4 }}
-        transition={{ duration: 5, ease: 'easeInOut', repeat: Infinity }}
+        initial={{ opacity: 0.0 }}
+        animate={{ opacity: 0.6 }}
+        transition={{ duration: 5, ease: 'circInOut', repeat: Infinity }}
       />
       <div className="relative bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center overflow-hidden">
         {/* Cartoon Illustration */}
