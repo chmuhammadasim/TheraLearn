@@ -20,16 +20,16 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getUserData();
+        const res = await getUserData();
         setFormData({
-          firstName: data.firstName || '',
-          lastName: data.lastName || '',
-          email: data.email || '',
-          address: data.address || '',
-          city: data.city || '',
-          country: data.country || '',
-          contact: data.contact || '',
-          bio: data.bio || '',
+          firstName: res.data.firstName || '',
+          lastName: res.data.lastName || '',
+          email: res.data.email || '',
+          address: res.data.address || '',
+          city: res.data.city || '',
+          country: res.data.country || '',
+          contact: res.data.contact || '',
+          bio: res.data.bio || '',
         });
         setError(null); // Clear any previous errors
       } catch (error) {
