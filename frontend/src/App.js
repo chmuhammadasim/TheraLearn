@@ -8,9 +8,10 @@ import AboutUsPage from './pages/BlogPages/AboutUs';
 import LoginPage from './pages/AuthPages/LoginPage';
 import SignupPage from './pages/AuthPages/SignupPage';
 import NotFound404 from './pages/NotFound404/NotFound';
-import DashboardPage from './pages/Dashboard/Dashboard';
+import Dashboard from './pages/Dashboard/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthRoute from './components/AuthRoute';
+import ProfilePage from './pages/Profile/Profile';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,7 +47,12 @@ function App() {
           } />
           <Route path="/dashboard" element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <DashboardPage />
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+           <Route path="/profile" element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <ProfilePage />
             </ProtectedRoute>
           } />
           <Route path="/contact" element={<ContactUsPage />} />

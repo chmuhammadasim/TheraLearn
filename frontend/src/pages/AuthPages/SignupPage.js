@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { signUpUser } from '../../services/authService'; // Import the signup function
-import Loading from '../../components/Loading'; // Import the Loading component
+import { signUpUser } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 
 function SignupPage() {
@@ -23,12 +24,12 @@ function SignupPage() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate an initialization delay
     setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the delay as needed
+    }, 2000);
   }, []);
 
   const handleChange = (e) => {
@@ -54,9 +55,11 @@ function SignupPage() {
     e.preventDefault();
     if (validate()) {
       try {
-        await signUpUser(formData);
+        const response =await signUpUser(formData);
         setMessage('Signup successful');
-        // Redirect or reset form
+        if (response.status === 201) {
+          navigate('/login');
+        }
       } catch (error) {
         setMessage(error.message || 'An error occurred');
       }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { logInUser } from '../../services/authService';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ function LoginPage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [loggingIn, setLoggingIn] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -26,6 +28,9 @@ function LoginPage() {
       const data = await logInUser(credentials);
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
+      localStorage.setItem('authRole', data.role);
+        navigate('/');
+      
     } catch (error) {
       setMessage(error.message);
     } finally {

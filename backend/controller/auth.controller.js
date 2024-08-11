@@ -58,10 +58,11 @@ AuthController.LogInUser = async (req, res) => {
                 { expiresIn: '1d' }
             );
 
-            res.send({
+            res.status(201).send({
                 message: 'Successfully logged in',
                 token,
-                expiresIn: 86400000
+                expiresIn: 86400000,
+                role:user.role
             });
         } else {
             res.status(400).send({ message: 'Incorrect email or password' });

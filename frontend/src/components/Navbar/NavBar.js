@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 
-export default function Navbar({ isLoggedIn }) {
+export default function Navbar({ isLoggedIn, user }) {
   const [navbarOpacity, setNavbarOpacity] = useState(1);
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -91,12 +92,25 @@ export default function Navbar({ isLoggedIn }) {
               {/* Right side: Auth Buttons */}
               <div className="hidden sm:flex sm:items-center sm:space-x-4">
                 {isLoggedIn ? (
-                  <button
-                    className="bg-[#ff347f] text-[#fdfdfd] px-3 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c]"
-                    onClick={handleLogout} // Call handleLogout on click
-                  >
-                    Logout
-                  </button>
+                  <>
+                    <Link to="/profile" className="flex items-center space-x-2">
+                      {user?.profilePicture ? (
+                        <img
+                          src={user.profilePicture}
+                          alt="Profile"
+                          className="w-8 h-8 rounded-full"
+                        />
+                      ) : (
+                        <UserCircleIcon className="w-8 h-8 text-gray-700" />
+                      )}
+                    </Link>
+                    <button
+                      className="bg-[#ff347f] text-[#fdfdfd] px-3 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c]"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </>
                 ) : (
                   <>
                     <Link
@@ -180,24 +194,40 @@ export default function Navbar({ isLoggedIn }) {
                 </Link>
               )}
               {isLoggedIn ? (
-                <button
-                  className="w-full bg-[#ff347f] text-[#fdfdfd] px-3 py-2 rounded-md text-base font-medium hover:bg-[#c9356c]"
-                  onClick={handleLogout} // Call handleLogout on click
-                >
-                  Logout
-                </button>
+                <>
+                  <Link to="/profile" className="flex items-center space-x-2" onClick={() => setOpen(false)}>
+                    {user?.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt="Profile"
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <UserCircleIcon className="w-8 h-8 text-gray-700" />
+                    )}
+                  </Link>
+                  <button
+                    className="bg-[#ff347f] text-[#fdfdfd] px-3 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c]"
+                    onClick={() => {
+                      setOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
                   <Link
                     to="/login"
-                    className="block w-full bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] px-3 py-2 rounded-md text-base font-medium"
+                    className="bg-[#ff347f] text-[#fdfdfd] block px-3 py-2 rounded-md text-base font-medium hover:bg-[#c9356c]"
                     onClick={() => setOpen(false)} // Close mobile menu on click
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup"
-                    className="block w-full bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] px-3 py-2 rounded-md text-base font-medium"
+                    className="bg-[#ff347f] text-[#fdfdfd] block px-3 py-2 rounded-md text-base font-medium hover:bg-[#c9356c]"
                     onClick={() => setOpen(false)} // Close mobile menu on click
                   >
                     Signup
