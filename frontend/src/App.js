@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar/NavBar';
 import Footer from './components/Footer/Footer';
@@ -10,10 +10,26 @@ import SignupPage from './pages/AuthPages/SignupPage';
 import NotFound404 from './pages/NotFound404/NotFound';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Function to check if the user is logged in
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem('authToken'); // Assume the token is stored in localStorage
+      if (token) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []); // Empty dependency array ensures this runs once on component mount
+
   return (
     <Router>
       <div>
-        <Navbar  isLoggedIn={false} />
+        <Navbar isLoggedIn={isLoggedIn} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
