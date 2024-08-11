@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -7,6 +7,7 @@ export default function Navbar({ isLoggedIn }) {
   const [navbarOpacity, setNavbarOpacity] = useState(1);
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +24,11 @@ export default function Navbar({ isLoggedIn }) {
   useEffect(() => {
     setOpen(false);
   }, [location]);
+
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all items from localStorage
+    navigate('/'); // Redirect to the homepage or login page
+  };
 
   return (
     <Disclosure as="nav" className="fixed w-full top-0 z-50 shadow-md" style={{ backgroundColor: `rgba(250, 250, 250, ${navbarOpacity})` }}>
@@ -87,9 +93,7 @@ export default function Navbar({ isLoggedIn }) {
                 {isLoggedIn ? (
                   <button
                     className="bg-[#ff347f] text-[#fdfdfd] px-3 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c]"
-                    onClick={() => {
-                      // Logic to handle logout
-                    }}
+                    onClick={handleLogout} // Call handleLogout on click
                   >
                     Logout
                   </button>
@@ -178,9 +182,7 @@ export default function Navbar({ isLoggedIn }) {
               {isLoggedIn ? (
                 <button
                   className="w-full bg-[#ff347f] text-[#fdfdfd] px-3 py-2 rounded-md text-base font-medium hover:bg-[#c9356c]"
-                  onClick={() => {
-                    // Logic to handle logout
-                  }}
+                  onClick={handleLogout} // Call handleLogout on click
                 >
                   Logout
                 </button>
@@ -188,14 +190,14 @@ export default function Navbar({ isLoggedIn }) {
                 <>
                   <Link
                     to="/login"
-                    className="bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] block px-3 py-2 rounded-md text-base font-medium"
+                    className="block w-full bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] px-3 py-2 rounded-md text-base font-medium"
                     onClick={() => setOpen(false)} // Close mobile menu on click
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup"
-                    className="bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] block px-3 py-2 rounded-md text-base font-medium"
+                    className="block w-full bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] px-3 py-2 rounded-md text-base font-medium"
                     onClick={() => setOpen(false)} // Close mobile menu on click
                   >
                     Signup
