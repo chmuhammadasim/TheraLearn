@@ -16,9 +16,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Function to check if the user is logged in
     const checkLoginStatus = () => {
-      const token = localStorage.getItem('authToken'); // Assume the token is stored in localStorage
+      const token = localStorage.getItem('authToken');
       if (token) {
         setIsLoggedIn(true);
       } else {
@@ -27,7 +26,7 @@ function App() {
     };
 
     checkLoginStatus();
-  }, []); // Empty dependency array ensures this runs once on component mount
+  }, []);
 
   return (
     <Router>
