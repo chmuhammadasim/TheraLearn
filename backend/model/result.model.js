@@ -4,42 +4,63 @@ const resultSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
   },
   totalGamesPlayed: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   totalTimePlayed: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   averagePlayTime: {
     type: Number,
-    default: 0
+    default: 0,
   },
   averageScore: {
     type: Number,
-    default: 0
+    default: 0,
   },
   lastGame: {
     gameId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Game'
+      ref: 'Game',
     },
     score: {
-      type: Number
+      type: Number,
     },
     timePlayed: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
+  lastUpdated: {
+    type: Date,
+    default: Date.now,
+  },
+  highestScore: {
+    type: Number,
+    default: 0,
+  },
+  lowestScore: {
+    type: Number,
+    default: 0,
+  },
+  totalPointsEarned: {
+    type: Number,
+    default: 0,
+  },
+});
+
+resultSchema.pre('save', function (next) {
+  this.lastUpdated = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Result', resultSchema);

@@ -3,36 +3,51 @@ const mongoose = require('mongoose');
 const questionSchema = new mongoose.Schema({
   questionText: {
     type: String,
-    required: true
+    required: true,
   },
   options: [{
     text: {
       type: String,
-      required: true
+      required: true,
     },
     isCorrect: {
       type: Boolean,
       required: true,
-      default: false
-    }
+      default: false,
+    },
   }],
   difficulty: {
     type: String,
     enum: ['easy', 'medium', 'hard'],
-    default: 'medium'
+    default: 'medium',
   },
   category: {
     type: String,
-    required: true
+    required: true,
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  timesAttempted: {
+    type: Number,
+    default: 0,
+  },
+  timesCorrect: {
+    type: Number,
+    default: 0,
+  },
+  tags: [{
+    type: String,
+  }],
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 questionSchema.pre('save', function (next) {

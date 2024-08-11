@@ -4,65 +4,83 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   role: {
     type: String,
     enum: ['admin', 'user', 'superadmin'],
-    default: 'user'
+    default: 'user',
   },
-  firstName : {
+  firstName: {
     type: String,
+    trim: true,
   },
-  lastName : {
+  lastName: {
     type: String,
+    trim: true,
   },
-  address : {
+  address: {
     type: String,
+    trim: true,
   },
-  city : {
+  city: {
     type: String,
+    trim: true,
   },
-  country : {
+  country: {
     type: String,
+    trim: true,
   },
-  contact : {
+  contact: {
     type: String,
+    trim: true,
   },
-  bio : {
+  bio: {
     type: String,
+    trim: true,
   },
-  profilePictureUrl : {
+  profilePictureUrl: {
     type: String,
+    trim: true,
   },
-  dateOfBirth : {
+  dateOfBirth: {
     type: Date,
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   games: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Game'
+    ref: 'Game',
   }],
   questions: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Question'
+    ref: 'Question',
   }],
   result: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Result'
+    ref: 'Result',
   }],
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  lastLogin: {
+    type: Date,
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
