@@ -4,10 +4,7 @@ const Result = require('../model/result.model');
 const Question = require('../model/question.model');
 const Game = require('../model/game.model');
 
-mongoose.connect('mongodb://127.0.0.1:27017/theraLearn', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect('mongodb://127.0.0.1:27017/theraLearn');
 
 const seedData = async () => {
   try {
@@ -80,7 +77,7 @@ const seedData = async () => {
         averagePlayTime: 240,
         averageScore: 75,
         lastGame: {
-          gameId: mongoose.Types.ObjectId(),
+          gameId: new mongoose.Types.ObjectId(),
           score: 85,
           timePlayed: 300
         },
@@ -95,7 +92,7 @@ const seedData = async () => {
         averagePlayTime: 225,
         averageScore: 80,
         lastGame: {
-          gameId: mongoose.Types.ObjectId(),
+          gameId:new mongoose.Types.ObjectId(),
           score: 90,
           timePlayed: 400
         },
@@ -110,7 +107,7 @@ const seedData = async () => {
         averagePlayTime: 200,
         averageScore: 70,
         lastGame: {
-          gameId: mongoose.Types.ObjectId(),
+          gameId: new mongoose.Types.ObjectId(),
           score: 75,
           timePlayed: 250
         },
