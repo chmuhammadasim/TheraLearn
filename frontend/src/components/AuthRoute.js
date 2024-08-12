@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 function AuthRoute({ isLoggedIn, children }) {
   if (isLoggedIn) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/dashboard" replace />;
   }
   return children;
 }

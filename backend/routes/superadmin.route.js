@@ -5,5 +5,6 @@ const superadminController = require('../controller/superadmin.controller');
 const router = express.Router();
 
 router.get('/',superadminController.Checkapi);
+router.get('/all',checkAuth,superadmin,superadminController.getAllUsers);
 
 module.exports = router;
