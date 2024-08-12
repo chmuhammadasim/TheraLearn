@@ -5,7 +5,7 @@ const userController = require('../controller/user.controller');
 const router = express.Router();
 
 router.get('/', userController.Checkapi);
-router.get('/byid',checkAuth, userController.GetUserById);
+router.get('/byid',checkAuth,  user, userController.GetUserById);
 // router.get('/users', user, getAllUsers);
 // router.put('/users/', user, updateUser);
 // router.delete('/users/', user, deleteUser);
