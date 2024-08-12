@@ -93,7 +93,7 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8c731] to-[#fc3a52] py-10 px-5">
-      <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+      <div className="max-w-4xl mt-20 mb-20 mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
         <div className="bg-[#0e2431] text-white flex items-center justify-between p-6">
           <div className="flex items-center">
             <img
