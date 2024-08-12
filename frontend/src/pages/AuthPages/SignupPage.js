@@ -56,8 +56,10 @@ function SignupPage() {
     if (validate()) {
       try {
         const response =await signUpUser(formData);
-        setMessage('Signup successful');
-        if (response.status === 201) {
+        console.log(response.status);
+        
+        if (response.status === "201") {
+          setMessage('Signup successful');
           navigate('/login');
         }
       } catch (error) {

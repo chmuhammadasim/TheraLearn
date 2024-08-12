@@ -1,6 +1,5 @@
 const API_URL = 'http://localhost:5000/api/auth/';
 
-// Function to handle user signup
 export const signUpUser = async (userData) => {
     try {
       const response = await fetch(`${API_URL}/signup`, {

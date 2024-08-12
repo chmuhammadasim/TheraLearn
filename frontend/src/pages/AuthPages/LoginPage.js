@@ -29,8 +29,7 @@ function LoginPage() {
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('authRole', data.role);
-        navigate('/');
-      
+      navigate('/');
     } catch (error) {
       setMessage(error.message);
     } finally {

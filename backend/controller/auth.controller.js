@@ -21,7 +21,7 @@ AuthController.SignUpUser = async (req, res) => {
         const hash = bcrypt.hashSync(password, salt);
         const user = new Users({ ...req.body, password: hash });
         await user.save();
-        res.status(201).send({ message: 'Signup was successful' });
+        res.status(201).send({ message: 'Signup was successful',status: '201', });
     } catch (error) {
         console.error('Error during signup:', error);
         if (error.code === 11000) {
@@ -62,6 +62,7 @@ AuthController.LogInUser = async (req, res) => {
                 message: 'Successfully logged in',
                 token,
                 expiresIn: 86400000,
+                status: '201',
                 role:user.role
             });
         } else {
