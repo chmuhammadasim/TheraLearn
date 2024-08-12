@@ -1,50 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { FaUserEdit } from 'react-icons/fa';
-import { MdEmail, MdLocationOn, MdPhone } from 'react-icons/md';
+import { FaUserEdit, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { MdEmail, MdPhone, MdPerson, MdCalendarToday, MdLock } from 'react-icons/md';
 import { getUserData, updateUserData } from '../../services/userService'; // Adjust the path as needed
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
     firstName: '',
     lastName: '',
-    email: '',
     address: '',
     city: '',
     country: '',
     contact: '',
     bio: '',
+    profilePictureUrl: '',
+    dateOfBirth: '',
+    createdAt: '',
   });
-  const [error, setError] = useState(null); // State for error handling
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await getUserData();
         setFormData({
+          username: res.data.username || '',
+          email: res.data.email || '',
+          password: '',
           firstName: res.data.firstName || '',
           lastName: res.data.lastName || '',
-          email: res.data.email || '',
           address: res.data.address || '',
           city: res.data.city || '',
           country: res.data.country || '',
           contact: res.data.contact || '',
           bio: res.data.bio || '',
+          profilePictureUrl: res.data.profilePictureUrl || 'https://via.placeholder.com/150',
+          dateOfBirth: res.data.dateOfBirth || '',
+          createdAt: res.data.createdAt || '',
         });
-        setError(null); // Clear any previous errors
+        setError(null);
       } catch (error) {
         console.error('Error fetching user data:', error);
         setError('Failed to fetch user data. Please try again later.');
-        // Set empty values in case of error
         setFormData({
+          username: '',
+          email: '',
+          password: '',
           firstName: '',
           lastName: '',
-          email: '',
           address: '',
           city: '',
           country: '',
           contact: '',
           bio: '',
+          profilePictureUrl: '',
+          dateOfBirth: '',
+          createdAt: '',
         });
       }
     };
@@ -72,6 +87,10 @@ const ProfilePage = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8c731] to-[#fc3a52] py-10 px-5">
       <div className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
@@ -79,7 +98,7 @@ const ProfilePage = () => {
           <div className="flex items-center">
             <img
               className="h-24 w-24 rounded-full object-cover border-4 border-[#f8c731]"
-              src={formData.profilePicture || 'https://via.placeholder.com/150'}
+              src={formData.profilePictureUrl}
               alt="Profile"
             />
             <div className="ml-4">
@@ -102,6 +121,75 @@ const ProfilePage = () => {
               {error}
             </div>
           )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-gray-700">Username</label>
+              <div className="flex items-center mt-1">
+                <MdPerson className="text-xl text-[#fc3a52] mr-2" />
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-gray-700">Email</label>
+              <div className="flex items-center mt-1">
+                <MdEmail className="text-xl text-[#fc3a52] mr-2" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-gray-700">Password</label>
+              <div className="flex items-center mt-1 relative">
+                <MdLock className="text-xl text-[#fc3a52] mr-2" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-gray-700">Contact</label>
+              <div className="flex items-center mt-1">
+                <MdPhone className="text-xl text-[#fc3a52] mr-2" />
+                <input
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700">First Name</label>
@@ -129,99 +217,75 @@ const ProfilePage = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-gray-700">Email</label>
-              <div className="flex items-center mt-1">
-                <MdEmail className="text-xl text-[#fc3a52] mr-2" />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700">Contact</label>
-              <div className="flex items-center mt-1">
-                <MdPhone className="text-xl text-[#fc3a52] mr-2" />
-                <input
-                  type="text"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
-                />
-              </div>
-            </div>
+             
+            <label className="block text-gray-700">Address</label>
+<input
+type="text"
+name="address"
+value={formData.address}
+onChange={handleInputChange}
+disabled={!isEditing}
+className={`mt-1 w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}/>
+</div>
+<div>
+<label className="block text-gray-700">City</label>
+<input type="text" name="city" value={formData.city} onChange={handleInputChange} disabled={!isEditing} className={`mt-1 w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}/>
+</div>
+</div>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-gray-700">Country</label>
+          <input
+            type="text"
+            name="country"
+            value={formData.country}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            className={`mt-1 w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
+          />
+        </div>
+        <div>
+          <label className="block text-gray-700">Date of Birth</label>
+          <div className="flex items-center mt-1">
+            <MdCalendarToday className="text-xl text-[#fc3a52] mr-2" />
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
+            />
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-700">Address</label>
-              <div className="flex items-center mt-1">
-                <MdLocationOn className="text-xl text-[#fc3a52] mr-2" />
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                className={`w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-gray-700">City</label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-                className={`mt-1 w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-700">Country</label>
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-                className={`mt-1 w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700">Bio</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-                className={`mt-1 w-full border-2 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fc3a52] ${!isEditing ? 'bg-gray-100' : 'bg-white'}`}
-              ></textarea>
-            </div>
-          </div>
-
-          {isEditing && (
-            <button
-              onClick={handleSaveChanges}
-              className="w-full mt-6 bg-[#f8c731] text-[#0e2431] py-2 rounded-md font-bold text-lg hover:bg-[#d1a52d] transition"
-            >
-              Save Changes
-            </button>
-          )}
         </div>
       </div>
+
+      <div>
+        <label className="block text-gray-700">Created At</label>
+        <div className="flex items-center mt-1">
+          <MdCalendarToday className="text-xl text-[#fc3a52] mr-2" />
+          <input
+            type="text"
+            name="createdAt"
+            value={new Date(formData.createdAt).toLocaleDateString()}
+            disabled
+            className="w-full border-2 rounded-md px-3 py-2 bg-gray-100"
+          />
+        </div>
+      </div>
+
+      {isEditing && (
+        <button
+          onClick={handleSaveChanges}
+          className="w-full mt-6 bg-[#fc3a52] text-white px-4 py-2 rounded-md shadow-lg hover:bg-[#d12f44] transition"
+        >
+          Save Changes
+        </button>
+      )}
     </div>
-  );
+  </div>
+</div>
+);
 };
 
 export default ProfilePage;
