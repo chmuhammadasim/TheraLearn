@@ -4,8 +4,8 @@ const userSchema = new mongoose.Schema({
   id: {
     type: Number,
     unique: true,
-    sparse:true
-},
+    sparse: true
+  },
   username: {
     type: String,
     required: true,
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'user', 'superadmin'],
+    enum: ['user', 'psychologist', 'superadmin'],
     default: 'user',
   },
   firstName: {
@@ -78,6 +78,14 @@ const userSchema = new mongoose.Schema({
   result: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Result',
+  }],
+  psychologist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  patients: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   }],
   isActive: {
     type: Boolean,
