@@ -35,7 +35,7 @@ export const signUpUser = async (userData) => {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Login failed');
       }
-  
+      
       return await response.json();
     } catch (error) {
       throw new Error(error.message || 'An error occurred during login');
