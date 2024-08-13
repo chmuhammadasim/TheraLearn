@@ -18,7 +18,8 @@ function SignupPage() {
     contact: '',
     bio: '',
     profilePictureUrl: '',
-    dateOfBirth: ''
+    dateOfBirth: '',
+    role: '' // Add role to formData state
   });
 
   const [errors, setErrors] = useState({});
@@ -46,6 +47,7 @@ function SignupPage() {
     if (!formData.firstName) newErrors.firstName = 'First name is required';
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+    if (!formData.role) newErrors.role = 'Role selection is required'; // Add role validation
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -55,9 +57,7 @@ function SignupPage() {
     e.preventDefault();
     if (validate()) {
       try {
-        const response =await signUpUser(formData);
-        console.log(response.status);
-        
+        const response = await signUpUser(formData);
         if (response.status === "201") {
           setMessage('Signup successful');
           navigate('/login');
@@ -73,14 +73,8 @@ function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#31f83b] to-[#ec3afc] relative overflow-hidden p-4 md:pt-24 md:pb-24">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#31f83b] to-[#3afcd2] relative overflow-hidden p-4 md:pt-24 md:pb-24">
       {/* Animated Background */}
-      {/* <motion.div
-        className="absolute top-0 left-0 w-full h-full bg-[#0e2431] opacity-20"
-        initial={{ opacity: 0.1 }}
-        animate={{ opacity: 0.3 }}
-        transition={{ duration: 8, ease: 'easeInOut', repeat: Infinity }}
-      /> */}
       <motion.div
         className="absolute w-64 h-64 bg-[#98fc3a] rounded-full top-10 right-20 opacity-70"
         animate={{ y: [0, 30, 0], rotate: [0, 180, 360] }}
@@ -91,19 +85,35 @@ function SignupPage() {
         animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
         transition={{ duration: 10, ease: 'easeInOut', repeat: Infinity }}
       />
-      {/* Fun Illustration */}
-      {/* <motion.img
-        src="https://via.placeholder.com/150x150?text=Cartoon+Icon"
-        alt="Cartoon Icon"
-        className="absolute top-[-50px] left-[-50px] w-20 h-20 md:w-32 md:h-32"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: 'easeInOut' }}
-      /> */}
+      <motion.div
+        className="absolute w-48 h-48 bg-[#fca652] rounded-full top-0 left-40 opacity-60"
+        animate={{ x: [-20, 20, -20], y: [-20, 20, -20] }}
+        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute w-24 h-24 bg-[#fc3a52] rounded-full bottom-32 right-32 opacity-50"
+        animate={{ scale: [1, 1.2, 1] }}
+        transition={{ duration: 8, ease: 'easeInOut', repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute w-72 h-72 bg-[#3a68fc] rounded-full bottom-0 left-0 opacity-60"
+        animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
+        transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute w-40 h-40 bg-[#8eecf5] rounded-full top-32 left-64 opacity-70"
+        animate={{ rotate: [0, 180, 360] }}
+        transition={{ duration: 16, ease: 'easeInOut', repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute w-20 h-20 bg-[#ecf53a] rounded-full top-20 right-48 opacity-50"
+        animate={{ scale: [1, 1.3, 1] }}
+        transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity }}
+      />
+
       <div className="relative bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-4xl text-center overflow-hidden mt-20 md:mt-0">
-        {/* Logo */}
         <motion.img
-          src="https://via.placeholder.com/100x100?text=Logo"
+          src="Boy1.png"
           alt="Logo"
           className="mx-auto mb-4 md:mb-6 w-16 h-16 md:w-24 md:h-24"
           initial={{ scale: 0.8 }}
@@ -213,8 +223,25 @@ function SignupPage() {
             </div>
           </div>
 
-          {/* Address and Contact */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Role Selection */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#0e2431]">Role:</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              required
+            >
+              <option value="">Select your role</option>
+              <option value="user">User</option>
+              <option value="psychologist">Psychologist</option>
+            </select>
+            {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
+          </div>
+
+          {/* Address, City, Country */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Address:</label>
               <input
@@ -225,20 +252,6 @@ function SignupPage() {
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
               />
             </div>
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Contact:</label>
-              <input
-                type="tel"
-                name="contact"
-                value={formData.contact}
-                onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              />
-            </div>
-          </div>
-
-          {/* City and Country */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">City:</label>
               <input
@@ -256,13 +269,23 @@ function SignupPage() {
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-2 md:p3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
               />
             </div>
           </div>
 
-          {/* Bio and Profile Picture */}
+          {/* Contact and Bio */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Contact:</label>
+              <input
+                type="text"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              />
+            </div>
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Bio:</label>
               <textarea
@@ -270,37 +293,40 @@ function SignupPage() {
                 value={formData.bio}
                 onChange={handleChange}
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              ></textarea>
+              />
             </div>
+          </div>
+
+          {/* Profile Picture URL and Date of Birth */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Profile Picture URL:</label>
               <input
-                type="text"
+                type="url"
                 name="profilePictureUrl"
                 value={formData.profilePictureUrl}
                 onChange={handleChange}
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
               />
             </div>
+            <div className="form-group">
+              <label className="block text-left text-lg font-medium text-[#0e2431]">Date of Birth:</label>
+              <input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
+              />
+              {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
+            </div>
           </div>
 
-          {/* Date of Birth */}
-          <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Date of Birth:</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              required
-            />
-            {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
-          </div>
-
+          {/* Submit Button */}
           <motion.button
             type="submit"
-            className="w-full p-2 md:p-3 bg-[#fc3a52] text-white rounded-lg hover:bg-[#0e2431] hover:text-[#f8c731] transition duration-300"
+            className="w-full py-2 md:py-3 text-lg font-semibold text-white bg-[#fc3a52] rounded-lg hover:bg-[#e33247] focus:outline-none focus:ring-4 focus:ring-[#f96b7a] transition-colors duration-300"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
