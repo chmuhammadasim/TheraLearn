@@ -62,7 +62,7 @@ const BlogList = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              <Link to={`/blogs/${blog._id}`}>
+              <Link to={`/blog/${blog._id}`}>
                 <img
                   src={blog.image || 'https://via.placeholder.com/400x200'}
                   alt={blog.title}
