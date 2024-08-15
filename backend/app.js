@@ -13,6 +13,7 @@ const errorMessage = require('./middleware/error-message');
 const authRoute = require('./routes/auth.route');
 const userRoute = require('./routes/user.route');
 const superadmin = require('./routes/superadmin.route');
+const blogRoute = require('./routes/blog.route');
 
 app.use(cors());
 app.use(accessControl);
@@ -40,6 +41,7 @@ app.get('/api', function (req, res) {
 app.use("/api/auth",authRoute);
 app.use("/api/user",userRoute);
 app.use("/api/superadmin",superadmin);
+app.use("/api/blog",blogRoute);
 
 app.use(errorHandler);
 app.use(errorMessage);

@@ -13,7 +13,6 @@ const seedData = async () => {
     await Question.deleteMany({});
     await Game.deleteMany({});
 
-    // Create users
     const users = await User.insertMany([
       {
         username: 'johndoe',
