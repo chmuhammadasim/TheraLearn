@@ -58,12 +58,12 @@ blogController.getBlogById = async (req, res) => {
   const { id } = req.params;
 
   // Check if ID is a valid ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Invalid blog ID format',
-    });
-  }
+  // if (!mongoose.Types.ObjectId.isValid(id)) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     message: 'Invalid blog ID format',
+  //   });
+  // }
 
   try {
     // Find the blog by ID

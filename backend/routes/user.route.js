@@ -6,8 +6,5 @@ const router = express.Router();
 
 router.get('/', userController.Checkapi);
 router.get('/byid',checkAuth,  user, userController.GetUserById);
-// router.get('/users', user, getAllUsers);
-// router.put('/users/', user, updateUser);
-// router.delete('/users/', user, deleteUser);
 
 module.exports = router;
