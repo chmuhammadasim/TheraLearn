@@ -3,7 +3,7 @@ const blogController = {};
 
 blogController.Checkapi = (req, res) => {
   res.status(200).send({
-      message: 'blog API is working'
+    message: "blog API is working",
   });
 };
 // Controller to get all blogs
@@ -11,8 +11,8 @@ blogController.getAllBlogs = async (req, res) => {
   try {
     // Fetch blogs from the database
     const blogs = await Blog.find();
-      // .populate("author", "username") 
-      // .sort({ publishedAt: -1 }); 
+    // .populate("author", "username")
+    // .sort({ publishedAt: -1 });
 
     // Check if blogs were found
     if (!blogs.length) {
@@ -57,44 +57,31 @@ blogController.getAllBlogs = async (req, res) => {
 blogController.getBlogById = async (req, res) => {
   const { id } = req.params;
 
-  // Check if ID is a valid ObjectId
-  // if (!mongoose.Types.ObjectId.isValid(id)) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     message: 'Invalid blog ID format',
-  //   });
-  // }
-
   try {
-    // Find the blog by ID
     const blog = await Blog.findById(id);
-
-    // Check if the blog exists
     if (!blog) {
       return res.status(404).json({
         success: false,
-        message: 'Blog not found',
+        message: "Blog not found",
       });
     }
 
-    // Return the blog data
     res.status(200).json({
       success: true,
       data: blog,
     });
   } catch (error) {
-    console.error('Error fetching blog:', error);
-    // Differentiate between database errors and server errors
-    if (error.name === 'CastError') {
+    console.error("Error fetching blog:", error);
+    if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
-        message: 'Invalid blog ID format',
+        message: "Invalid blog ID format",
       });
     }
-    
+
     res.status(500).json({
       success: false,
-      message: 'Server Error: Unable to fetch blog',
+      message: "Server Error: Unable to fetch blog",
     });
   }
 };
