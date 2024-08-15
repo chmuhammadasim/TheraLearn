@@ -25,6 +25,7 @@ export default function Navbar({ isLoggedIn, role }) {
 
   useEffect(() => {
     setOpen(false);
+    setUser(null);
   }, [location]);
 
   const handleLogout = () => {
