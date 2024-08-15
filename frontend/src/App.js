@@ -17,7 +17,7 @@ import SuperAdminPanel from "./pages/superAdmin/SuperAdminPanel";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState(null); // Track user role
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -26,6 +26,10 @@ function App() {
       if (token) {
         setIsLoggedIn(true);
         setRole(userRole);
+        console.log(isLoggedIn);
+        console.log(role);
+        
+        
       } else {
         setIsLoggedIn(false);
         setRole(null);
