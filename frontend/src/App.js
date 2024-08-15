@@ -9,6 +9,8 @@ import LoginPage from "./pages/AuthPages/LoginPage";
 import SignupPage from "./pages/AuthPages/SignupPage";
 import NotFound404 from "./pages/NotFound404/NotFound";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import BlogList from "./pages/BlogPages/BlogList";
+import BlogDetail from "./pages/BlogPages/BlogDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthRoute from "./components/AuthRoute";
 import ProfilePage from "./pages/Profile/Profile";
@@ -99,6 +101,8 @@ function App() {
 
           {/* Public Routes */}
           <Route path="/contact" element={<ContactUsPage />} />
+          <Route path="/bloglist" element={<BlogList />} />
+          <Route path="/blog/:id" element={<BlogDetail />} />
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="/404" element={<NotFound404 />} />
           <Route path="*" element={<NotFound404 />} />

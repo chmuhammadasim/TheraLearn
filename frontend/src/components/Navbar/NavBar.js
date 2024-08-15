@@ -101,7 +101,7 @@ export default function Navbar({ isLoggedIn, role }) {
                   Games
                 </Link>
                 <Link
-                  to="/blogs"
+                  to="/bloglist"
                   className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
                     location.pathname === "/blogs"
                       ? "bg-[#2ed4fd] text-white"
@@ -305,7 +305,7 @@ export default function Navbar({ isLoggedIn, role }) {
                 Games
               </Link>
               <Link
-                to="/blogs"
+                to="/bloglist"
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   location.pathname === "/blogs"
                     ? "bg-[#2ed4fd] text-white"
