@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Disclosure } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { UserCircleIcon } from '@heroicons/react/24/solid';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Disclosure } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 export default function Navbar({ isLoggedIn, role }) {
   const [navbarOpacity, setNavbarOpacity] = useState(1);
@@ -16,10 +16,10 @@ export default function Navbar({ isLoggedIn, role }) {
       const scrollY = window.scrollY;
       setNavbarOpacity(scrollY > 0 ? 0.95 : 1);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -30,14 +30,18 @@ export default function Navbar({ isLoggedIn, role }) {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/');
+    navigate("/");
   };
 
-  const isSuperAdmin = role === 'superadmin';
-  const isPsychologist = role === 'psychologist';
+  const isSuperAdmin = role === "superadmin";
+  const isPsychologist = role === "psychologist";
 
   return (
-    <Disclosure as="nav" className="fixed w-full top-0 z-50 shadow-md" style={{ backgroundColor: `rgba(250, 250, 250, ${navbarOpacity})` }}>
+    <Disclosure
+      as="nav"
+      className="fixed w-full top-0 z-50 shadow-md"
+      style={{ backgroundColor: `rgba(250, 250, 250, ${navbarOpacity})` }}
+    >
       {({ open: isMobileMenuOpen }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -49,38 +53,60 @@ export default function Navbar({ isLoggedIn, role }) {
                   src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                   alt="Logo"
                 />
-                <span className="text-gray-800 text-lg font-semibold ml-2">MyApp</span>
+                <span className="text-gray-800 text-lg font-semibold ml-2">
+                  MyApp
+                </span>
               </div>
 
               {/* Centered Links */}
               <div className="hidden sm:flex sm:space-x-4">
                 <Link
                   to="/"
-                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/' ? 'bg-[#61d4b3] text-white' : 'hover:bg-[#61d4b3] hover:text-white'}`}
+                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                    location.pathname === "/"
+                      ? "bg-[#61d4b3] text-white"
+                      : "hover:bg-[#61d4b3] hover:text-white"
+                  }`}
                 >
                   HomePage
                 </Link>
                 <Link
                   to="/contact"
-                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/contact' ? 'bg-[#fdd365] text-white' : 'hover:bg-[#fdd365] hover:text-white'}`}
+                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                    location.pathname === "/contact"
+                      ? "bg-[#fdd365] text-white"
+                      : "hover:bg-[#fdd365] hover:text-white"
+                  }`}
                 >
                   Contact Us
                 </Link>
                 <Link
                   to="/about"
-                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/about' ? 'bg-[#fb8d62] text-white' : 'hover:bg-[#fb8d62] hover:text-white'}`}
+                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                    location.pathname === "/about"
+                      ? "bg-[#fb8d62] text-white"
+                      : "hover:bg-[#fb8d62] hover:text-white"
+                  }`}
                 >
                   About Us
                 </Link>
                 <Link
                   to="/games"
-                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/games' ? 'bg-[#fd2eb3] text-white' : 'hover:bg-[#fd2eb3] hover:text-white'}`}
+                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                    location.pathname === "/games"
+                      ? "bg-[#fd2eb3] text-white"
+                      : "hover:bg-[#fd2eb3] hover:text-white"
+                  }`}
                 >
                   Games
                 </Link>
                 <Link
                   to="/blogs"
-                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/blogs' ? 'bg-[#2ed4fd] text-white' : 'hover:bg-[#2ed4fd] hover:text-white'}`}
+                  className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                    location.pathname === "/blogs"
+                      ? "bg-[#2ed4fd] text-white"
+                      : "hover:bg-[#2ed4fd] hover:text-white"
+                  }`}
                 >
                   Blogs
                 </Link>
@@ -88,7 +114,11 @@ export default function Navbar({ isLoggedIn, role }) {
                   <>
                     <Link
                       to="/dashboard"
-                      className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/dashboard' ? 'bg-[#b5d461] text-white' : 'hover:bg-[#b5d461] hover:text-white'}`}
+                      className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                        location.pathname === "/dashboard"
+                          ? "bg-[#b5d461] text-white"
+                          : "hover:bg-[#b5d461] hover:text-white"
+                      }`}
                     >
                       Dashboard
                     </Link>
@@ -96,19 +126,31 @@ export default function Navbar({ isLoggedIn, role }) {
                       <>
                         <Link
                           to="/psychologist-dashboard"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/psychologist-dashboard' ? 'bg-[#ff8c00] text-white' : 'hover:bg-[#ff8c00] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/psychologist-dashboard"
+                              ? "bg-[#ff8c00] text-white"
+                              : "hover:bg-[#ff8c00] hover:text-white"
+                          }`}
                         >
                           Psychologist Dashboard
                         </Link>
                         <Link
                           to="/psychologist-blog-form"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/psychologist-blog-form' ? 'bg-[#ff8c00] text-white' : 'hover:bg-[#ff8c00] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/psychologist-blog-form"
+                              ? "bg-[#ff8c00] text-white"
+                              : "hover:bg-[#ff8c00] hover:text-white"
+                          }`}
                         >
                           Psychologist Blog Form
                         </Link>
                         <Link
                           to="/psychologist-profile"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/psychologist-profile' ? 'bg-[#ff8c00] text-white' : 'hover:bg-[#ff8c00] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/psychologist-profile"
+                              ? "bg-[#ff8c00] text-white"
+                              : "hover:bg-[#ff8c00] hover:text-white"
+                          }`}
                         >
                           Psychologist Profile
                         </Link>
@@ -118,27 +160,43 @@ export default function Navbar({ isLoggedIn, role }) {
                       <>
                         <Link
                           to="/superadmindashboard"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/superadmin-dashboard' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/superadmin-dashboard"
+                              ? "bg-[#ff00ff] text-white"
+                              : "hover:bg-[#ff00ff] hover:text-white"
+                          }`}
                         >
-                          SuperAdmin Dashboard
+                          Admin Dashboard
                         </Link>
                         <Link
                           to="/superadminpanel"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/superadmin-panel' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/superadmin-panel"
+                              ? "bg-[#ff00ff] text-white"
+                              : "hover:bg-[#ff00ff] hover:text-white"
+                          }`}
                         >
-                          SuperAdmin Panel
+                          Admin Panel
                         </Link>
                         <Link
                           to="/superadmincontactus"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/superadmin-contact-us' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/superadmin-contact-us"
+                              ? "bg-[#ff00ff] text-white"
+                              : "hover:bg-[#ff00ff] hover:text-white"
+                          }`}
                         >
-                          SuperAdmin Contact Us Dashboard
+                          Admin Contact Panel
                         </Link>
                         <Link
                           to="/superadminblogdashboard"
-                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${location.pathname === '/superadmin-blog-dashboard' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/superadmin-blog-dashboard"
+                              ? "bg-[#ff00ff] text-white"
+                              : "hover:bg-[#ff00ff] hover:text-white"
+                          }`}
                         >
-                          SuperAdmin Blog Dashboard
+                         Admin Blog Panel
                         </Link>
                       </>
                     )}
@@ -208,31 +266,51 @@ export default function Navbar({ isLoggedIn, role }) {
             <div className="space-y-1 px-2 pt-2 pb-3">
               <Link
                 to="/"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/' ? 'bg-[#61d4b3] text-white' : 'hover:bg-[#61d4b3] hover:text-white'}`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  location.pathname === "/"
+                    ? "bg-[#61d4b3] text-white"
+                    : "hover:bg-[#61d4b3] hover:text-white"
+                }`}
               >
                 HomePage
               </Link>
               <Link
                 to="/contact"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/contact' ? 'bg-[#fdd365] text-white' : 'hover:bg-[#fdd365] hover:text-white'}`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  location.pathname === "/contact"
+                    ? "bg-[#fdd365] text-white"
+                    : "hover:bg-[#fdd365] hover:text-white"
+                }`}
               >
                 Contact Us
               </Link>
               <Link
                 to="/about"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/about' ? 'bg-[#fb8d62] text-white' : 'hover:bg-[#fb8d62] hover:text-white'}`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  location.pathname === "/about"
+                    ? "bg-[#fb8d62] text-white"
+                    : "hover:bg-[#fb8d62] hover:text-white"
+                }`}
               >
                 About Us
               </Link>
               <Link
                 to="/games"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/games' ? 'bg-[#fd2eb3] text-white' : 'hover:bg-[#fd2eb3] hover:text-white'}`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  location.pathname === "/games"
+                    ? "bg-[#fd2eb3] text-white"
+                    : "hover:bg-[#fd2eb3] hover:text-white"
+                }`}
               >
                 Games
               </Link>
               <Link
                 to="/blogs"
-                className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/blogs' ? 'bg-[#2ed4fd] text-white' : 'hover:bg-[#2ed4fd] hover:text-white'}`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  location.pathname === "/blogs"
+                    ? "bg-[#2ed4fd] text-white"
+                    : "hover:bg-[#2ed4fd] hover:text-white"
+                }`}
               >
                 Blogs
               </Link>
@@ -240,7 +318,11 @@ export default function Navbar({ isLoggedIn, role }) {
                 <>
                   <Link
                     to="/dashboard"
-                    className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/dashboard' ? 'bg-[#b5d461] text-white' : 'hover:bg-[#b5d461] hover:text-white'}`}
+                    className={`block px-3 py-2 rounded-md text-base font-medium ${
+                      location.pathname === "/dashboard"
+                        ? "bg-[#b5d461] text-white"
+                        : "hover:bg-[#b5d461] hover:text-white"
+                    }`}
                   >
                     Dashboard
                   </Link>
@@ -248,19 +330,31 @@ export default function Navbar({ isLoggedIn, role }) {
                     <>
                       <Link
                         to="/psychologist-dashboard"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/psychologist-dashboard' ? 'bg-[#ff8c00] text-white' : 'hover:bg-[#ff8c00] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/psychologist-dashboard"
+                            ? "bg-[#ff8c00] text-white"
+                            : "hover:bg-[#ff8c00] hover:text-white"
+                        }`}
                       >
                         Psychologist Dashboard
                       </Link>
                       <Link
                         to="/psychologist-blog-form"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/psychologist-blog-form' ? 'bg-[#ff8c00] text-white' : 'hover:bg-[#ff8c00] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/psychologist-blog-form"
+                            ? "bg-[#ff8c00] text-white"
+                            : "hover:bg-[#ff8c00] hover:text-white"
+                        }`}
                       >
                         Psychologist Blog Form
                       </Link>
                       <Link
                         to="/psychologist-profile"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/psychologist-profile' ? 'bg-[#ff8c00] text-white' : 'hover:bg-[#ff8c00] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/psychologist-profile"
+                            ? "bg-[#ff8c00] text-white"
+                            : "hover:bg-[#ff8c00] hover:text-white"
+                        }`}
                       >
                         Psychologist Profile
                       </Link>
@@ -270,27 +364,43 @@ export default function Navbar({ isLoggedIn, role }) {
                     <>
                       <Link
                         to="/superadmin-dashboard"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/superadmin-dashboard' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/superadmin-dashboard"
+                            ? "bg-[#ff00ff] text-white"
+                            : "hover:bg-[#ff00ff] hover:text-white"
+                        }`}
                       >
-                        SuperAdmin Dashboard
+                         Admin dashboard
                       </Link>
                       <Link
                         to="/superadmin-panel"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/superadmin-panel' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/superadmin-panel"
+                            ? "bg-[#ff00ff] text-white"
+                            : "hover:bg-[#ff00ff] hover:text-white"
+                        }`}
                       >
-                        SuperAdmin Panel
+                         Admin Panel
                       </Link>
                       <Link
                         to="/superadmin-contact-us"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/superadmin-contact-us' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/superadmin-contact-us"
+                            ? "bg-[#ff00ff] text-white"
+                            : "hover:bg-[#ff00ff] hover:text-white"
+                        }`}
                       >
-                        SuperAdmin Contact Us Dashboard
+                       Admin Contact Panel
                       </Link>
                       <Link
                         to="/superadmin-blog-dashboard"
-                        className={`block px-3 py-2 rounded-md text-base font-medium ${location.pathname === '/superadmin-blog-dashboard' ? 'bg-[#ff00ff] text-white' : 'hover:bg-[#ff00ff] hover:text-white'}`}
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/superadmin-blog-dashboard"
+                            ? "bg-[#ff00ff] text-white"
+                            : "hover:bg-[#ff00ff] hover:text-white"
+                        }`}
                       >
-                        SuperAdmin Blog Dashboard
+                        Admin Blog Panel
                       </Link>
                     </>
                   )}

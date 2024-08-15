@@ -26,10 +26,6 @@ function App() {
       if (token) {
         setIsLoggedIn(true);
         setRole(userRole);
-        console.log(isLoggedIn);
-        console.log(role);
-        
-        
       } else {
         setIsLoggedIn(false);
         setRole(null);
