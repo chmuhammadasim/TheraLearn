@@ -11,11 +11,13 @@ import NotFound404 from "./pages/NotFound404/NotFound";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BlogList from "./pages/BlogPages/BlogList";
 import BlogDetail from "./pages/BlogPages/BlogDetail";
+import BlogForm from "./pages/psychologist/BlogForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthRoute from "./components/AuthRoute";
 import ProfilePage from "./pages/Profile/Profile";
 import SuperAdminRoute from "./components/SuperAdminRoute";
 import SuperAdminPanel from "./pages/superAdmin/SuperAdminPanel";
+import PsychologistRoute from "./components/PsychologistRoute";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -95,6 +97,17 @@ function App() {
                 <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
                   <SuperAdminPanel />
                 </SuperAdminRoute>
+              }
+            />
+          )}
+
+          {isLoggedIn && role === "psychologist" && (
+            <Route
+              path="/blogform"
+              element={
+                <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
+                  <BlogForm />
+                </PsychologistRoute>
               }
             />
           )}
