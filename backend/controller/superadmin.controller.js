@@ -1,15 +1,14 @@
-const superadminController = {};
+const adminController = {};
 const User = require('../model/user.model');
 
-// Controller to check if the API is working
-superadminController.Checkapi = (req, res) => {
+adminController.Checkapi = (req, res) => {
   res.status(200).send({
     message: 'Auth API is working'
   });
 };
 
 // Controller to get all users and their data
-superadminController.getAllUsers = async (req, res) => {
+adminController.getAllUsers = async (req, res) => {
   try {
     const users = await User.find({});
 
@@ -39,4 +38,4 @@ superadminController.getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = superadminController;
+module.exports = adminController;

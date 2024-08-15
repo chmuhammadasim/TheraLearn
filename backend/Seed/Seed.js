@@ -8,7 +8,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/theraLearn');
 
 const seedData = async () => {
   try {
-    // Clear existing data
     await User.deleteMany({});
     await Result.deleteMany({});
     await Question.deleteMany({});

@@ -6,12 +6,12 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an admin');
     }
   };
-  const superadmin = (req, res, next) => {
-    if (req.userData.role === 'superadmin') {
+  const psychologist = (req, res, next) => {
+    if (req.userData.role === 'psychologist') {
       next();
     } else {
       res.status(403);
-       throw new Error('Not authorized as an superadmin');
+       throw new Error('Not authorized as an psychologist');
     }
   };
   const user = (req, res, next) => {
@@ -22,4 +22,4 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an User');
     }
   };
-  module.exports = {  admin,user,superadmin };  
+  module.exports = {  admin,user,psychologist };  
