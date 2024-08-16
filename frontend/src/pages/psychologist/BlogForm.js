@@ -31,7 +31,6 @@ const BlogForm = () => {
     let tempErrors = {};
 
     if (!formData.title) tempErrors.title = "Title is required";
-
     if (!formData.author) tempErrors.author = "Author is required";
     if (!formData.content) tempErrors.content = "Content is required";
     if (!formData.category) tempErrors.category = "Category is required";
