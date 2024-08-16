@@ -32,8 +32,8 @@ export default function Navbar({ isLoggedIn, role }) {
     localStorage.clear();
     navigate("/");
   };
-
-  const isSuperAdmin = role === "superadmin";
+  const isUser = role === "user";
+  const isSuperAdmin = role === "admin";
   const isPsychologist = role === "psychologist";
 
   return (
@@ -112,7 +112,8 @@ export default function Navbar({ isLoggedIn, role }) {
                 </Link>
                 {isLoggedIn && (
                   <>
-                    <Link
+                    { isUser && (
+                      <Link
                       to="/dashboard"
                       className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
                         location.pathname === "/dashboard"
@@ -122,6 +123,7 @@ export default function Navbar({ isLoggedIn, role }) {
                     >
                       Dashboard
                     </Link>
+                    )}
                     {isPsychologist && (
                       <>
                         <Link
@@ -144,7 +146,7 @@ export default function Navbar({ isLoggedIn, role }) {
                         >
                           Psychologist Blog Form
                         </Link>
-                        <Link
+                        {/* <Link
                           to="/psychologist-profile"
                           className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
                             location.pathname === "/psychologist-profile"
@@ -153,7 +155,7 @@ export default function Navbar({ isLoggedIn, role }) {
                           }`}
                         >
                           Psychologist Profile
-                        </Link>
+                        </Link> */}
                       </>
                     )}
                     {isSuperAdmin && (
@@ -316,7 +318,8 @@ export default function Navbar({ isLoggedIn, role }) {
               </Link>
               {isLoggedIn && (
                 <>
-                  <Link
+                  {isUser && (
+                    <Link
                     to="/dashboard"
                     className={`block px-3 py-2 rounded-md text-base font-medium ${
                       location.pathname === "/dashboard"
@@ -326,6 +329,7 @@ export default function Navbar({ isLoggedIn, role }) {
                   >
                     Dashboard
                   </Link>
+                  )}
                   {isPsychologist && (
                     <>
                       <Link
@@ -348,7 +352,7 @@ export default function Navbar({ isLoggedIn, role }) {
                       >
                         Psychologist Blog Form
                       </Link>
-                      <Link
+                      {/* <Link
                         to="/psychologist-profile"
                         className={`block px-3 py-2 rounded-md text-base font-medium ${
                           location.pathname === "/psychologist-profile"
@@ -357,7 +361,7 @@ export default function Navbar({ isLoggedIn, role }) {
                         }`}
                       >
                         Psychologist Profile
-                      </Link>
+                      </Link> */}
                     </>
                   )}
                   {isSuperAdmin && (
