@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
-  const [filter, setFilter] = useState('all');
+  //const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,18 +26,18 @@ const BlogList = () => {
   }, []);
 
   useEffect(() => {
-    if (filter === 'all') {
-      setFilteredBlogs(blogs);
-    } else {
-      setFilteredBlogs(blogs.filter(blog => blog.category === filter));
-    }
-  }, [filter, blogs]);
+    // if (filter === 'all') {
+       setFilteredBlogs(blogs);
+    // } else {
+    //   setFilteredBlogs(blogs.filter(blog => blog.category === filter));
+    // }
+  }, [ blogs]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold text-center mb-8">Our Blog</h1>
 
-      <div className="mb-6 flex justify-center">
+      {/* <div className="mb-6 flex justify-center">
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
@@ -48,7 +48,7 @@ const BlogList = () => {
           <option value="health">Health</option>
           <option value="education">Education</option>
         </select>
-      </div>
+      </div> */}
 
       {loading ? (
         <div className="text-center text-gray-500">Loading...</div>

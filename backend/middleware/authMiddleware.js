@@ -22,4 +22,12 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an User');
     }
   };
-  module.exports = {  admin,user,psychologist };  
+  const userpsychologist = (req, res, next) => {
+    if (req.userData.role === 'user' || req.userData.role === 'psychologist') {
+      next();
+    } else {
+      res.status(403);
+       throw new Error('Not authorized as an ');
+    }
+  };
+  module.exports = {  admin,user,psychologist,userpsychologist };  
