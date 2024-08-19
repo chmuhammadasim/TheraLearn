@@ -6,7 +6,7 @@ gameController.Checkapi = (req, res) => {
     message: "game API is working",
   });
 };
-// Controller to get all blogs
+
 gameController.getAllGames = async (req, res) => {
   try {
     // Fetch blogs from the database
@@ -55,11 +55,11 @@ gameController.getAllGames = async (req, res) => {
 };
 
 gameController.getGameById = async (req, res) => {
-  const userId = req.userData.userId; // Extracting the userId from req.userData
+  const userId = req.userData.userId; 
 
   try {
-    const game = await Game.findOne({ userId }); // Finding a game associated with the userId
-
+    const game = await Game.findOne({ userId }); 
+    
     if (!game) {
       return res.status(404).json({
         success: false,

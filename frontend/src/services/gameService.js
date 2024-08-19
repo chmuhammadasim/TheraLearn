@@ -12,9 +12,8 @@ export const getUserGames = async () => {
         'Content-Type': 'application/json'
       }
     });
-    console.log(response.data);
     
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error('Failed to fetch user data: ' + error.message);
   }

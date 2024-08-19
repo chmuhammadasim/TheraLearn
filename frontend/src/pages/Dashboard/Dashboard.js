@@ -4,6 +4,7 @@ import { getUserData } from '../../services/userService';
 import { getUserGames } from '../../services/gameService';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { motion } from 'framer-motion';
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -15,9 +16,6 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
-        console.log(user, games);
-        console.log(user);
-        
         setUserData(user);
         setUserGames(games);
         setLoading(false);
@@ -26,7 +24,7 @@ function Dashboard() {
         setError("There was an issue retrieving data. Please try again later.");
         setLoading(false);
         setUserData(null);
-        setUserGames(null);
+        setUserGames([]);
       }
     };
 
@@ -110,12 +108,22 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
+    <motion.div
+      className="min-h-screen bg-gray-50 p-6 flex flex-col items-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="w-full max-w-4xl bg-white p-8 shadow-lg rounded-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">User Dashboard</h1>
 
         {userData ? (
-          <div className="mb-8">
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, translateY: -20 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">User Information</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <p><strong>Username:</strong> {userData.username || 'N/A'}</p>
@@ -130,12 +138,23 @@ function Dashboard() {
               <p><strong>Date of Birth:</strong> {userData.dateOfBirth ? new Date(userData.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
               <p><strong>Created At:</strong> {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}</p>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <p>No user data available.</p>
+          <motion.p
+            initial={{ opacity: 0, translateY: -20 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            No user data available.
+          </motion.p>
         )}
 
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, translateY: -20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Games Played</h2>
           {userGames.length > 0 ? (
             <ul className="space-y-4">
@@ -150,18 +169,23 @@ function Dashboard() {
           ) : (
             <p>No games played yet.</p>
           )}
-        </div>
+        </motion.div>
 
-        <div className="mb-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, translateY: -20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Game Score Trend</h2>
           {userGames.length > 0 ? (
             <Line data={gameData} options={chartOptions} className="rounded-lg shadow-md" />
           ) : (
             <p>No game data available to display chart.</p>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

@@ -6,6 +6,7 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an admin');
     }
   };
+
   const psychologist = (req, res, next) => {
     if (req.userData.role === 'psychologist') {
       next();
@@ -14,6 +15,7 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an psychologist');
     }
   };
+
   const user = (req, res, next) => {
     if (req.userData.role === 'user') {
       next();
@@ -22,6 +24,7 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an User');
     }
   };
+
   const userpsychologist = (req, res, next) => {
     if (req.userData.role === 'user' || req.userData.role === 'psychologist') {
       next();
@@ -30,4 +33,5 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an ');
     }
   };
+  
   module.exports = {  admin,user,psychologist,userpsychologist };  
