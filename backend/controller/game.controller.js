@@ -10,15 +10,15 @@ gameController.Checkapi = (req, res) => {
 gameController.getAllGames = async (req, res) => {
   try {
     // Fetch blogs from the database
-    const blogs = await Game.find();
+    const game = await Game.find();
     // .populate("author", "username")
     // .sort({ publishedAt: -1 });
 
     // Check if blogs were found
-    if (!blogs.length) {
-      return res.status(404).json({
+    if (!game.length) {
+      return res.status(200).json({
         success: false,
-        message: "No blogs found",
+        message: "No game found",
       });
     }
 
@@ -55,10 +55,10 @@ gameController.getAllGames = async (req, res) => {
 };
 
 gameController.getGameById = async (req, res) => {
-  const id = req.userData.userId;
+  const userId = req.userData.userId; // Extracting the userId from req.userData
 
   try {
-    const game = await Game.findById(id);
+    const game = await Game.findOne({ userId }); // Finding a game associated with the userId
 
     if (!game) {
       return res.status(404).json({
@@ -68,7 +68,6 @@ gameController.getGameById = async (req, res) => {
       });
     }
 
-    // If the game is found, return it with a 200 status
     res.status(200).json({
       success: true,
       data: game,
@@ -80,18 +79,19 @@ gameController.getGameById = async (req, res) => {
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
-        data: null, // Returning null for invalid ID format
-        message: "Invalid game ID format",
+        data: null,
+        message: "Invalid user ID format",
       });
     }
 
     // General server error handling
     res.status(500).json({
       success: false,
-      data: null, // Returning null for any other server errors
+      data: null,
       message: "Server Error: Unable to fetch game",
     });
   }
 };
+
 
 module.exports = gameController;

@@ -16,6 +16,7 @@ function Dashboard() {
       try {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
         console.log(user, games);
+        console.log(user);
         
         setUserData(user);
         setUserGames(games);
@@ -24,6 +25,8 @@ function Dashboard() {
         console.error("Failed to fetch data:", error);
         setError("There was an issue retrieving data. Please try again later.");
         setLoading(false);
+        setUserData(null);
+        setUserGames(null);
       }
     };
 
