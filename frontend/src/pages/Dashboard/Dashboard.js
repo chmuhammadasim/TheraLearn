@@ -15,6 +15,8 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
+        console.log(user, games);
+        
         setUserData(user);
         setUserGames(games);
         setLoading(false);
@@ -115,11 +117,15 @@ function Dashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <p><strong>Username:</strong> {userData.username || 'N/A'}</p>
               <p><strong>Email:</strong> {userData.email || 'N/A'}</p>
-              <p><strong>Full Name:</strong> {userData.firstName ? `${userData.firstName} ${userData.lastName}` : 'N/A'}</p>
-              <p><strong>Address:</strong> {userData.address ? `${userData.address}, ${userData.city}, ${userData.country}` : 'N/A'}</p>
+              <p><strong>Password:</strong> **********</p> {/* Hiding actual password for security */}
               <p><strong>Contact:</strong> {userData.contact || 'N/A'}</p>
-              <p><strong>Bio:</strong> {userData.bio || 'N/A'}</p>
+              <p><strong>First Name:</strong> {userData.firstName || 'N/A'}</p>
+              <p><strong>Last Name:</strong> {userData.lastName || 'N/A'}</p>
+              <p><strong>Address:</strong> {userData.address || 'N/A'}</p>
+              <p><strong>City:</strong> {userData.city || 'N/A'}</p>
+              <p><strong>Country:</strong> {userData.country || 'N/A'}</p>
               <p><strong>Date of Birth:</strong> {userData.dateOfBirth ? new Date(userData.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
+              <p><strong>Created At:</strong> {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}</p>
             </div>
           </div>
         ) : (

@@ -58,30 +58,38 @@ gameController.getGameById = async (req, res) => {
   const id = req.userData.userId;
 
   try {
-    const blog = await Game.findById(id);
-    if (!blog) {
+    const game = await Game.findById(id);
+
+    if (!game) {
       return res.status(404).json({
         success: false,
-        message: "Blog not found",
+        data: null,
+        message: "Game not found",
       });
     }
 
+    // If the game is found, return it with a 200 status
     res.status(200).json({
       success: true,
-      data: blog,
+      data: game,
     });
   } catch (error) {
-    console.error("Error fetching blog:", error);
+    console.error("Error fetching game:", error);
+
+    // Handling invalid ID format (CastError)
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
-        message: "Invalid blog ID format",
+        data: null, // Returning null for invalid ID format
+        message: "Invalid game ID format",
       });
     }
 
+    // General server error handling
     res.status(500).json({
       success: false,
-      message: "Server Error: Unable to fetch blog",
+      data: null, // Returning null for any other server errors
+      message: "Server Error: Unable to fetch game",
     });
   }
 };
