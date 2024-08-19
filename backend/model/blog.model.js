@@ -127,6 +127,10 @@ const blogSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 blogSchema.pre('save', function (next) {
