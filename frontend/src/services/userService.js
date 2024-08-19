@@ -13,7 +13,7 @@ export const getUserData = async () => {
       }
     });
     
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw new Error('Failed to fetch user data: ' + error.message);
   }

@@ -57,7 +57,7 @@ function Dashboard() {
     datasets: [
       {
         label: 'Game Scores Over Time',
-        data: userGames.length > 0 ? userGames.map(game => game.score) : [],
+        data: userGames.length > 0 ? userGames.map(game => game.overallResults.totalScore) : [],
         fill: true,
         backgroundColor: 'rgba(252, 58, 82, 0.2)',
         borderColor: '#fc3a52',
@@ -159,10 +159,15 @@ function Dashboard() {
           {userGames.length > 0 ? (
             <ul className="space-y-4">
               {userGames.map((game) => (
-                <li key={game.id} className="p-4 bg-gray-100 rounded-lg shadow-sm">
-                  <p><strong>Game Name:</strong> {game.name || 'N/A'}</p>
-                  <p><strong>Score:</strong> {game.score || 'N/A'}</p>
+                <li key={game._id} className="p-4 bg-gray-100 rounded-lg shadow-sm">
+                  <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
+                  <p><strong>Status:</strong> {game.status || 'N/A'}</p>
+                  <p><strong>Highest Score:</strong> {game.highestScore || 'N/A'}</p>
+                  <p><strong>Attempts:</strong> {game.attempts || 'N/A'}</p>
                   <p><strong>Date Played:</strong> {game.datePlayed ? new Date(game.datePlayed).toLocaleDateString() : 'N/A'}</p>
+                  <p><strong>Level:</strong> {game.sessions?.[0]?.level || 'N/A'}</p>
+                  <p><strong>Score:</strong> {game.sessions?.[0]?.score || 'N/A'}</p>
+                  <p><strong>Duration:</strong> {game.sessions?.[0]?.duration || 'N/A'}</p>
                 </li>
               ))}
             </ul>
