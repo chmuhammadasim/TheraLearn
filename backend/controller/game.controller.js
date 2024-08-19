@@ -55,7 +55,7 @@ gameController.getAllGames = async (req, res) => {
 };
 
 gameController.getGameById = async (req, res) => {
-  const { id } = req.params;
+  const id = req.userData.userId;
 
   try {
     const blog = await Game.findById(id);
