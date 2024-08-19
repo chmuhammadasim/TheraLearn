@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Loading from '../../components/Loading';
-import { getUserData, getUserGames } from '../../services/userService';
+import { getUserData } from '../../services/userService';
+import { getUserGames } from '../../services/gameService' 
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -27,38 +30,62 @@ function Dashboard() {
     return <Loading />;
   }
 
+  const gameData = {
+    labels: userGames.length > 0 ? userGames.map(game => new Date(game.datePlayed).toLocaleDateString()) : [],
+    datasets: [
+      {
+        label: 'Game Scores Over Time',
+        data: userGames.length > 0 ? userGames.map(game => game.score) : [],
+        fill: false,
+        backgroundColor: '#fc3a52',
+        borderColor: '#0e2431',
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white p-8 shadow-md rounded-lg">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">User Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">User Dashboard</h1>
 
-        {userData && (
+        {userData ? (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-700">User Information</h2>
-            <p><strong>Username:</strong> {userData.username}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Full Name:</strong> {userData.firstName} {userData.lastName}</p>
-            <p><strong>Address:</strong> {userData.address}, {userData.city}, {userData.country}</p>
-            <p><strong>Contact:</strong> {userData.contact}</p>
-            <p><strong>Bio:</strong> {userData.bio}</p>
-            <p><strong>Date of Birth:</strong> {new Date(userData.dateOfBirth).toLocaleDateString()}</p>
+            <h2 className="text-2xl font-semibold text-gray-700">User Information</h2>
+            <p><strong>Username:</strong> {userData.username || 'N/A'}</p>
+            <p><strong>Email:</strong> {userData.email || 'N/A'}</p>
+            <p><strong>Full Name:</strong> {userData.firstName ? `${userData.firstName} ${userData.lastName}` : 'N/A'}</p>
+            <p><strong>Address:</strong> {userData.address ? `${userData.address}, ${userData.city}, ${userData.country}` : 'N/A'}</p>
+            <p><strong>Contact:</strong> {userData.contact || 'N/A'}</p>
+            <p><strong>Bio:</strong> {userData.bio || 'N/A'}</p>
+            <p><strong>Date of Birth:</strong> {userData.dateOfBirth ? new Date(userData.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
           </div>
+        ) : (
+          <p>No user data available.</p>
         )}
 
-        <div>
-          <h2 className="text-xl font-semibold text-gray-700">Games Played</h2>
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-gray-700">Games Played</h2>
           {userGames.length > 0 ? (
             <ul className="list-disc list-inside">
               {userGames.map((game) => (
-                <li key={game.id} className="mb-2">
-                  <p><strong>Game Name:</strong> {game.name}</p>
-                  <p><strong>Score:</strong> {game.score}</p>
-                  <p><strong>Date Played:</strong> {new Date(game.datePlayed).toLocaleDateString()}</p>
+                <li key={game.id} className="mb-4">
+                  <p><strong>Game Name:</strong> {game.name || 'N/A'}</p>
+                  <p><strong>Score:</strong> {game.score || 'N/A'}</p>
+                  <p><strong>Date Played:</strong> {game.datePlayed ? new Date(game.datePlayed).toLocaleDateString() : 'N/A'}</p>
                 </li>
               ))}
             </ul>
           ) : (
             <p>No games played yet.</p>
+          )}
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-gray-700">Game Score Trend</h2>
+          {userGames.length > 0 ? (
+            <Line data={gameData} />
+          ) : (
+            <p>No game data available to display chart.</p>
           )}
         </div>
       </div>

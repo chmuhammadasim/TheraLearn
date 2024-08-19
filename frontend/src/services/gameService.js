@@ -1,13 +1,21 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/games';
+const API_URL = 'http://localhost:5000/api/game';
 
-export const getGames = async (userId) => {
+export const getUserGames = async () => {
+  const token = localStorage.getItem('authToken');
+  
   try {
-    const response = await axios.get(`${API_URL}/${userId}`);
+    const response = await axios.get(`${API_URL}/getbyid`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(response.data);
+    
     return response.data;
   } catch (error) {
-    console.error('Error fetching games:', error);
-    throw error;
+    throw new Error('Failed to fetch user data: ' + error.message);
   }
 };
