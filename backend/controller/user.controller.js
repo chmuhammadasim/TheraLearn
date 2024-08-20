@@ -7,7 +7,6 @@ userController.Checkapi = (req, res) => {
 };
 
 userController.GetUserById  = async (req, res) => {
-  console.log(req.userData.userId);
   
     const id = req.userData.userId;
   

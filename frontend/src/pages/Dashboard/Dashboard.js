@@ -16,10 +16,8 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
-        console.log(games.gameName);
-        
         setUserData(user.data);
-        setUserGames(games);
+        setUserGames(games.data); // Ensure the data is being set correctly
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -55,7 +53,7 @@ function Dashboard() {
   }
 
   const gameData = {
-    labels: userGames.length > 0 ? userGames.map(game => new Date(game.sessions[0]?.datePlayed).toLocaleDateString()) : [],
+    labels: userGames.length > 0 ? userGames.map(game => new Date(game.sessions[0].datePlayed).toLocaleDateString()) : [],
     datasets: [
       {
         label: 'Game Scores Over Time',
@@ -163,15 +161,13 @@ function Dashboard() {
               {userGames.map((game) => (
                 <li key={game._id} className="p-4 bg-gray-100 rounded-lg shadow-sm">
                   <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
+                  <p><strong>Status:</strong> {game.sessions[0]?.status || 'N/A'}</p>
                   <p><strong>Highest Score:</strong> {game.overallResults.highestScore || 'N/A'}</p>
-                  <p><strong>Total Attempts:</strong> {game.overallResults.totalAttempts || 'N/A'}</p>
-                  <p><strong>Total Score:</strong> {game.overallResults.totalScore || 'N/A'}</p>
-                  <p><strong>Date Played:</strong> {game.sessions?.[0]?.datePlayed ? new Date(game.sessions[0].datePlayed).toLocaleDateString() : 'N/A'}</p>
-                  <p><strong>Status:</strong> {game.sessions?.[0]?.status || 'N/A'}</p>
-                  <p><strong>Level:</strong> {game.sessions?.[0]?.level || 'N/A'}</p>
-                  <p><strong>Score:</strong> {game.sessions?.[0]?.score || 'N/A'}</p>
-                  <p><strong>Duration:</strong> {game.sessions?.[0]?.duration ? `${game.sessions[0].duration} seconds` : 'N/A'}</p>
-                  <p><strong>Attempts:</strong> {game.sessions?.[0]?.attempts || 'N/A'}</p>
+                  <p><strong>Attempts:</strong> {game.overallResults.totalAttempts || 'N/A'}</p>
+                  <p><strong>Date Played:</strong> {game.sessions[0]?.datePlayed ? new Date(game.sessions[0].datePlayed).toLocaleDateString() : 'N/A'}</p>
+                  <p><strong>Level:</strong> {game.sessions[0]?.level || 'N/A'}</p>
+                  <p><strong>Score:</strong> {game.sessions[0]?.score || 'N/A'}</p>
+                  <p><strong>Duration:</strong> {game.sessions[0]?.duration || 'N/A'} seconds</p>
                 </li>
               ))}
             </ul>
@@ -186,11 +182,11 @@ function Dashboard() {
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Game Score Trend</h2>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Game Score Trends</h2>
           {userGames.length > 0 ? (
-            <Line data={gameData} options={chartOptions} className="rounded-lg shadow-md" />
+            <Line data={gameData} options={chartOptions} />
           ) : (
-            <p>No game data available to display chart.</p>
+            <p>No game data available to display trends.</p>
           )}
         </motion.div>
       </div>

@@ -25,8 +25,8 @@ const admin = (req, res, next) => {
     }
   };
 
-  const userpsychologist = (req, res, next) => {
-    if (req.userData.role === 'user' || req.userData.role === 'psychologist') {
+  const userpsychologistadmin = (req, res, next) => {
+    if (req.userData.role === 'user' || req.userData.role === 'psychologist' || req.userData.role === 'admin') {
       next();
     } else {
       res.status(403);
@@ -34,4 +34,4 @@ const admin = (req, res, next) => {
     }
   };
   
-  module.exports = {  admin,user,psychologist,userpsychologist };  
+  module.exports = {  admin,user,psychologist,userpsychologistadmin };  
