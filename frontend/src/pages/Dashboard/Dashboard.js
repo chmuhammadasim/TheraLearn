@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [userGames, setUserGames] = useState([]);
+  const [userGames, setUserGames] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -17,7 +17,9 @@ function Dashboard() {
       try {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
         setUserData(user.data);
-        setUserGames(games.data); // Ensure the data is being set correctly
+        setUserGames(games.data);
+        
+
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch data:", error);
