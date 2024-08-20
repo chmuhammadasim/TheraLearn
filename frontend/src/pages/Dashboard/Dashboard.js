@@ -16,7 +16,9 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
-        setUserData(user);
+        console.log(games.gameName);
+        
+        setUserData(user.data);
         setUserGames(games);
         setLoading(false);
       } catch (error) {
@@ -53,7 +55,7 @@ function Dashboard() {
   }
 
   const gameData = {
-    labels: userGames.length > 0 ? userGames.map(game => new Date(game.datePlayed).toLocaleDateString()) : [],
+    labels: userGames.length > 0 ? userGames.map(game => new Date(game.sessions[0]?.datePlayed).toLocaleDateString()) : [],
     datasets: [
       {
         label: 'Game Scores Over Time',
@@ -161,13 +163,15 @@ function Dashboard() {
               {userGames.map((game) => (
                 <li key={game._id} className="p-4 bg-gray-100 rounded-lg shadow-sm">
                   <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
-                  <p><strong>Status:</strong> {game.status || 'N/A'}</p>
-                  <p><strong>Highest Score:</strong> {game.highestScore || 'N/A'}</p>
-                  <p><strong>Attempts:</strong> {game.attempts || 'N/A'}</p>
-                  <p><strong>Date Played:</strong> {game.datePlayed ? new Date(game.datePlayed).toLocaleDateString() : 'N/A'}</p>
+                  <p><strong>Highest Score:</strong> {game.overallResults.highestScore || 'N/A'}</p>
+                  <p><strong>Total Attempts:</strong> {game.overallResults.totalAttempts || 'N/A'}</p>
+                  <p><strong>Total Score:</strong> {game.overallResults.totalScore || 'N/A'}</p>
+                  <p><strong>Date Played:</strong> {game.sessions?.[0]?.datePlayed ? new Date(game.sessions[0].datePlayed).toLocaleDateString() : 'N/A'}</p>
+                  <p><strong>Status:</strong> {game.sessions?.[0]?.status || 'N/A'}</p>
                   <p><strong>Level:</strong> {game.sessions?.[0]?.level || 'N/A'}</p>
                   <p><strong>Score:</strong> {game.sessions?.[0]?.score || 'N/A'}</p>
-                  <p><strong>Duration:</strong> {game.sessions?.[0]?.duration || 'N/A'}</p>
+                  <p><strong>Duration:</strong> {game.sessions?.[0]?.duration ? `${game.sessions[0].duration} seconds` : 'N/A'}</p>
+                  <p><strong>Attempts:</strong> {game.sessions?.[0]?.attempts || 'N/A'}</p>
                 </li>
               ))}
             </ul>
