@@ -29,7 +29,7 @@ const BlogList = () => {
   }, [blogs]);
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gradient-to-b from-blue-100 via-purple-100 to-pink-100">
+    <div className="container mx-auto mt-20 mb-10 px-4 py-8 bg-gradient-to-b from-blue-100 via-purple-200 to-pink-300">
       <h1 className="text-5xl font-bold text-center text-blue-900 mb-12">Our Blog</h1>
 
       {loading ? (
