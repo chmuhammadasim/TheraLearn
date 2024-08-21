@@ -3,7 +3,7 @@ const psychologistController = {};
 
 psychologistController.Checkapi = (req, res) => {
   res.status(200).send({
-    message: "blog API is working",
+    message: "psychologist API is working",
   });
 };
 
