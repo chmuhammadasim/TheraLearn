@@ -106,7 +106,7 @@ function App() {
 
           {isLoggedIn && role === "psychologist" && (
             <Route
-              path="/blogform"
+              path="/psychologist-blog-form"
               element={
                 <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
                   <BlogForm />
