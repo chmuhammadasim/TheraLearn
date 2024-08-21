@@ -11,10 +11,7 @@ blogController.getAllBlogs = async (req, res) => {
   try {
     // Fetch blogs from the database
     const blogs = await Blog.find();
-    // .populate("author", "username")
-    // .sort({ publishedAt: -1 });
 
-    // Check if blogs were found
     if (!blogs.length) {
       return res.status(404).json({
         success: false,

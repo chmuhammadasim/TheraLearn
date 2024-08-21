@@ -6,9 +6,10 @@ psychologistController.Checkapi = (req, res) => {
     message: "psychologist API is working",
   });
 };
+
 psychologistController.getAllPsychologists = async (req, res) => {
   try {
-    const psychologists = await User.find({ role: 'psychologist' });
+    const psychologists = await Users.find({ role: 'psychologist', isActive: true });
 
     if (!psychologists || psychologists.length === 0) {
       return res.status(404).json({ message: 'No psychologists found.' });
@@ -25,7 +26,7 @@ psychologistController.getPsychologistById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const psychologist = await User.findById(id);
+    const psychologist = await Users.findById(id);
 
     if (!psychologist) {
       return res.status(404).json({ message: 'Psychologist not found.' });
