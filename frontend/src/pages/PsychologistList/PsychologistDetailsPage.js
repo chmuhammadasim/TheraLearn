@@ -28,20 +28,29 @@ function PsychologistDetailsPage() {
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
         <div className="flex flex-col md:flex-row items-center">
           <img
-            src={psychologist.image}
+            src={psychologist.profilePictureUrl}
             alt={psychologist.name}
             className="w-48 h-48 object-cover rounded-full shadow-lg"
           />
           <div className="md:ml-8 mt-4 md:mt-0">
-            <h1 className="text-4xl font-extrabold text-blue-900">{psychologist.name}</h1>
+            <h1 className="text-4xl font-extrabold text-blue-900">{psychologist.firstName} {psychologist.lastName}</h1>
             <p className="text-gray-600 text-xl">{psychologist.specialization}</p>
             <p className="text-gray-500 mt-2">{psychologist.phone}</p>
             <p className="text-gray-500">{psychologist.contact}</p>
+            <p className="text-gray-600 mt-2">
+              {psychologist.city}, {psychologist.country}
+            </p>
           </div>
         </div>
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-gray-800">About</h2>
-          <p className="text-gray-600 mt-4">{psychologist.description}</p>
+          <p className="text-gray-600 mt-4">{psychologist.bio}</p>
+        </div>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-800">Experience & Education</h2>
+          <p className="text-gray-600 mt-4">Years of Experience: {psychologist.yearsOfExperience} years</p>
+          <p className="text-gray-600 mt-2">Education: {psychologist.education}</p>
+          {/* <p className="text-gray-600 mt-2">Languages Spoken: {psychologist.languagesSpoken.join(', ')}</p> */}
         </div>
         <div className="mt-8 text-center">
           <a
