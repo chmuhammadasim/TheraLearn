@@ -1,36 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const fetchPsychologists = async () => {
-
-  const response = await fetch('/api/psychologists');
-  const data = await response.json();
-  return data;
-};
+import { getPsychologists } from '../../services/psychologistService';
 
 function PsychologistListPage() {
   const [psychologists, setPsychologists] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredPsychologists, setFilteredPsychologists] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadPsychologists = async () => {
-      const data = await fetchPsychologists();
-      setPsychologists(data);
+    const fetchPsychologists = async () => {
+      try {
+        const data = await getPsychologists();
+        setPsychologists(data);
+      } catch (error) {
+        console.error('Error fetching psychologists:', error);
+      }
     };
 
-    loadPsychologists();
+    fetchPsychologists();
   }, []);
-
-  useEffect(() => {
-    setFilteredPsychologists(
-      psychologists.filter(psychologist =>
-        psychologist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        psychologist.specialization.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [searchTerm, psychologists]);
 
   const handlePsychologistClick = (psychologistId) => {
     navigate(`/psychologists/${psychologistId}`);
@@ -39,22 +26,15 @@ function PsychologistListPage() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-green-100 to-yellow-100 p-6">
       <header className="text-center py-8">
-        <h1 className="text-5xl font-extrabold text-blue-900 mb-4 animate-fadeIn">Our Psychologists</h1>
-        <p className="text-xl text-gray-700 mb-6">Click on a psychologist to view details and contact them.</p>
-        <input
-          type="text"
-          placeholder="Search by name or specialization..."
-          className="p-2 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-6"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <h1 className="text-5xl font-extrabold text-blue-900 mb-4">Our Psychologists</h1>
+        <p className="text-xl text-gray-700">Click on a psychologist to view details and contact them.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-12">
-        {filteredPsychologists.map((psychologist) => (
+        {psychologists.map((psychologist) => (
           <div
             key={psychologist.id}
-            className="group relative bg-white p-4 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
+            className="group relative bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
             onClick={() => handlePsychologistClick(psychologist.id)}
           >
             <img
@@ -65,6 +45,8 @@ function PsychologistListPage() {
             <div className="relative z-10 mt-4 text-center">
               <h3 className="text-2xl font-bold text-gray-900">{psychologist.name}</h3>
               <p className="text-gray-600 mt-2">{psychologist.specialization}</p>
+              <p className="text-gray-500 mt-2">{psychologist.phone}</p>
+              <p className="text-gray-500">{psychologist.contact}</p>
             </div>
             <div className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="bg-black bg-opacity-50 text-white text-center rounded-full px-6 py-3 font-bold animate-bounce">
