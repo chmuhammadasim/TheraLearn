@@ -15,6 +15,7 @@ const userRoute = require('./routes/user.route');
 const superadmin = require('./routes/superadmin.route');
 const blogRoute = require('./routes/blog.route');
 const gameRoute = require('./routes/game.route');
+const psychologistRoute = require('./routes/psychologist.route');
 
 app.use(cors());
 app.use(accessControl);
@@ -43,6 +44,7 @@ app.use("/api/auth",authRoute);
 app.use("/api/user",userRoute);
 app.use("/api/superadmin",superadmin);
 app.use("/api/blog",blogRoute);
+app.use("/api/psychologist",psychologistRoute);
 app.use("/api/game",gameRoute);
 
 app.use(errorHandler);
