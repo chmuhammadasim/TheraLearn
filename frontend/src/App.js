@@ -18,6 +18,7 @@ import ProfilePage from "./pages/Profile/Profile";
 import SuperAdminRoute from "./components/SuperAdminRoute";
 import SuperAdminPanel from "./pages/superAdmin/SuperAdminPanel";
 import PsychologistRoute from "./components/PsychologistRoute";
+import GamePage from './pages/Game/Game'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -117,6 +118,7 @@ function App() {
           <Route path="/bloglist" element={<BlogList />} />
           <Route path="/blog/:id" element={<BlogDetail />} />
           <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/games" element={<GamePage />} />
           <Route path="/404" element={<NotFound404 />} />
           <Route path="*" element={<NotFound404 />} />
         </Routes>

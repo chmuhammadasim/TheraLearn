@@ -18,6 +18,7 @@ function Dashboard() {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
         setUserData(user.data);
         setUserGames(games.data);
+        console.log(userGames);
         
 
         setLoading(false);
