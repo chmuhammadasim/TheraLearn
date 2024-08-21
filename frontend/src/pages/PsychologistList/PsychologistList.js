@@ -19,8 +19,8 @@ function PsychologistListPage() {
     fetchPsychologists();
   }, []);
 
-  const handlePsychologistClick = (psychologistId) => {
-    navigate(`/psychologists/${psychologistId}`);
+  const handlePsychologistClick = (psychologistId) => {    
+    navigate(`/psychologistsdetail/${psychologistId}`);
   };
 
   return (
@@ -35,7 +35,7 @@ function PsychologistListPage() {
           <div
             key={psychologist.id}
             className="group relative bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
-            onClick={() => handlePsychologistClick(psychologist.id)}
+            onClick={() => handlePsychologistClick(psychologist._id)}
           >
             <img
               src={psychologist.image}
