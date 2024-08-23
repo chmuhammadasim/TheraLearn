@@ -18,9 +18,10 @@ import ProfilePage from "./pages/Profile/Profile";
 import SuperAdminRoute from "./components/SuperAdminRoute";
 import SuperAdminPanel from "./pages/superAdmin/SuperAdminPanel";
 import PsychologistRoute from "./components/PsychologistRoute";
-import GamePage from './pages/Game/Game'
+import GamePage from "./pages/Game/Game";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
 import PsychologistDetailsPage from "./pages/PsychologistList/PsychologistDetailsPage";
+import { AuthProvider } from "./components/AuthContext/AuthContext";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,92 +44,100 @@ function App() {
   }, [isLoggedIn, role]);
 
   return (
-    <Router>
-      <div>
-        <Navbar isLoggedIn={isLoggedIn} role={role} />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
+    <AuthProvider>
+      <Router>
+        <div>
+          <Navbar isLoggedIn={isLoggedIn} role={role} />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
 
-          {/* Show Login/Signup only if the user is not signed in */}
-          {!isLoggedIn && (
-            <>
-              <Route
-                path="/login"
-                element={
-                  <AuthRoute isLoggedIn={isLoggedIn}>
-                    <LoginPage />
-                  </AuthRoute>
-                }
-              />
-              <Route
-                path="/signup"
-                element={
-                  <AuthRoute isLoggedIn={isLoggedIn}>
-                    <SignupPage />
-                  </AuthRoute>
-                }
-              />
-            </>
-          )}
+            {/* Show Login/Signup only if the user is not signed in */}
+            {!isLoggedIn && (
+              <>
+                <Route
+                  path="/login"
+                  element={
+                    <AuthRoute isLoggedIn={isLoggedIn}>
+                      <LoginPage />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="/signup"
+                  element={
+                    <AuthRoute isLoggedIn={isLoggedIn}>
+                      <SignupPage />
+                    </AuthRoute>
+                  }
+                />
+              </>
+            )}
 
-          {/* Show Dashboard only if the user is signed in */}
-          {isLoggedIn && (
-            <>
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute isLoggedIn={isLoggedIn}>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-            </>
-          )}
+            {/* Show Dashboard only if the user is signed in */}
+            {isLoggedIn && (
+              <>
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+              </>
+            )}
 
-          {isLoggedIn && role === "superadmin" && (
+            {isLoggedIn && role === "superadmin" && (
+              <Route
+                path="/superadmin"
+                element={
+                  <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
+                    <SuperAdminPanel />
+                  </SuperAdminRoute>
+                }
+              />
+            )}
+
+            {isLoggedIn && role === "psychologist" && (
+              <Route
+                path="/psychologist-blog-form"
+                element={
+                  <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
+                    <BlogForm />
+                  </PsychologistRoute>
+                }
+              />
+            )}
+
+            {/* Public Routes */}
+            <Route path="/contact" element={<ContactUsPage />} />
+            <Route path="/bloglist" element={<BlogList />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
+            <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/games" element={<GamePage />} />
             <Route
-              path="/superadmin"
-              element={
-                <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
-                  <SuperAdminPanel />
-                </SuperAdminRoute>
-              }
+              path="/psychologistslist"
+              element={<PsychologistListPage />}
             />
-          )}
-
-          {isLoggedIn && role === "psychologist" && (
             <Route
-              path="/psychologist-blog-form"
-              element={
-                <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
-                  <BlogForm />
-                </PsychologistRoute>
-              }
+              path="/psychologistsdetail/:id"
+              element={<PsychologistDetailsPage />}
             />
-          )}
-
-          {/* Public Routes */}
-          <Route path="/contact" element={<ContactUsPage />} />
-          <Route path="/bloglist" element={<BlogList />} />
-          <Route path="/blog/:id" element={<BlogDetail />} />
-          <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/games" element={<GamePage />} />
-          <Route path="/psychologistslist" element={<PsychologistListPage />} />
-          <Route path="/psychologistsdetail/:id" element={<PsychologistDetailsPage />} />
-          <Route path="/404" element={<NotFound404 />} />
-          <Route path="*" element={<NotFound404 />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+            <Route path="/404" element={<NotFound404 />} />
+            <Route path="*" element={<NotFound404 />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

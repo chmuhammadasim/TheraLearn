@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { AuthContext } from "../../components/AuthContext/AuthContext";
 
-export default function Navbar({ isLoggedIn, role }) {
+export default function Navbar() {
+  const { isLoggedIn, role, logout } = useContext(AuthContext);
   const [navbarOpacity, setNavbarOpacity] = useState(1);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -29,7 +31,7 @@ export default function Navbar({ isLoggedIn, role }) {
   }, [location]);
 
   const handleLogout = () => {
-    localStorage.clear();
+    logout();
     navigate("/");
   };
   const isUser = role === "user";

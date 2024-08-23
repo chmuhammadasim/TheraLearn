@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { logInUser } from '../../services/authService';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from "../../components/AuthContext/AuthContext";
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ function LoginPage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [loggingIn, setLoggingIn] = useState(false);
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +31,7 @@ function LoginPage() {
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('authRole', data.role);
+      login(data.token, data.role);
       navigate('/');
     } catch (error) {
       setMessage(error.message);
