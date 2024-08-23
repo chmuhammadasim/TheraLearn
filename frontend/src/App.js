@@ -95,7 +95,7 @@ function App() {
               </>
             )}
 
-            {isLoggedIn && role === "superadmin" && (
+            {isLoggedIn && role === "admin" && (
               <Route
                 path="/superadmin"
                 element={

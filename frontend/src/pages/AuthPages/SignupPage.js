@@ -3,6 +3,7 @@ import { signUpUser } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
+import { FaUserGraduate, FaBriefcase, FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
 
 function SignupPage() {
   const [isPsychologist, setIsPsychologist] = useState(false);
@@ -20,9 +21,9 @@ function SignupPage() {
     bio: '',
     profilePictureUrl: '',
     dateOfBirth: '',
-    role: 'user', // Default role is user
-    education: '', // Additional field for psychologists
-    experience: '', // Additional field for psychologists
+    role: 'user',
+    educations: [''],
+    experiences: [''],
   });
 
   const [errors, setErrors] = useState({});
@@ -41,6 +42,36 @@ function SignupPage() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleEducationChange = (index, value) => {
+    const newEducations = [...formData.educations];
+    newEducations[index] = value;
+    setFormData({ ...formData, educations: newEducations });
+  };
+
+  const handleExperienceChange = (index, value) => {
+    const newExperiences = [...formData.experiences];
+    newExperiences[index] = value;
+    setFormData({ ...formData, experiences: newExperiences });
+  };
+
+  const addEducation = () => {
+    setFormData({ ...formData, educations: [...formData.educations, ''] });
+  };
+
+  const removeEducation = (index) => {
+    const newEducations = formData.educations.filter((_, i) => i !== index);
+    setFormData({ ...formData, educations: newEducations });
+  };
+
+  const addExperience = () => {
+    setFormData({ ...formData, experiences: [...formData.experiences, ''] });
+  };
+
+  const removeExperience = (index) => {
+    const newExperiences = formData.experiences.filter((_, i) => i !== index);
+    setFormData({ ...formData, experiences: newExperiences });
+  };
+
   const validate = () => {
     const newErrors = {};
     if (!formData.username) newErrors.username = 'Username is required';
@@ -52,8 +83,8 @@ function SignupPage() {
     if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
 
     if (isPsychologist) {
-      if (!formData.education) newErrors.education = 'Education is required';
-      if (!formData.experience) newErrors.experience = 'Experience is required';
+      if (formData.educations.some((education) => !education)) newErrors.educations = 'All education fields are required';
+      if (formData.experiences.some((experience) => !experience)) newErrors.experiences = 'All experience fields are required';
     }
 
     setErrors(newErrors);
@@ -86,9 +117,9 @@ function SignupPage() {
       
       <div className="relative bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-4xl text-center overflow-hidden mt-20 md:mt-0">
         <motion.img
-          src="Boy1.png"
+          src="LOGO.png"
           alt="Logo"
-          className="mx-auto mb-4 md:mb-6 w-16 h-16 md:w-24 md:h-24"
+          className="mx-auto mb-4 md:mb-6 w-20 h-20 md:w-24 md:h-24"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
@@ -185,7 +216,7 @@ function SignupPage() {
             </div>
           </div>
 
-          {/* First Name and Last Name */}
+          {/* Personal Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">First Name:</label>
@@ -213,8 +244,8 @@ function SignupPage() {
             </div>
           </div>
 
-          {/* Address, City, Country */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Address and City */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Address:</label>
               <input
@@ -223,6 +254,7 @@ function SignupPage() {
                 value={formData.address}
                 onChange={handleChange}
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
               />
             </div>
             <div className="form-group">
@@ -233,8 +265,13 @@ function SignupPage() {
                 value={formData.city}
                 onChange={handleChange}
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
               />
             </div>
+          </div>
+
+          {/* Country and Contact */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Country:</label>
               <input
@@ -243,12 +280,9 @@ function SignupPage() {
                 value={formData.country}
                 onChange={handleChange}
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
               />
             </div>
-          </div>
-
-          {/* Contact, Bio, Profile Picture URL */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Contact:</label>
               <input
@@ -257,25 +291,7 @@ function SignupPage() {
                 value={formData.contact}
                 onChange={handleChange}
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              />
-            </div>
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Bio:</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              />
-            </div>
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Profile Picture URL:</label>
-              <input
-                type="url"
-                name="profilePictureUrl"
-                value={formData.profilePictureUrl}
-                onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                required
               />
             </div>
           </div>
@@ -294,43 +310,107 @@ function SignupPage() {
             {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
           </div>
 
-          {/* Additional fields for Psychologists */}
+          {/* Bio */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#0e2431]">Bio:</label>
+            <textarea
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              rows="4"
+            />
+          </div>
+
+          {/* Profile Picture */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#0e2431]">Profile Picture URL:</label>
+            <input
+              type="url"
+              name="profilePictureUrl"
+              value={formData.profilePictureUrl}
+              onChange={handleChange}
+              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+            />
+          </div>
+
+          {/* Education and Experience Fields for Psychologist */}
           {isPsychologist && (
             <>
               <div className="form-group">
                 <label className="block text-left text-lg font-medium text-[#0e2431]">Education:</label>
-                <input
-                  type="text"
-                  name="education"
-                  value={formData.education}
-                  onChange={handleChange}
-                  className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                  required
-                />
-                {errors.education && <span className="text-red-500 text-sm">{errors.education}</span>}
+                {formData.educations.map((education, index) => (
+                  <div key={index} className="flex items-center gap-2 mb-2">
+                    <FaUserGraduate className="text-[#f8c731] text-2xl" />
+                    <input
+                      type="text"
+                      value={education}
+                      onChange={(e) => handleEducationChange(index, e.target.value)}
+                      className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                      placeholder="Education details"
+                      required
+                    />
+                    {formData.educations.length > 1 && (
+                      <FaMinusCircle
+                        className="text-red-500 text-2xl cursor-pointer"
+                        onClick={() => removeEducation(index)}
+                      />
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addEducation}
+                  className="flex items-center text-[#0e2431] hover:text-[#fc3a52] transition duration-200"
+                >
+                  <FaPlusCircle className="mr-1" />
+                  Add Education
+                </button>
+                {errors.educations && <span className="text-red-500 text-sm">{errors.educations}</span>}
               </div>
 
               <div className="form-group">
                 <label className="block text-left text-lg font-medium text-[#0e2431]">Experience:</label>
-                <input
-                  type="text"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                  required
-                />
-                {errors.experience && <span className="text-red-500 text-sm">{errors.experience}</span>}
+                {formData.experiences.map((experience, index) => (
+                  <div key={index} className="flex items-center gap-2 mb-2">
+                    <FaBriefcase className="text-[#f8c731] text-2xl" />
+                    <input
+                      type="text"
+                      value={experience}
+                      onChange={(e) => handleExperienceChange(index, e.target.value)}
+                      className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                      placeholder="Experience details"
+                      required
+                    />
+                    {formData.experiences.length > 1 && (
+                      <FaMinusCircle
+                        className="text-red-500 text-2xl cursor-pointer"
+                        onClick={() => removeExperience(index)}
+                      />
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  className="flex items-center text-[#0e2431] hover:text-[#fc3a52] transition duration-200"
+                >
+                  <FaPlusCircle className="mr-1" />
+                  Add Experience
+                </button>
+                {errors.experiences && <span className="text-red-500 text-sm">{errors.experiences}</span>}
               </div>
             </>
           )}
 
-          <button
+          <motion.button
             type="submit"
-            className="w-full py-3 mt-6 font-bold text-white bg-[#fc3a52] rounded-lg hover:bg-[#e92e44] transition duration-300"
+            className="w-full p-3 md:p-4 bg-[#fc3a52] text-white font-semibold rounded-lg hover:bg-[#0e2431] transition duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {isPsychologist ? 'Sign Up as Psychologist' : 'Sign Up as User'}
-          </button>
+            Sign Up
+          </motion.button>
         </form>
       </div>
     </div>

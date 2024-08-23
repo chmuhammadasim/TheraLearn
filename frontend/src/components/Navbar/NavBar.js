@@ -51,12 +51,12 @@ export default function Navbar() {
               {/* Logo and Name */}
               <div className="flex items-center">
                 <img
-                  className="h-8 w-8"
-                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                  className="h-12 w-12"
+                  src="/LOGO.png"
                   alt="Logo"
                 />
                 <span className="text-gray-800 text-lg font-semibold ml-2">
-                  MyApp
+                  THERALEARN
                 </span>
               </div>
 
@@ -175,14 +175,14 @@ export default function Navbar() {
                     {isSuperAdmin && (
                       <>
                         <Link
-                          to="/superadmindashboard"
+                          to="/superadmin"
                           className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
-                            location.pathname === "/superadmin-dashboard"
+                            location.pathname === "/superadmin"
                               ? "bg-[#ff00ff] text-white"
                               : "hover:bg-[#ff00ff] hover:text-white"
                           }`}
                         >
-                          Admin Dashboard
+                          User Dashboard
                         </Link>
                         <Link
                           to="/superadminpanel"
@@ -393,14 +393,14 @@ export default function Navbar() {
                   {isSuperAdmin && (
                     <>
                       <Link
-                        to="/superadmin-dashboard"
+                        to="/superadmin"
                         className={`block px-3 py-2 rounded-md text-base font-medium ${
-                          location.pathname === "/superadmin-dashboard"
+                          location.pathname === "/superadmin"
                             ? "bg-[#ff00ff] text-white"
                             : "hover:bg-[#ff00ff] hover:text-white"
                         }`}
                       >
-                        Admin dashboard
+                        User dashboard
                       </Link>
                       <Link
                         to="/superadmin-panel"

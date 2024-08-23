@@ -55,7 +55,7 @@ const SuperAdminPanel = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#f8c731] to-[#fc3a52] py-10 px-5">
       <ToastContainer />
-      <div className="max-w-6xl mt-20 mb-20 mx-auto bg-white shadow-xl rounded-lg overflow-hidden animate-fadeIn">
+      <div className="max-w-7xl mt-20 mb-20 mx-auto bg-white shadow-xl rounded-lg overflow-hidden animate-fadeIn">
         <div className="bg-[#0e2431] text-white p-6 text-center">
           <h2 className="text-3xl font-bold">Super Admin Panel</h2>
           <p>Manage user accounts, activate or deactivate them.</p>
