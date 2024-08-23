@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -114,17 +114,29 @@ export default function Navbar() {
                 </Link>
                 {isLoggedIn && (
                   <>
-                    { isUser && (
-                      <Link
-                      to="/dashboard"
-                      className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
-                        location.pathname === "/dashboard"
-                          ? "bg-[#b5d461] text-white"
-                          : "hover:bg-[#b5d461] hover:text-white"
-                      }`}
-                    >
-                      Dashboard
-                    </Link>
+                    {isUser && (
+                      <>
+                        <Link
+                          to="/dashboard"
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/dashboard"
+                              ? "bg-[#b5d461] text-white"
+                              : "hover:bg-[#b5d461] hover:text-white"
+                          }`}
+                        >
+                          Dashboard
+                        </Link>
+                        <Link
+                          to="/psychologistslist"
+                          className={`text-gray-800 px-3 py-2 rounded-md text-sm font-medium ${
+                            location.pathname === "/psychologistslist"
+                              ? "bg-[#d4619a] text-white"
+                              : "hover:bg-[#d4619a] hover:text-white"
+                          }`}
+                        >
+                          Psychologists List
+                        </Link>
+                      </>
                     )}
                     {isPsychologist && (
                       <>
@@ -200,7 +212,7 @@ export default function Navbar() {
                               : "hover:bg-[#ff00ff] hover:text-white"
                           }`}
                         >
-                         Admin Blog Panel
+                          Admin Blog Panel
                         </Link>
                       </>
                     )}
@@ -321,16 +333,28 @@ export default function Navbar() {
               {isLoggedIn && (
                 <>
                   {isUser && (
-                    <Link
-                    to="/dashboard"
-                    className={`block px-3 py-2 rounded-md text-base font-medium ${
-                      location.pathname === "/dashboard"
-                        ? "bg-[#b5d461] text-white"
-                        : "hover:bg-[#b5d461] hover:text-white"
-                    }`}
-                  >
-                    Dashboard
-                  </Link>
+                    <>
+                      <Link
+                        to="/dashboard"
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/dashboard"
+                            ? "bg-[#b5d461] text-white"
+                            : "hover:bg-[#b5d461] hover:text-white"
+                        }`}
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        to="/psychologistslist"
+                        className={`block px-3 py-2 rounded-md text-base font-medium ${
+                          location.pathname === "/dashboard"
+                            ? "bg-[#b5d461] text-white"
+                            : "hover:bg-[#b5d461] hover:text-white"
+                        }`}
+                      >
+                        Psychologists List
+                      </Link>
+                    </>
                   )}
                   {isPsychologist && (
                     <>
@@ -376,7 +400,7 @@ export default function Navbar() {
                             : "hover:bg-[#ff00ff] hover:text-white"
                         }`}
                       >
-                         Admin dashboard
+                        Admin dashboard
                       </Link>
                       <Link
                         to="/superadmin-panel"
@@ -386,7 +410,7 @@ export default function Navbar() {
                             : "hover:bg-[#ff00ff] hover:text-white"
                         }`}
                       >
-                         Admin Panel
+                        Admin Panel
                       </Link>
                       <Link
                         to="/superadmin-contact-us"
@@ -396,7 +420,7 @@ export default function Navbar() {
                             : "hover:bg-[#ff00ff] hover:text-white"
                         }`}
                       >
-                       Admin Contact Panel
+                        Admin Contact Panel
                       </Link>
                       <Link
                         to="/superadmin-blog-dashboard"
