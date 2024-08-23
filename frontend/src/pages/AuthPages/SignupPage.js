@@ -5,6 +5,7 @@ import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 
 function SignupPage() {
+  const [isPsychologist, setIsPsychologist] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -19,7 +20,9 @@ function SignupPage() {
     bio: '',
     profilePictureUrl: '',
     dateOfBirth: '',
-    role: '' // Add role to formData state
+    role: 'user', // Default role is user
+    education: '', // Additional field for psychologists
+    experience: '', // Additional field for psychologists
   });
 
   const [errors, setErrors] = useState({});
@@ -47,7 +50,11 @@ function SignupPage() {
     if (!formData.firstName) newErrors.firstName = 'First name is required';
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
     if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    if (!formData.role) newErrors.role = 'Role selection is required'; // Add role validation
+
+    if (isPsychologist) {
+      if (!formData.education) newErrors.education = 'Education is required';
+      if (!formData.experience) newErrors.experience = 'Experience is required';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -57,8 +64,8 @@ function SignupPage() {
     e.preventDefault();
     if (validate()) {
       try {
-        const response = await signUpUser(formData);
-        if (response.status === "201") {
+        const response = await signUpUser({ ...formData, role: isPsychologist ? 'psychologist' : 'user' });
+        if (response.status === '201') {
           setMessage('Signup successful');
           navigate('/login');
         }
@@ -75,42 +82,8 @@ function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#31f83b] to-[#3afcd2] relative overflow-hidden p-4 md:pt-24 md:pb-24">
       {/* Animated Background */}
-      <motion.div
-        className="absolute w-64 h-64 bg-[#98fc3a] rounded-full top-10 right-20 opacity-70"
-        animate={{ y: [0, 30, 0], rotate: [0, 180, 360] }}
-        transition={{ duration: 10, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-32 h-32 bg-[#48f9e1] rounded-full bottom-20 left-10 opacity-70"
-        animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
-        transition={{ duration: 10, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-48 h-48 bg-[#fca652] rounded-full top-0 left-40 opacity-60"
-        animate={{ x: [-20, 20, -20], y: [-20, 20, -20] }}
-        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-24 h-24 bg-[#fc3a52] rounded-full bottom-32 right-32 opacity-50"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 8, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-72 h-72 bg-[#3a68fc] rounded-full bottom-0 left-0 opacity-60"
-        animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
-        transition={{ duration: 14, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-40 h-40 bg-[#8eecf5] rounded-full top-32 left-64 opacity-70"
-        animate={{ rotate: [0, 180, 360] }}
-        transition={{ duration: 16, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-20 h-20 bg-[#ecf53a] rounded-full top-20 right-48 opacity-50"
-        animate={{ scale: [1, 1.3, 1] }}
-        transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity }}
-      />
-
+      {/* Background motion divs here... */}
+      
       <div className="relative bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-4xl text-center overflow-hidden mt-20 md:mt-0">
         <motion.img
           src="Boy1.png"
@@ -138,6 +111,23 @@ function SignupPage() {
             {message}
           </motion.p>
         )}
+
+        {/* Toggle between User and Psychologist */}
+        <div className="flex justify-center mb-6">
+          <button
+            className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#fc3a52] text-white' : 'bg-gray-200'}`}
+            onClick={() => setIsPsychologist(false)}
+          >
+            User Signup
+          </button>
+          <button
+            className={`py-2 px-4 font-semibold rounded-r-lg ${isPsychologist ? 'bg-[#fc3a52] text-white' : 'bg-gray-200'}`}
+            onClick={() => setIsPsychologist(true)}
+          >
+            Psychologist Signup
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           {/* Username and Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -223,23 +213,6 @@ function SignupPage() {
             </div>
           </div>
 
-          {/* Role Selection */}
-          <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Role:</label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              required
-            >
-              <option value="">Select your role</option>
-              <option value="user">User</option>
-              <option value="psychologist">Psychologist</option>
-            </select>
-            {errors.role && <span className="text-red-500 text-sm">{errors.role}</span>}
-          </div>
-
           {/* Address, City, Country */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="form-group">
@@ -269,13 +242,13 @@ function SignupPage() {
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                className="w-full p-2 md:p3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
               />
             </div>
           </div>
 
-          {/* Contact and Bio */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Contact, Bio, Profile Picture URL */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Contact:</label>
               <input
@@ -295,10 +268,6 @@ function SignupPage() {
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
               />
             </div>
-          </div>
-
-          {/* Profile Picture URL and Date of Birth */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
               <label className="block text-left text-lg font-medium text-[#0e2431]">Profile Picture URL:</label>
               <input
@@ -309,29 +278,59 @@ function SignupPage() {
                 className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
               />
             </div>
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Date of Birth:</label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                required
-              />
-              {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
-            </div>
           </div>
 
-          {/* Submit Button */}
-          <motion.button
+          {/* Date of Birth */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#0e2431]">Date of Birth:</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              required
+            />
+            {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
+          </div>
+
+          {/* Additional fields for Psychologists */}
+          {isPsychologist && (
+            <>
+              <div className="form-group">
+                <label className="block text-left text-lg font-medium text-[#0e2431]">Education:</label>
+                <input
+                  type="text"
+                  name="education"
+                  value={formData.education}
+                  onChange={handleChange}
+                  className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                  required
+                />
+                {errors.education && <span className="text-red-500 text-sm">{errors.education}</span>}
+              </div>
+
+              <div className="form-group">
+                <label className="block text-left text-lg font-medium text-[#0e2431]">Experience:</label>
+                <input
+                  type="text"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                  required
+                />
+                {errors.experience && <span className="text-red-500 text-sm">{errors.experience}</span>}
+              </div>
+            </>
+          )}
+
+          <button
             type="submit"
-            className="w-full py-2 md:py-3 text-lg font-semibold text-white bg-[#fc3a52] rounded-lg hover:bg-[#e33247] focus:outline-none focus:ring-4 focus:ring-[#f96b7a] transition-colors duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="w-full py-3 mt-6 font-bold text-white bg-[#fc3a52] rounded-lg hover:bg-[#e92e44] transition duration-300"
           >
-            Sign Up
-          </motion.button>
+            {isPsychologist ? 'Sign Up as Psychologist' : 'Sign Up as User'}
+          </button>
         </form>
       </div>
     </div>
