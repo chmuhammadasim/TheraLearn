@@ -39,20 +39,22 @@ export const deleteBlog = async (blogId) => {
   }
 };
 
-// Update blog status
 export const updateBlogStatus = async (blogId, status) => {
-  const token = localStorage.getItem('authToken');
-  
   try {
-    const response = await axios.patch(`${API_URL}/update-status/${blogId}`, { status }, {
-      headers: {
-        'authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    
+    const response = await axios.put(`/api/blogs/${blogId}`, { status });
     return response.data;
   } catch (error) {
-    throw new Error('Failed to update blog status: ' + error.message);
+    console.error("Error updating blog status", error);
+    throw error;
+  }
+};
+
+export const toggleBlogActiveStatus = async (blogId, isActive) => {
+  try {
+    const response = await axios.put(`/api/blogs/${blogId}/toggle-active`, { isActive });
+    return response.data;
+  } catch (error) {
+    console.error("Error toggling blog active status", error);
+    throw error;
   }
 };

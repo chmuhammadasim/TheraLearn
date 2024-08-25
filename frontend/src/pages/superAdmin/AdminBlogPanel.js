@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getBlogs, deleteBlog, updateBlogStatus } from '../../services/blogService';
+import { getBlogs, deleteBlog, updateBlogStatus, toggleBlogActiveStatus  } from '../../services/blogService';
 import BlogCard from './components/BlogCard';
 import BlogPreviewModal from './components/BlogPreviewModal';
 import Pagination from './components/Pagination';
@@ -52,7 +52,12 @@ function AdminBlogDashboard() {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
+  const handleToggleActive = async (blogId, isActive) => {
+    await toggleBlogActiveStatus(blogId, isActive);
+    setBlogs(blogs.map(blog => 
+      blog._id === blogId ? { ...blog, isActive } : blog
+    ));
+  };
   // Pagination logic
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
@@ -95,24 +100,26 @@ function AdminBlogDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBlogs.map(blog => (
-            <BlogCard
-              key={blog._id}
-              blog={blog}
-              onDelete={() => handleDelete(blog._id)}
-              onPreview={() => {
-                setPreviewBlog(blog);
-                setShowPreview(true);
-              }}
-              onSelect={(isSelected) => {
-                setSelectedBlogs(isSelected
-                  ? [...selectedBlogs, blog._id]
-                  : selectedBlogs.filter(id => id !== blog._id)
-                );
-              }}
-            />
-          ))}
-        </div>
+  {filteredBlogs.map(blog => (
+    <BlogCard
+      key={blog._id}
+      blog={blog}
+      onDelete={() => handleDelete(blog._id)}
+      onPreview={() => {
+        setPreviewBlog(blog);
+        setShowPreview(true);
+      }}
+      onSelect={(isSelected) => {
+        setSelectedBlogs(isSelected
+          ? [...selectedBlogs, blog._id]
+          : selectedBlogs.filter(id => id !== blog._id)
+        );
+      }}
+      onToggleActive={handleToggleActive}
+    />
+  ))}
+</div>
+
 
         {/* Improved Pagination Design */}
         <Pagination 

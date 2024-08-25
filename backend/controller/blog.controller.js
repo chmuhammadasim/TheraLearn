@@ -88,9 +88,9 @@ blogController.deleteBlog = async (req, res) => {
   const { blogId } = req.params;
 
   // Check if the blogId is a valid MongoDB ObjectId
-  if (!mongoose.Types.ObjectId.isValid(blogId)) {
-    return res.status(400).json({ message: 'Invalid blog ID' });
-  }
+  // if (!mongoose.Types.ObjectId.isValid(blogId)) {
+  //   return res.status(400).json({ message: 'Invalid blog ID' });
+  // }
 
   try {
     const blog = await Blog.findByIdAndDelete(blogId);
