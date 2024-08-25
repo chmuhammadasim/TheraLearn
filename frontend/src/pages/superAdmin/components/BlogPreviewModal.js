@@ -16,7 +16,7 @@ function BlogPreviewModal({ blog, onClose }) {
         <div className="text-gray-800 space-y-4">
           <p>{blog.content}</p>
           {blog.additionalImages && blog.additionalImages.map((url, index) => (
-            <img key={index} src={url} alt={`Blog Image ${index + 1}`} className="w-full h-auto rounded-lg shadow-lg" />
+            <img key={index} src={url} alt={`Blog`} className="w-full h-auto rounded-lg shadow-lg" />
           ))}
           {blog.videoUrl && (
             <div className="mt-6">

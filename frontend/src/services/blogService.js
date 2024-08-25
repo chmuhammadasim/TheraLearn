@@ -1,20 +1,21 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/blogs';
+const API_URL = 'http://localhost:5000/api/blog';
 
 // Fetch all blogs
 export const getBlogs = async () => {
   const token = localStorage.getItem('authToken');
   
   try {
-    const response = await axios.get(`${API_URL}/getall`, {
+    const response = await axios.get(`${API_URL}/all`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
+    console.log(response.data);
     
-    return response.data;
+    return Array.isArray(response.data.data) ? response.data.data : [];
   } catch (error) {
     throw new Error('Failed to fetch blogs: ' + error.message);
   }

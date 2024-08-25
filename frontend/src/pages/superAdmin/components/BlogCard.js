@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaEdit, FaTrash, FaEye, FaThumbsUp, FaCheckCircle } from 'react-icons/fa';
+import {  FaTrash, FaEye, FaThumbsUp, FaCheckCircle } from 'react-icons/fa';
 
 function BlogCard({ blog, onDelete, onPreview, onSelect }) {
   return (
