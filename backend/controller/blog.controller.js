@@ -83,4 +83,55 @@ blogController.getBlogById = async (req, res) => {
   }
 };
 
+// Delete a blog by ID
+blogController.deleteBlog = async (req, res) => {
+  const { blogId } = req.params;
+
+  // Check if the blogId is a valid MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(blogId)) {
+    return res.status(400).json({ message: 'Invalid blog ID' });
+  }
+
+  try {
+    const blog = await Blog.findByIdAndDelete(blogId);
+    
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    res.status(200).json({ message: 'Blog deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete blog', error: error.message });
+  }
+};
+
+// Update blog status
+blogController.updateBlogStatus = async (req, res) => {
+  const { blogId } = req.params;
+  const { status } = req.body;
+
+  // Check if the blogId is a valid MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(blogId)) {
+    return res.status(400).json({ message: 'Invalid blog ID' });
+  }
+
+  // Validate the status field
+  const validStatuses = ['draft', 'published', 'archived'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ message: 'Invalid status value' });
+  }
+
+  try {
+    const blog = await Blog.findByIdAndUpdate(blogId, { status }, { new: true });
+
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+
+    res.status(200).json(blog);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update blog status', error: error.message });
+  }
+};
+
 module.exports = blogController;
