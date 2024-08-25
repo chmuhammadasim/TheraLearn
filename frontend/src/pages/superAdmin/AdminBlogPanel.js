@@ -6,6 +6,9 @@ import Pagination from './components/Pagination';
 
 function AdminBlogDashboard() {
   const [blogs, setBlogs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [blogsPerPage] = useState(9); // Number of blogs to show per page
+
   const [selectedBlogs, setSelectedBlogs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -46,19 +49,28 @@ function AdminBlogDashboard() {
     setIsDarkMode(!isDarkMode);
   };
 
-  const filteredBlogs = blogs.filter(blog =>
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Pagination logic
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
+
+  const filteredBlogs = currentBlogs.filter(blog =>
     blog.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (filterStatus === 'all' || blog.status === filterStatus)
   );
 
   return (
     <div className={`${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} min-h-screen p-6`}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto mt-16 mb-16"> {/* Added margin for navbar and footer */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Admin Blog Dashboard</h1>
+          <h1 className="text-3xl font-bold animate-pulse">Admin Blog Dashboard</h1> {/* Added animation */}
           <button
             onClick={toggleDarkMode}
-            className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition"
+            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-indigo-600 transition transform hover:scale-105"
           >
             {isDarkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
@@ -70,10 +82,10 @@ function AdminBlogDashboard() {
             placeholder="Search blogs..."
             value={searchQuery}
             onChange={handleSearch}
-            className="border rounded-lg px-4 py-2 w-1/3"
+            className="border rounded-lg px-4 py-2 w-1/3 shadow-md focus:ring-2 focus:ring-indigo-500 transition"
           />
           <select
-            className="border rounded-lg px-4 py-2"
+            className="border rounded-lg px-4 py-2 shadow-md focus:ring-2 focus:ring-indigo-500 transition"
             onChange={(e) => setFilterStatus(e.target.value)}
           >
             <option value="all">All Status</option>
@@ -102,19 +114,25 @@ function AdminBlogDashboard() {
           ))}
         </div>
 
-        <Pagination totalItems={filteredBlogs.length} itemsPerPage={9} />
+        {/* Improved Pagination Design */}
+        <Pagination 
+          totalItems={blogs.length} 
+          itemsPerPage={blogsPerPage} 
+          currentPage={currentPage} 
+          onPageChange={handlePageChange} 
+        />
 
-        <div className="mt-6">
+        <div className="mt-6 flex justify-between">
           <button
             onClick={handleBulkDelete}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg mr-4"
+            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg mr-4 hover:bg-red-600 transition transform hover:scale-105"
             disabled={selectedBlogs.length === 0}
           >
             Delete Selected
           </button>
           <button
             onClick={() => handleBulkStatusChange('published')}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg"
+            className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-green-600 transition transform hover:scale-105"
             disabled={selectedBlogs.length === 0}
           >
             Publish Selected
