@@ -60,6 +60,10 @@ const blogSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  dislikes: {
+    type: Number,
+    default: 0,
+  },
   comments: [
     {
       user: {

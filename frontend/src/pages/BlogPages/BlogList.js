@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
-  const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,7 +12,6 @@ const BlogList = () => {
       try {
         const response = await axios.get('http://localhost:5000/api/blog/all');
         setBlogs(response.data.data);
-        setFilteredBlogs(response.data.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching blogs:', error);
@@ -24,9 +22,13 @@ const BlogList = () => {
     fetchBlogs();
   }, []);
 
-  useEffect(() => {
-    setFilteredBlogs(blogs);
-  }, [blogs]);
+  const handleBlogClick = async (blogId) => {
+    try {
+      await axios.post(`http://localhost:5000/api/blog/increment-views/${blogId}`);
+    } catch (error) {
+      console.error('Error incrementing view count:', error);
+    }
+  };
 
   return (
     <div className="container mx-auto mt-20 mb-10 px-4 py-8 bg-gradient-to-b from-blue-100 via-purple-200 to-pink-300">
@@ -41,16 +43,16 @@ const BlogList = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          {filteredBlogs.map(blog => (
+          {blogs.map(blog => (
             <motion.div
               key={blog._id}
               className="bg-white rounded-lg shadow-xl overflow-hidden transform transition-transform duration-300 hover:scale-105"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <Link to={`/blog/${blog._id}`}>
+              <Link to={`/blog/${blog._id}`} onClick={() => handleBlogClick(blog._id)}>
                 <motion.img
-                  src={blog.image || 'https://via.placeholder.com/400x200'}
+                  src={blog.coverImageUrl || 'https://via.placeholder.com/400x200'}
                   alt={blog.title}
                   className="w-full h-48 object-cover filter brightness-90 hover:brightness-110 transition-all duration-500"
                   initial={{ scale: 1 }}
@@ -59,7 +61,7 @@ const BlogList = () => {
                 />
                 <div className="p-6">
                   <h2 className="text-3xl font-semibold text-gray-800">{blog.title}</h2>
-                  <p className="text-gray-600 mt-4">{blog.excerpt}</p>
+                  <p className="text-gray-600 mt-4">{blog.summary}</p>
                   <div className="flex justify-between items-center mt-6">
                     <p className="text-blue-500 font-semibold">Read more...</p>
                     <motion.div

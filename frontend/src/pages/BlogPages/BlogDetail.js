@@ -6,7 +6,9 @@ import { motion } from 'framer-motion';
 const BlogDetail = () => {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
+  const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -23,38 +25,135 @@ const BlogDetail = () => {
     fetchBlog();
   }, [id]);
 
+  const handleLike = async () => {
+    if (token) {
+      try {
+        await axios.post(`http://localhost:5000/api/blog/like/${id}`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setBlog(prevBlog => ({ ...prevBlog, likes: prevBlog.likes + 1 }));
+      } catch (error) {
+        console.error('Error liking the blog:', error);
+      }
+    }
+  };
+
+  const handleDislike = async () => {
+    if (token) {
+      try {
+        await axios.post(`http://localhost:5000/api/blog/dislike/${id}`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setBlog(prevBlog => ({ ...prevBlog, dislikes: prevBlog.dislikes + 1 }));
+      } catch (error) {
+        console.error('Error disliking the blog:', error);
+      }
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (token && comment.trim()) {
+      try {
+        const response = await axios.post(`http://localhost:5000/api/blog/comment/${id}`, { comment }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setBlog(prevBlog => ({
+          ...prevBlog,
+          comments: [...prevBlog.comments, response.data.comment]
+        }));
+        setComment('');
+      } catch (error) {
+        console.error('Error commenting on the blog:', error);
+      }
+    }
+  };
+
   if (loading) return <div className="text-center text-gray-500">Loading...</div>;
   if (!blog) return <div className="text-center text-gray-500">Blog not found</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link to="/blogs" className="text-blue-500 hover:underline mb-4 inline-block">
+      <Link to="/blogs" className="text-blue-600 hover:underline mb-4 inline-block font-semibold transition duration-300 ease-in-out transform hover:scale-105">
         &larr; Back to Blog List
       </Link>
       <motion.div
-        className="bg-white rounded-lg shadow-lg overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        className="bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 rounded-lg shadow-xl overflow-hidden"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
       >
         <img
-          src={blog.image || 'https://via.placeholder.com/800x400'}
+          src={blog.coverImageUrl || 'https://via.placeholder.com/800x400'}
           alt={blog.title}
-          className="w-full h-64 object-cover"
+          className="w-full h-72 object-cover"
         />
-        <div className="p-6">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">{blog.title}</h1>
-          <p className="text-gray-600 mb-6">{blog.content}</p>
+        <div className="p-8 text-white">
+          <h1 className="text-5xl font-extrabold mb-4">{blog.title}</h1>
+          <p className="text-lg leading-relaxed mb-6">{blog.content}</p>
           <div className="mt-6">
-            <p className="text-gray-500">Published on: {new Date(blog.publishedAt).toDateString()}</p>
+            <p className="text-gray-300">Published on: {new Date(blog.publishedAt).toDateString()}</p>
+            <p className="text-gray-300">Views: {blog.viewCount}</p>
           </div>
-          <div className="flex items-center mt-4">
-            <img
-              src={blog.authorProfilePicture || 'https://via.placeholder.com/50'}
-              alt={blog.author}
-              className="w-12 h-12 rounded-full mr-3"
-            />
-            <p className="text-gray-700">{blog.author}</p>
+          {token && (
+            <div className="flex items-center mt-8 space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleLike}
+                className="flex items-center px-4 py-2 bg-blue-600 rounded-full text-white shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out"
+              >
+                👍 Like ({blog.likes})
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleDislike}
+                className="flex items-center px-4 py-2 bg-red-600 rounded-full text-white shadow-lg hover:bg-red-700 transition duration-300 ease-in-out"
+              >
+                👎 Dislike ({blog.dislikes})
+              </motion.button>
+            </div>
+          )}
+          <div className="mt-10">
+            <h2 className="text-3xl font-bold mb-6">Comments</h2>
+            {blog.comments.length > 0 ? (
+              <ul className="space-y-6">
+                {blog.comments.map((comment, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="border-t pt-4"
+                  >
+                    <p className="text-white text-lg">{comment.comment}</p>
+                    <p className="text-sm text-gray-400">{new Date(comment.date).toDateString()}</p>
+                  </motion.li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-300">No comments yet. Be the first to comment!</p>
+            )}
+            {token && (
+              <form onSubmit={handleCommentSubmit} className="mt-6">
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg p-4 text-black"
+                  placeholder="Write a comment..."
+                  rows="4"
+                ></textarea>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="submit"
+                  className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full shadow-lg hover:from-purple-600 hover:to-pink-600 transition duration-300 ease-in-out"
+                >
+                  Submit Comment
+                </motion.button>
+              </form>
+            )}
           </div>
         </div>
       </motion.div>
