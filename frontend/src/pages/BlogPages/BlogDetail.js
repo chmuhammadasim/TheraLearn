@@ -78,7 +78,7 @@ const BlogDetail = () => {
         &larr; Back to Blog List
       </Link>
       <motion.div
-        className="bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 rounded-lg shadow-xl overflow-hidden"
+        className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-lg shadow-xl overflow-hidden"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -89,11 +89,11 @@ const BlogDetail = () => {
           className="w-full h-72 object-cover"
         />
         <div className="p-8 text-white">
-          <h1 className="text-5xl font-extrabold mb-4">{blog.title}</h1>
+          <h1 className="text-4xl font-extrabold mb-4">{blog.title}</h1>
           <p className="text-lg leading-relaxed mb-6">{blog.content}</p>
           <div className="mt-6">
-            <p className="text-gray-300">Published on: {new Date(blog.publishedAt).toDateString()}</p>
-            <p className="text-gray-300">Views: {blog.viewCount}</p>
+            <p className="text-gray-400">Published on: {new Date(blog.publishedAt).toDateString()}</p>
+            <p className="text-gray-400">Views: {blog.viewCount}</p>
           </div>
           {token && (
             <div className="flex items-center mt-8 space-x-4">
@@ -101,7 +101,7 @@ const BlogDetail = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleLike}
-                className="flex items-center px-4 py-2 bg-blue-600 rounded-full text-white shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out"
+                className="flex items-center px-4 py-2 bg-blue-500 rounded-full text-white shadow-lg hover:bg-blue-600 transition duration-300 ease-in-out"
               >
                 👍 Like ({blog.likes})
               </motion.button>
@@ -109,14 +109,14 @@ const BlogDetail = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleDislike}
-                className="flex items-center px-4 py-2 bg-red-600 rounded-full text-white shadow-lg hover:bg-red-700 transition duration-300 ease-in-out"
+                className="flex items-center px-4 py-2 bg-red-500 rounded-full text-white shadow-lg hover:bg-red-600 transition duration-300 ease-in-out"
               >
                 👎 Dislike ({blog.dislikes})
               </motion.button>
             </div>
           )}
           <div className="mt-10">
-            <h2 className="text-3xl font-bold mb-6">Comments</h2>
+            <h2 className="text-2xl font-bold mb-6">Comments</h2>
             {blog.comments.length > 0 ? (
               <ul className="space-y-6">
                 {blog.comments.map((comment, index) => (
@@ -125,7 +125,7 @@ const BlogDetail = () => {
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="border-t pt-4"
+                    className="border-t border-gray-700 pt-4"
                   >
                     <p className="text-white text-lg">{comment.comment}</p>
                     <p className="text-sm text-gray-400">{new Date(comment.date).toDateString()}</p>
@@ -133,14 +133,14 @@ const BlogDetail = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-300">No comments yet. Be the first to comment!</p>
+              <p className="text-gray-400">No comments yet. Be the first to comment!</p>
             )}
             {token && (
               <form onSubmit={handleCommentSubmit} className="mt-6">
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg p-4 text-black"
+                  className="w-full border border-gray-600 rounded-lg p-4 text-black focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
                   placeholder="Write a comment..."
                   rows="4"
                 ></textarea>
@@ -148,7 +148,7 @@ const BlogDetail = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   type="submit"
-                  className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-full shadow-lg hover:from-purple-600 hover:to-pink-600 transition duration-300 ease-in-out"
+                  className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300 ease-in-out"
                 >
                   Submit Comment
                 </motion.button>
