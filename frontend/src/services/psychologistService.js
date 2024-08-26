@@ -13,6 +13,7 @@ export const getPsychologists = async () => {
       }
     });
     
+    
     return response.data;
   } catch (error) {
     console.error('Error fetching psychologists:', error);
@@ -27,7 +28,7 @@ export const getPsychologistById = async (id) => {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': id  // Pass psychologist ID in headers
+        'psychologistID': id
       }
     });
     return response.data;
