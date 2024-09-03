@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { submitQuery } from '../../services/queryService';
 import './ContactUs.css';
 import Loading from '../../components/Loading';
 
@@ -50,9 +51,10 @@ function ContactUsPage() {
       return;
     }
     setErrors({});
-    
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Submit the query using the service
+      await submitQuery(formData);
       setSubmitted(true);
     } catch (error) {
       console.error('Error submitting form', error);
@@ -108,21 +110,22 @@ function ContactUsPage() {
   return (
     <div className="contact-container mt-10 p-6">
       <motion.h1
-        className="text-4xl font-bold mb-12 text-center"
+        className="text-5xl font-extrabold mb-12 text-center gradient-text"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        📧 Contact Us
+        Contact Us ✉️
       </motion.h1>
 
       {/* Contact Information */}
       <div className="flex flex-col  md:flex-row justify-around items-center mb-12">
         <motion.div
-          className="flex m-5 items-center mb-6 md:mb-0"
+          className="flex m-5 items-center mb-6 md:mb-0 info-box"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
+          whileHover={{ scale: 1.05 }}
         >
           <FaEnvelope className="text-[#fc3a52]  text-6xl mr-4" />
           <div>
@@ -131,10 +134,11 @@ function ContactUsPage() {
           </div>
         </motion.div>
         <motion.div
-          className="flex m-5 items-center mb-6 md:mb-0"
+          className="flex m-5 items-center mb-6 md:mb-0 info-box"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
+          whileHover={{ scale: 1.05 }}
         >
           <FaPhone className="text-[#48e4f9] text-6xl mr-4" />
           <div>
@@ -143,10 +147,11 @@ function ContactUsPage() {
           </div>
         </motion.div>
         <motion.div
-          className="flex m-5 items-center mb-6 md:mb-0"
+          className="flex m-5 items-center mb-6 md:mb-0 info-box"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
+          whileHover={{ scale: 1.05 }}
         >
           <FaMapMarkerAlt className="text-[#f8c731] text-6xl mr-4" />
           <div>
@@ -157,7 +162,7 @@ function ContactUsPage() {
       </div>
 
       {/* Contact Form */}
-      <div className="contact-form-container">
+      <div className="contact-form-container bg-white shadow-lg p-8 rounded-lg">
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name:</label>
