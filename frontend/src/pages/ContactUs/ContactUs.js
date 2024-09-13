@@ -53,7 +53,6 @@ function ContactUsPage() {
     setErrors({});
 
     try {
-      // Submit the query using the service
       await submitQuery(formData);
       setSubmitted(true);
     } catch (error) {

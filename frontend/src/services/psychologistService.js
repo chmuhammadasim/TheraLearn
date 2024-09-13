@@ -45,7 +45,7 @@ export const assignPsychologistToPatient = async (psychologistId) => {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': psychologistId  // Pass psychologist ID in headers
+        'psychologist-id': psychologistId 
       }
     });
     return response.data;
