@@ -27,7 +27,7 @@ const BlogDetail = () => {
   const handleLike = async () => {
     if (token) {
       try {
-        await likeBlog(id, token);
+        await likeBlog(id);
         setBlog(prevBlog => ({ ...prevBlog, likes: prevBlog.likes + 1 }));
       } catch (error) {
         console.error('Error liking blog:', error);
@@ -38,7 +38,7 @@ const BlogDetail = () => {
   const handleDislike = async () => {
     if (token) {
       try {
-        await dislikeBlog(id, token);
+        await dislikeBlog(id);
         setBlog(prevBlog => ({ ...prevBlog, dislikes: prevBlog.dislikes + 1 }));
       } catch (error) {
         console.error('Error disliking blog:', error);
@@ -50,7 +50,7 @@ const BlogDetail = () => {
     e.preventDefault();
     if (token && comment.trim()) {
       try {
-        const newComment = await submitComment(id, comment, token);
+        const newComment = await submitComment(id, comment);
         setBlog(prevBlog => ({
           ...prevBlog,
           comments: [...prevBlog.comments, newComment]

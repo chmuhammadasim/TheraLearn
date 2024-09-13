@@ -94,14 +94,16 @@ blogController.deleteBlog = async (req, res) => {
 
   try {
     const blog = await Blog.findByIdAndDelete(blogId);
-    
+
     if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+      return res.status(404).json({ message: "Blog not found" });
     }
 
-    res.status(200).json({ message: 'Blog deleted successfully' });
+    res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete blog', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to delete blog", error: error.message });
   }
 };
 
@@ -112,25 +114,31 @@ blogController.updateBlogStatus = async (req, res) => {
 
   // Check if the blogId is a valid MongoDB ObjectId
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
-    return res.status(400).json({ message: 'Invalid blog ID' });
+    return res.status(400).json({ message: "Invalid blog ID" });
   }
 
   // Validate the status field
-  const validStatuses = ['draft', 'published', 'archived'];
+  const validStatuses = ["draft", "published", "archived"];
   if (!validStatuses.includes(status)) {
-    return res.status(400).json({ message: 'Invalid status value' });
+    return res.status(400).json({ message: "Invalid status value" });
   }
 
   try {
-    const blog = await Blog.findByIdAndUpdate(blogId, { status }, { new: true });
+    const blog = await Blog.findByIdAndUpdate(
+      blogId,
+      { status },
+      { new: true }
+    );
 
     if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+      return res.status(404).json({ message: "Blog not found" });
     }
 
     res.status(200).json(blog);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to update blog status', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to update blog status", error: error.message });
   }
 };
 blogController.toggleBlogActiveStatus = async (req, res) => {
@@ -139,25 +147,29 @@ blogController.toggleBlogActiveStatus = async (req, res) => {
 
   // Check if the blogId is valid
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
-    return res.status(400).json({ message: 'Invalid blog ID' });
+    return res.status(400).json({ message: "Invalid blog ID" });
   }
 
   try {
-    const blog = await Blog.findByIdAndUpdate(blogId, { isActive }, { new: true });
+    const blog = await Blog.findByIdAndUpdate(
+      blogId,
+      { isActive },
+      { new: true }
+    );
 
     if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+      return res.status(404).json({ message: "Blog not found" });
     }
 
     res.status(200).json({
       success: true,
-      message: `Blog ${isActive ? 'activated' : 'deactivated'} successfully`,
+      message: `Blog ${isActive ? "activated" : "deactivated"} successfully`,
       data: blog,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to toggle blog active status',
+      message: "Failed to toggle blog active status",
       error: error.message,
     });
   }
@@ -170,7 +182,7 @@ blogController.likeBlog = async (req, res) => {
     const blog = await Blog.findById(blogId);
 
     if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+      return res.status(404).json({ message: "Blog not found" });
     }
 
     blog.likes += 1; // Increment likes
@@ -178,13 +190,13 @@ blogController.likeBlog = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Blog liked successfully',
+      message: "Blog liked successfully",
       data: blog,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to like blog',
+      message: "Failed to like blog",
       error: error.message,
     });
   }
@@ -196,7 +208,7 @@ blogController.dislikeBlog = async (req, res) => {
     const blog = await Blog.findById(blogId);
 
     if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+      return res.status(404).json({ message: "Blog not found" });
     }
 
     blog.dislikes += 1; // Increment dislikes
@@ -204,13 +216,13 @@ blogController.dislikeBlog = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Blog disliked successfully',
+      message: "Blog disliked successfully",
       data: blog,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to dislike blog',
+      message: "Failed to dislike blog",
       error: error.message,
     });
   }
@@ -219,34 +231,32 @@ blogController.submitComment = async (req, res) => {
   const { blogId } = req.params;
   const { comment } = req.body;
 
-  if (!comment || comment.trim() === '') {
-    return res.status(400).json({ message: 'Comment cannot be empty' });
+  if (!comment || comment.trim() === "") {
+    return res.status(400).json({ message: "Comment cannot be empty" });
   }
 
   try {
     const blog = await Blog.findById(blogId);
 
     if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+      return res.status(404).json({ message: "Blog not found" });
     }
 
-    blog.comments.push({ text: comment, user: req.user._id }); // Assuming user is stored in `req.user`
+    blog.comments.push({ text: comment, user: req.user._id });
     await blog.save();
 
     res.status(200).json({
       success: true,
-      message: 'Comment submitted successfully',
+      message: "Comment submitted successfully",
       data: blog.comments,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to submit comment',
+      message: "Failed to submit comment",
       error: error.message,
     });
   }
 };
-
-
 
 module.exports = blogController;
