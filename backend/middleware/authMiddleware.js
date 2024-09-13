@@ -33,5 +33,13 @@ const admin = (req, res, next) => {
        throw new Error('Not authorized as an ');
     }
   };
+  const psychologistadmin = (req, res, next) => {
+    if ( req.userData.role === 'psychologist' || req.userData.role === 'admin') {
+      next();
+    } else {
+      res.status(403);
+       throw new Error('Not authorized as an psychologistadmin ');
+    }
+  };
   
-  module.exports = {  admin,user,psychologist,userpsychologistadmin };  
+  module.exports = {  admin,user,psychologist,userpsychologistadmin,psychologistadmin };  
