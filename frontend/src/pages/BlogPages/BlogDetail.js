@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { getBlogById, likeBlog, dislikeBlog, submitComment } from '../../services/blogService';
 import { motion } from 'framer-motion';
 
 const BlogDetail = () => {
@@ -13,11 +13,10 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/blog/getbyid/${id}`);
-        setBlog(response.data.data);
+        const data = await getBlogById(id);
+        setBlog(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching blog:', error);
         setLoading(false);
       }
     };
@@ -28,12 +27,10 @@ const BlogDetail = () => {
   const handleLike = async () => {
     if (token) {
       try {
-        await axios.post(`http://localhost:5000/api/blog/like/${id}`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await likeBlog(id, token);
         setBlog(prevBlog => ({ ...prevBlog, likes: prevBlog.likes + 1 }));
       } catch (error) {
-        console.error('Error liking the blog:', error);
+        console.error('Error liking blog:', error);
       }
     }
   };
@@ -41,12 +38,10 @@ const BlogDetail = () => {
   const handleDislike = async () => {
     if (token) {
       try {
-        await axios.post(`http://localhost:5000/api/blog/dislike/${id}`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await dislikeBlog(id, token);
         setBlog(prevBlog => ({ ...prevBlog, dislikes: prevBlog.dislikes + 1 }));
       } catch (error) {
-        console.error('Error disliking the blog:', error);
+        console.error('Error disliking blog:', error);
       }
     }
   };
@@ -55,12 +50,10 @@ const BlogDetail = () => {
     e.preventDefault();
     if (token && comment.trim()) {
       try {
-        const response = await axios.post(`http://localhost:5000/api/blog/comment/${id}`, { comment }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const newComment = await submitComment(id, comment, token);
         setBlog(prevBlog => ({
           ...prevBlog,
-          comments: [...prevBlog.comments, response.data.comment]
+          comments: [...prevBlog.comments, newComment]
         }));
         setComment('');
       } catch (error) {
