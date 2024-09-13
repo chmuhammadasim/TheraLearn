@@ -1,22 +1,26 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const blogController = require('../controller/blog.controller');
-const { psychologistadmin, admin } = require('../middleware/authMiddleware');
-const checkAuth = require('../middleware/check-auth');
-
-// Route to check API status
+const blogController = require("../controller/blog.controller");
+const { psychologistadmin, admin } = require("../middleware/authMiddleware");
+const checkAuth = require("../middleware/check-auth");
 router.get("/", blogController.Checkapi);
-
-// Route to get all blogs
 router.get("/all", blogController.getAllBlogs);
-
-// Route to get a blog by ID
-router.get('/getbyid/:id', blogController.getBlogById);
-
-// Route to delete a blog by ID
-router.delete('/delete/:blogId',checkAuth,admin, blogController.deleteBlog);
-
-// Route to update the status of a blog by ID
-router.patch('/update-status/:blogId',checkAuth,psychologistadmin, blogController.updateBlogStatus);
+router.get("/getbyid/:id", blogController.getBlogById);
+router.delete("/delete/:blogId", checkAuth, admin, blogController.deleteBlog);
+router.patch(
+  "/update-status/:blogId",
+  checkAuth,
+  psychologistadmin,
+  blogController.updateBlogStatus
+);
+router.put(
+  "/toggle-active/:blogId",
+  checkAuth,
+  psychologistadmin,
+  blogController.toggleBlogActiveStatus
+);
+router.post("/like/:blogId", checkAuth, blogController.likeBlog);
+router.post("/dislike/:blogId", checkAuth, blogController.dislikeBlog);
+router.post("/comment/:blogId", checkAuth, blogController.submitComment);
 
 module.exports = router;
