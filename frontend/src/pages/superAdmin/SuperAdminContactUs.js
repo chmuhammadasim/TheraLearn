@@ -35,7 +35,7 @@ const SuperAdminContactUs = () => {
   const handleSendReply = async (email) => {
     try {
       await axios.post(
-        '/api/query/reply',
+        'http://localhost:5000/api/query/reply',
         { email, subject: reply.subject, replyMessage: reply.replyMessage },
         {
           headers: {
