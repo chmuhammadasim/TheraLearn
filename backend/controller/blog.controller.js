@@ -241,8 +241,7 @@ blogController.submitComment = async (req, res) => {
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-
-    blog.comments.push({ text: comment, user: req.user._id });
+    blog.comments.push({ comment: comment, user: req.userData.userId });
     await blog.save();
 
     res.status(200).json({

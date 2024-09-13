@@ -80,7 +80,7 @@ const blogSchema = new mongoose.Schema({
   relatedBlogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog', // Reference to related blogs
+      ref: 'Blog',
     },
   ],
   publishedAt: {
