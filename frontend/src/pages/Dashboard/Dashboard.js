@@ -32,7 +32,7 @@ function Dashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [userGames]);
 
   if (loading) {
     return <Loading />;

@@ -2,11 +2,10 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/superadmin';
 const token = localStorage.getItem('authToken');
-
 // Function to fetch all users
 export const fetchAllUsers = async () => {
   try {
-    const response = await axios.get(`${API_URL}/all`, {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/all`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
