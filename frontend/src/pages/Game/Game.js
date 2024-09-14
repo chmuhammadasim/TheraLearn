@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Loading from '../../components/Loading';
 
 const games = [
@@ -26,7 +27,6 @@ function GamePage() {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -39,43 +39,85 @@ function GamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-yellow-100 via-pink-100 to-red-100 px-6 py-20">
-      <header className="text-center py-8 animate-fadeIn">
-        <h1 className="text-5xl font-extrabold text-blue-900 mb-4">Choose Your Game</h1>
-        <p className="text-xl text-gray-700 animate-pulse">Click on a game to start playing!</p>
-      </header>
+    <div className="min-h-screen bg-gradient-to-r from-blue-300 via-green-200 to-green-300 px-6 py-20 relative">
+      {/* Animated background bubbles */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        transition={{ duration: 2, ease: 'easeInOut' }}
+      >
+        <motion.div
+          className="w-64 h-64 bg-purple-500 rounded-full absolute top-10 left-20 filter blur-xl opacity-20"
+          animate={{ x: [0, 50, -50, 0], y: [0, -50, 50, 0] }}
+          transition={{ repeat: Infinity, duration: 15, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="w-48 h-48 bg-pink-500 rounded-full absolute bottom-10 right-20 filter blur-xl opacity-20"
+          animate={{ x: [0, -50, 50, 0], y: [0, 50, -50, 0] }}
+          transition={{ repeat: Infinity, duration: 12, ease: 'easeInOut' }}
+        />
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-12">
+      <motion.header
+        className="text-center py-8 relative z-10"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <h1 className="text-6xl font-extrabold text-indigo-900 mb-6 drop-shadow-lg">
+          Choose Your Game
+        </h1>
+        <motion.p
+          className="text-2xl text-gray-700"
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+        >
+          Click on a game to start playing!
+        </motion.p>
+      </motion.header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-12 relative z-10">
         {games.map((game) => (
-          <div
+          <motion.div
             key={game.id}
-            className="group relative bg-white p-4 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform duration-300 cursor-pointer overflow-hidden"
+            className="group relative bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl cursor-pointer overflow-hidden"
             onClick={() => handleGameClick(game.id)}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
           >
-            <img
+            <motion.img
               src={game.image}
               alt={game.name}
-              className="w-full h-64 object-cover rounded-lg group-hover:opacity-75 transition-opacity duration-300"
+              className="w-full h-64 object-cover rounded-lg transition-opacity duration-300"
+              whileHover={{ opacity: 0.8 }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
-            <div className="relative z-10 mt-4 text-center">
-              <h3 className="text-2xl font-bold text-white group-hover:text-yellow-400 transition-colors duration-300">{game.name}</h3>
-              <p className="text-gray-300 mt-2 group-hover:text-white transition-colors duration-300">{game.description}</p>
-            </div>
-            <div className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="bg-black bg-opacity-50 text-white text-center rounded-full px-6 py-3 font-bold animate-bounce">
-                Start Game
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-75 transition-opacity duration-300"
+            ></motion.div>
+            <motion.div className="relative z-10 mt-4 text-center">
+              <h3 className="text-3xl font-bold text-white transition-colors duration-300 group-hover:text-yellow-400">
+                {game.name}
+              </h3>
+              <p className="text-gray-300 mt-2 group-hover:text-white transition-colors duration-300">
+                {game.description}
+              </p>
+            </motion.div>
+            <motion.div
+              className="absolute inset-0 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+            >
+              <div className="bg-indigo-700 bg-opacity-80 text-white text-center rounded-full px-8 py-3 font-bold animate-bounce">
+                Play Now
               </div>
-            </div>
-            <div className="absolute top-0 left-0 w-full h-1 bg-yellow-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-yellow-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-right"></div>
-          </div>
+            </motion.div>
+          </motion.div>
         ))}
       </div>
-
-      <footer className="text-center py-8 mt-12 text-gray-700">
-        <p>&copy; 2024 TheraLearn. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
