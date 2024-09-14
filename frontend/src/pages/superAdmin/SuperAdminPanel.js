@@ -32,13 +32,13 @@ const SuperAdminPanel = () => {
       await updateUserStatus(userId, !isActive);
       setUsers(users.map(user => user._id === userId ? { ...user, isActive: !isActive } : user));
       toast.success(`User status updated successfully!`, {
-        position: toast.POSITION.TOP_CENTER,
+        position: "top-center",
         autoClose: 2000,
       });
     } catch (error) {
       console.error('Error updating user status:', error);
       toast.error('Failed to update user status.', {
-        position: toast.POSITION.TOP_CENTER,
+        position: "top-center",
         autoClose: 2000,
       });
     }

@@ -10,8 +10,6 @@ module.exports = async (req, res, next) => {
         throw new Error('Not authorized, no token');
       }
       const decoded = jwt.verify(token, process.env.JWT_KEY);
-      console.log(decoded);
-      
       req.userData = decoded;
       next();
     } catch (error) {

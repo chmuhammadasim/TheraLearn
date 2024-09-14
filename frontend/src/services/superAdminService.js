@@ -20,7 +20,7 @@ export const fetchAllUsers = async () => {
 };
 
 // Function to update the status of a user (activate/deactivate)
-export const updateUserStatus = async (userId, isActive, token) => {
+export const updateUserStatus = async (userId, isActive) => {
   try {
     const response = await axios.patch(`${API_URL}/users/${userId}`, 
       { isActive },

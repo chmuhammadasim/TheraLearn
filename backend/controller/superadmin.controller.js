@@ -37,5 +37,30 @@ adminController.getAllUsers = async (req, res) => {
     });
   }
 };
+adminController.updateUserStatus = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isActive } = req.body;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user's status
+    user.isActive = isActive;
+    await user.save();
+
+    res.status(200).json({
+      message: `User ${isActive ? 'activated' : 'deactivated'} successfully`,
+      user,
+    });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 module.exports = adminController;
