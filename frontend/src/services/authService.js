@@ -1,8 +1,7 @@
-const API_URL = 'http://localhost:5000/api/auth/';
 
 export const signUpUser = async (userData) => {
     try {
-      const response = await fetch(`${API_URL}/signup`, {
+      const response = await fetch(`${process.env.REACT_APP_API_KEY}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,7 +22,7 @@ export const signUpUser = async (userData) => {
   
   export const logInUser = async (credentials) => {
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${process.env.REACT_APP_API_KEY}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,12 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/user';
 
 export const getUserData = async () => {
   const token = localStorage.getItem('authToken');
   
   try {
-    const response = await axios.get(`${API_URL}/byid`, {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/user/byid`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -23,7 +22,7 @@ export const updateUserData = async (data) => {
   const token = localStorage.getItem('authToken');
   
   try {
-    const response = await axios.put(`${API_URL}`, data, {
+    const response = await axios.put(`${process.env.REACT_APP_API_KEY}/user`, data, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

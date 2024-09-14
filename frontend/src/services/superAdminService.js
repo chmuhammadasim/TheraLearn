@@ -1,11 +1,9 @@
 import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/superadmin';
 const token = localStorage.getItem('authToken');
 // Function to fetch all users
 export const fetchAllUsers = async () => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/all`, {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/superadmin/all`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -21,7 +19,7 @@ export const fetchAllUsers = async () => {
 // Function to update the status of a user (activate/deactivate)
 export const updateUserStatus = async (userId, isActive) => {
   try {
-    const response = await axios.patch(`${API_URL}/users/${userId}`, 
+    const response = await axios.patch(`${process.env.REACT_APP_API_KEY}/superadmin/users/${userId}`, 
       { isActive },
       {
         headers: {

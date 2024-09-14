@@ -1,12 +1,11 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/blog";
 const token = localStorage.getItem("authToken");
 // Fetch all blogs
 export const getBlogs = async () => {
 
   try {
-    const response = await axios.get(`${API_URL}/all`, {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/all`, {
       headers: {
         authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -24,7 +23,7 @@ export const getBlogs = async () => {
 export const deleteBlog = async (blogId) => {
 
   try {
-    const response = await axios.delete(`${API_URL}/delete/${blogId}`, {
+    const response = await axios.delete(`${process.env.REACT_APP_API_KEY}/blog/delete/${blogId}`, {
       headers: {
         authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -60,7 +59,7 @@ export const toggleBlogActiveStatus = async (blogId, isActive) => {
 };
 export const getBlogById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/getbyid/${id}`);
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/getbyid/${id}`);
     console.log(response.data.data);
     
     return response.data.data;
@@ -73,7 +72,7 @@ export const getBlogById = async (id) => {
 export const likeBlog = async (id) => {
   try {
     await axios.post(
-      `${API_URL}/like/${id}`,
+      `${process.env.REACT_APP_API_KEY}/blog/like/${id}`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -88,7 +87,7 @@ export const likeBlog = async (id) => {
 export const dislikeBlog = async (id) => {
   try {
     await axios.post(
-      `${API_URL}/dislike/${id}`,
+      `${process.env.REACT_APP_API_KEY}/blog/dislike/${id}`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -103,7 +102,7 @@ export const dislikeBlog = async (id) => {
 export const submitComment = async (id, comment) => {
   try {
     const response = await axios.post(
-      `${API_URL}/comment/${id}`,
+      `${process.env.REACT_APP_API_KEY}/blog/comment/${id}`,
       { comment },
       {
         headers: { Authorization: `Bearer ${token}` },
