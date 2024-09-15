@@ -51,7 +51,7 @@ function GamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-teal-100 to-green-200 px-6 py-20 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-r from-emerald-400 via-lime-300 to-green-200 px-6 py-20 relative overflow-hidden">
       {/* Animated background bubbles */}
       <motion.div 
         className="absolute inset-0 pointer-events-none"
