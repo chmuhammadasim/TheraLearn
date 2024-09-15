@@ -107,10 +107,10 @@ function ContactUsPage() {
   }
 
   return (
-    <div className="contact-container bg-light-gray min-h-screen pt-20 relative overflow-hidden">
-      <div className=" w-full h-full bg-gradient-to-r from-[#e0f7fa] to-[#f1f8e9] opacity-20 z-[-1]"></div>
+    <div className="contact-container min-h-screen relative overflow-hidden">
+      <div className=" w-full h-full pt-20 bg-gradient-to-r from-[#e0f7fa] to-[#f1f8e9] opacity-20 z-[-1]"></div>
       <motion.h1
-        className="text-5xl font-extrabold mb-12 text-center gradient-text"
+        className="text-5xl font-extrabold mb-12 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
