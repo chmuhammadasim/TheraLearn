@@ -24,16 +24,23 @@ const MainPage = () => {
             className="bg-[url('https://source.unsplash.com/1600x900/?toys')] bg-cover bg-center h-full"
           />
         </div>
+        {/* Adding floating elements for extra creativity */}
         <motion.div
           className="absolute -top-10 left-1/4 bg-[#ffdbac] w-32 h-32 rounded-full opacity-30"
-          animate={{ y: [0, 20, 0] }}
-          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          animate={{ y: [0, 400, 0] }}
+          transition={{ repeat: Infinity, duration: 30, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-0 right-1/4 bg-[#ffd1a5] w-20 h-20 rounded-full opacity-20"
+          className="absolute -bottom-10 left-1/2 bg-[#9fc1ff] w-32 h-32 rounded-full opacity-30"
+          animate={{ y: [0, -40, 0], x: [0, 20, 0] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-0 right-1/4 bg-[#ffb0fb] w-20 h-20 rounded-full opacity-20"
           animate={{ y: [0, -15, 0] }}
           transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
         />
+        {/* Main content */}
         <div className="container mx-auto px-6 text-center">
           <motion.h1
             className="text-5xl md:text-6xl font-extrabold mb-4 tracking-wide"
@@ -62,8 +69,15 @@ const MainPage = () => {
           </motion.a>
         </div>
       </section>
-      {/* Features Section */}
+      {/* Features Section with additional illustrations */}
       <section className="py-16 md:py-24 min-h-screen flex flex-col justify-center bg-gradient-to-r from-white via-gray-100 to-white relative">
+        {/* Adding parallax effect in the background */}
+        <motion.div
+          className="absolute inset-0 bg-[url('https://source.unsplash.com/1600x900/?abstract')] bg-no-repeat bg-center opacity-10"
+          initial={{ opacity: 0.1, y: -50 }}
+          animate={{ opacity: 0.3, y: 0 }}
+          transition={{ duration: 1, ease: "easeInOut" }}
+        />
         <div className="container mx-auto px-6 text-center">
           <motion.h2
             className="text-3xl md:text-4xl font-bold mb-12 text-gray-800"
@@ -105,7 +119,7 @@ const MainPage = () => {
           </div>
         </div>
       </section>
-      {/* CTA Section */}
+      {/* CTA Section with new animations */}
       <section
         id="cta"
         className="bg-[#ff347f] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center relative overflow-hidden"
@@ -146,7 +160,7 @@ const MainPage = () => {
           </motion.a>
         </div>
       </section>
-      {/* Blog Section */}
+      {/* Blog Section with smooth transition */}
       <section className="py-16 md:py-24 min-h-screen flex flex-col justify-center bg-white">
         <div className="container mx-auto px-6 text-center">
           <motion.h2
@@ -192,17 +206,23 @@ const MainPage = () => {
 const FeatureCard = ({ icon, title, description, image, color }) => {
   return (
     <motion.div
-      className="p-6 bg-white shadow-lg rounded-lg hover
-              transition-shadow duration-300"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.3 }}
+      className="bg-white p-6 rounded-lg shadow-lg hover transition-shadow duration-300 text-center"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
       {" "}
-      <div className="text-5xl mb-4" style={{ color }}>
-        {icon}
-      </div>{" "}
-      <h3 className="text-xl font-bold mb-2">{title}</h3>{" "}
-      <p className="text-gray-600 mb-4">{description}</p>{" "}
+      <motion.img
+        className="w-20 h-20 mx-auto mb-4"
+        src={image}
+        alt={title}
+        initial={{ scale: 0.8 }}
+        whileHover={{ scale: 1.1 }}
+        transition={{ duration: 0.4 }}
+      />{" "}
+      <div className={`${color} text-5xl mb-4`}>{icon}</div>{" "}
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>{" "}
+      <p className="text-gray-700">{description}</p>{" "}
     </motion.div>
   );
 };
@@ -210,15 +230,23 @@ const FeatureCard = ({ icon, title, description, image, color }) => {
 const BlogCard = ({ icon, title, summary, image }) => {
   return (
     <motion.div
-      className="p-6 bg-white shadow-lg rounded-lg hover
-              transition-shadow duration-300"
-      whileHover={{ scale: 1.05 }}
-      transition={{ duration: 0.3 }}
+      className="bg-gray-100 p-6 rounded-lg shadow-lg hover transition-shadow duration-300 text-center"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
       {" "}
-      <img src={image} alt={title} className="mb-4 rounded-lg" />{" "}
-      <h3 className="text-xl font-bold mb-2">{title}</h3>{" "}
-      <p className="text-gray-600 mb-4">{summary}</p>{" "}
+      <motion.img
+        className="w-20 h-20 mx-auto mb-4"
+        src={image}
+        alt={title}
+        initial={{ scale: 0.8 }}
+        whileHover={{ scale: 1.1 }}
+        transition={{ duration: 0.4 }}
+      />{" "}
+      <div className="text-5xl mb-4">{icon}</div>{" "}
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>{" "}
+      <p className="text-gray-700">{summary}</p>{" "}
     </motion.div>
   );
 };
