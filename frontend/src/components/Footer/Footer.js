@@ -8,18 +8,18 @@ const Footer = () => {
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <motion.svg
-          className="absolute -top-24 -left-24 w-1/4 opacity-30"
+          className="absolute top-8 left-8 w-1/4 opacity-30"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 200 200"
+          viewBox="0 0 350 350"
           animate={{ rotate: [0, 360] }}
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
         >
           <circle cx="100" cy="100" r="90" fill="#ffffff" />
         </motion.svg>
         <motion.svg
-          className="absolute bottom-0 right-0 w-1/4 opacity-20"
+          className="absolute top-4 right-0 w-1/4 opacity-20"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 200 200"
+          viewBox="0 0 350 350"
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         >
@@ -28,7 +28,7 @@ const Footer = () => {
         <motion.svg
           className="absolute top-1/4 right-1/4 w-1/5 opacity-40"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 200 200"
+          viewBox="0 0 350 350"
           animate={{ rotate: [0, -15, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         >
