@@ -136,3 +136,65 @@ button[type="button"]:hover {
     font-weight: bold;
   }
   
+
+  .contact-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(45deg, #fc3a52, #f8c731);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .info-box {
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .form-input {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+  
+  .form-input:focus {
+    border-color: #61d4b3;
+    outline: none;
+  }
+  
+  .error-input {
+    border-color: #fc3a52;
+  }
+  
+  .error-text {
+    color: #fc3a52;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+  
+  .submitted {
+    background-color: #e0f7fa;
+  }
+  
+  .submitted button {
+    margin-top: 1rem;
+  }
+  
+  .contact-form-container {
+    margin-top: 2rem;
+    background: #f9f9f9;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  

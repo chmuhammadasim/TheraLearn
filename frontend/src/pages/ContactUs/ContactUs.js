@@ -76,7 +76,7 @@ function ContactUsPage() {
 
   if (submitted) {
     return (
-      <div className="submitted">
+      <div className="submitted text-center p-8 bg-[#f0f8ff]">
         <motion.h1
           className="text-4xl font-bold mb-4"
           initial={{ opacity: 0 }}
@@ -95,7 +95,7 @@ function ContactUsPage() {
         </motion.p>
         <motion.button
           onClick={handleReset}
-          className="bg-[#61d4b3] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#4daa8b] transition"
+          className="bg-gradient-to-r from-[#61d4b3] to-[#4daa8b] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gradient-to-l transition-transform transform hover:scale-105"
           initial={{ scale: 1 }}
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.3 }}
@@ -107,7 +107,8 @@ function ContactUsPage() {
   }
 
   return (
-    <div className="contact-container mt-10 p-6">
+    <div className="contact-container bg-light-gray min-h-screen pt-20 relative overflow-hidden">
+      <div className=" w-full h-full bg-gradient-to-r from-[#e0f7fa] to-[#f1f8e9] opacity-20 z-[-1]"></div>
       <motion.h1
         className="text-5xl font-extrabold mb-12 text-center gradient-text"
         initial={{ opacity: 0 }}
@@ -118,26 +119,24 @@ function ContactUsPage() {
       </motion.h1>
 
       {/* Contact Information */}
-      <div className="flex flex-col  md:flex-row justify-around items-center mb-12">
+      <div className="flex flex-col md:flex-row justify-around items-center mb-12">
         <motion.div
-          className="flex m-5 items-center mb-6 md:mb-0 info-box"
+          className="flex m-5 items-center mb-6 md:mb-0 info-box bg-white shadow-lg p-4 rounded-lg transform transition-transform hover:scale-105 hover:shadow-xl"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          whileHover={{ scale: 1.05 }}
         >
-          <FaEnvelope className="text-[#fc3a52]  text-6xl mr-4" />
+          <FaEnvelope className="text-[#fc3a52] text-6xl mr-4" />
           <div>
             <h2 className="text-2xl font-bold">Email Us</h2>
             <p className="text-lg">contact@kidssite.com</p>
           </div>
         </motion.div>
         <motion.div
-          className="flex m-5 items-center mb-6 md:mb-0 info-box"
+          className="flex m-5 items-center mb-6 md:mb-0 info-box bg-white shadow-lg p-4 rounded-lg transform transition-transform hover:scale-105 hover:shadow-xl"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          whileHover={{ scale: 1.05 }}
         >
           <FaPhone className="text-[#48e4f9] text-6xl mr-4" />
           <div>
@@ -146,11 +145,10 @@ function ContactUsPage() {
           </div>
         </motion.div>
         <motion.div
-          className="flex m-5 items-center mb-6 md:mb-0 info-box"
+          className="flex m-5 items-center mb-6 md:mb-0 info-box bg-white shadow-lg p-4 rounded-lg transform transition-transform hover:scale-105 hover:shadow-xl"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
-          whileHover={{ scale: 1.05 }}
         >
           <FaMapMarkerAlt className="text-[#f8c731] text-6xl mr-4" />
           <div>
@@ -160,8 +158,14 @@ function ContactUsPage() {
         </motion.div>
       </div>
 
+
       {/* Contact Form */}
-      <div className="contact-form-container bg-white shadow-lg p-8 rounded-lg">
+      <motion.div
+        className="contact-form-container bg-white shadow-lg p-8 rounded-lg"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name:</label>
@@ -172,6 +176,7 @@ function ContactUsPage() {
               value={formData.name}
               onChange={handleChange}
               className={`form-input ${errors.name ? 'error-input' : ''}`}
+              placeholder="Your Name"
             />
             {errors.name && <p className="error-text">{errors.name} 😟</p>}
           </div>
@@ -184,6 +189,7 @@ function ContactUsPage() {
               value={formData.email}
               onChange={handleChange}
               className={`form-input ${errors.email ? 'error-input' : ''}`}
+              placeholder="Your Email"
             />
             {errors.email && <p className="error-text">{errors.email} 😟</p>}
           </div>
@@ -195,13 +201,14 @@ function ContactUsPage() {
               value={formData.message}
               onChange={handleChange}
               className={`form-input ${errors.message ? 'error-input' : ''}`}
+              placeholder="Your Message"
             />
             {errors.message && <p className="error-text">{errors.message} 😟</p>}
           </div>
           <div className="form-buttons">
             <motion.button
               type="submit"
-              className="bg-[#61d4b3] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#4daa8b] transition"
+              className="bg-gradient-to-r from-[#61d4b3] to-[#4daa8b] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gradient-to-l transition-transform transform hover:scale-105"
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
@@ -211,16 +218,16 @@ function ContactUsPage() {
             <motion.button
               type="button"
               onClick={handleReset}
-              className="bg-[#ff347f] text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#c9356c] transition"
+              className="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-semibold ml-4 hover:bg-gray-400 transition-transform transform hover:scale-105"
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
-              Reset 🔄
+              Reset
             </motion.button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
