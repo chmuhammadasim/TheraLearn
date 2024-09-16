@@ -40,28 +40,44 @@ export default function Navbar() {
   const isPsychologist = role === "psychologist";
 
   const navLinks = [
-    { to: "/", label: "HomePage", color: "#61d4b3" },
-    { to: "/games", label: "Games", color: "#fd2eb3" },
-    { to: "/bloglist", label: "Blogs", color: "#2ed4fd" },
-    { to: "/about", label: "AboutUs", color: "#fb8d62" },
-    { to: "/contact", label: "ContactUs", color: "#fdd365" }
+    { to: "/", label: "HomePage", color: "#ff6f61" }, // Coral Red
+    { to: "/games", label: "Games", color: "#8ac926" }, // Lime Green
+    { to: "/bloglist", label: "Blogs", color: "#1982c4" }, // Sky Blue
+    { to: "/about", label: "AboutUs", color: "#ffca3a" }, // Golden Yellow
+    { to: "/contact", label: "ContactUs", color: "#ff595e" }, // Watermelon Pink
   ];
 
   const roleLinks = {
     user: [
-      { to: "/dashboard", label: "Dashboard", color: "#b5d461" },
-      { to: "/psychologistslist", label: "Psychologists List", color: "#d4619a" }
+      { to: "/dashboard", label: "Dashboard", color: "#6a4c93" }, // Deep Purple
+      {
+        to: "/psychologistslist",
+        label: "Psychologists List",
+        color: "#f4a261",
+      }, // Warm Orange
     ],
     psychologist: [
-      { to: "/psychologist-dashboard", label: "Paitent Info", color: "#ff8c00" },
-      { to: "/psychologist-blog-form", label: "Blog Form", color: "#ff8c00" }
+      {
+        to: "/psychologist-dashboard",
+        label: "Paitent Info",
+        color: "#2a9d8f",
+      }, // Teal
+      { to: "/psychologist-blog-form", label: "Blog Form", color: "#e76f51" }, // Muted Red-Orange
     ],
     admin: [
-      { to: "/superadmin", label: "User Dashboard", color: "#ff00ff" },
-      { to: "/superadminpanel", label: "Admin Panel", color: "#ff00ff" },
-      { to: "/superadmincontactus", label: "Admin Contact Panel", color: "#ff00ff" },
-      { to: "/superadminblogdashboard", label: "Admin Blog Panel", color: "#ff00ff" }
-    ]
+      { to: "/superadmin", label: "User Dashboard", color: "#ff0054" }, // Hot Pink
+      { to: "/superadminpanel", label: "Admin Panel", color: "#3a86ff" }, // Bright Blue
+      {
+        to: "/superadmincontactus",
+        label: "Admin Contact Panel",
+        color: "#8338ec",
+      }, // Vivid Violet
+      {
+        to: "/superadminblogdashboard",
+        label: "Admin Blog Panel",
+        color: "#fb5607",
+      }, // Vibrant Orange
+    ],
   };
 
   return (
@@ -85,7 +101,7 @@ export default function Navbar() {
                   transition={{ duration: 0.3 }}
                 />
                 <motion.span
-                  className="text-gray-800 text-lg font-extrabold animate__animated animate__fadeIn"
+                  className="text-gray-800 text-lg font-extrabold"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
@@ -97,33 +113,50 @@ export default function Navbar() {
               {/* Centered Links */}
               <div className="hidden sm:flex sm:space-x-6">
                 {navLinks.map(({ to, label, color }) => (
-                  <Link
+                  <motion.div
                     key={to}
-                    to={to}
-                    className={`px-2 ml-2 py-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
-                      location.pathname === to
-                        ? `bg-[${color}] text-white`
-                        : `hover:bg-[${color}] hover:text-white`
-                    }`}
+                    className="relative"
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    {label}
-                  </Link>
+                    <Link
+                      to={to}
+                      className={`px-2 py-2 ml-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
+                        location.pathname === to ? "text-white" : `text-gray-900` 
+                      }`}
+                      style={{
+                        backgroundColor: location.pathname === to ? color : "transparent",
+                      }}
+                    >
+                      {label}
+                    </Link>
+                  </motion.div>
                 ))}
                 {isLoggedIn && (
                   <>
-                    {(isUser || isPsychologist || isSuperAdmin) && roleLinks[role].map(({ to, label, color }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        className={`px-2 py-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
-                          location.pathname === to
-                            ? `bg-[${color}] text-white`
-                            : `hover:bg-[${color}] hover:text-white`
-                        }`}
-                      >
-                        {label}
-                      </Link>
-                    ))}
+                    {(isUser || isPsychologist || isSuperAdmin) &&
+                      roleLinks[role].map(({ to, label, color }) => (
+                        <motion.div
+                          key={to}
+                          className="relative"
+                          initial={{ scale: 1 }}
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <Link
+                            to={to}
+                            className={`px-2 py-2 ml-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
+                              location.pathname === to ? "text-white" : "text-gray-700 hover:text-white"
+                            }`}
+                            style={{
+                              backgroundColor: location.pathname === to ? color : "transparent",
+                            }}
+                          >
+                            {label}
+                          </Link>
+                        </motion.div>
+                      ))}
                   </>
                 )}
               </div>
@@ -189,58 +222,79 @@ export default function Navbar() {
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navLinks.map(({ to, label, color }) => (
-                <Link
+                <motion.div
                   key={to}
-                  to={to}
-                  className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
-                    location.pathname === to
-                      ? `bg-[${color}] text-white`
-                      : `hover:bg-[${color}] hover:text-white`
-                  }`}
+                  className="relative"
+                  initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {label}
-                </Link>
+                  <Link
+                    to={to}
+                    className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
+                      location.pathname === to ? "text-white" : "text-gray-700 hover:text-white"
+                    }`}
+                    style={{
+                      backgroundColor: location.pathname === to ? color : "transparent",
+                    }}
+                    onClick={() => setOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                </motion.div>
               ))}
               {isLoggedIn && (
                 <>
-                  {(isUser || isPsychologist || isSuperAdmin) && roleLinks[role].map(({ to, label, color }) => (
+                  {(isUser || isPsychologist || isSuperAdmin) &&
+                    roleLinks[role].map(({ to, label, color }) => (
+                      <motion.div
+                        key={to}
+                        className="relative"
+                        initial={{ scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Link
+                          to={to}
+                          className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
+                            location.pathname === to ? "text-white" : "text-gray-700 hover:text-white"
+                          }`}
+                          style={{
+                            backgroundColor: location.pathname === to ? color : "transparent",
+                          }}
+                          onClick={() => setOpen(false)}
+                        >
+                          {label}
+                        </Link>
+                      </motion.div>
+                    ))}
+                </>
+              )}
+              <div className="mt-4">
+                {isLoggedIn ? (
+                  <button
+                    className="w-full bg-[#ff347f] text-[#fdfdfd] px-4 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c] transition duration-300 ease-in-out"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <>
                     <Link
-                      key={to}
-                      to={to}
-                      className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
-                        location.pathname === to
-                          ? `bg-[${color}] text-white`
-                          : `hover:bg-[${color}] hover:text-white`
-                      }`}
+                      to="/login"
+                      className="block w-full bg-[#ff347f] text-[#fdfdfd] px-4 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c] transition duration-300 ease-in-out"
                     >
-                      {label}
+                      Login
                     </Link>
-                  ))}
-                </>
-              )}
-              {isLoggedIn ? (
-                <button
-                  className="w-full text-left px-4 py-2 rounded-md text-base font-medium bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] transition duration-300 ease-in-out"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="block w-full text-left px-4 py-2 rounded-md text-base font-medium bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] transition duration-300 ease-in-out"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="block w-full text-left px-4 py-2 rounded-md text-base font-medium bg-[#ff347f] text-[#fdfdfd] hover:bg-[#c9356c] transition duration-300 ease-in-out"
-                  >
-                    Signup
-                  </Link>
-                </>
-              )}
+                    <Link
+                      to="/signup"
+                      className="block w-full mt-2 bg-[#ff347f] text-[#fdfdfd] px-4 py-2 rounded-md text-sm font-medium hover:bg-[#c9356c] transition duration-300 ease-in-out"
+                    >
+                      Signup
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </Disclosure.Panel>
         </>

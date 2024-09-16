@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { logInUser } from '../../services/authService';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
@@ -45,47 +45,44 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#f76b1c] to-[#ffaf2b] text-[#0e2431] relative overflow-hidden">
-      {/* Background Animation */}
-      {/* <motion.div
-        className="absolute top-0 left-0 w-full h-full bg-[#0e2431] opacity-40"
-        initial={{ opacity: 0.0 }}
-        animate={{ opacity: 0.6 }}
-        transition={{ duration: 5, ease: 'circInOut', repeat: Infinity }}
-      /> */}
-      
-      {/* Floating Shapes Animation */}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#92ffff] to-[#799cfa] text-[#0e2431] relative overflow-hidden">
+      {/* Animated Background Shapes */}
       <motion.div
-        className="absolute w-64 h-64 bg-[#fc3a52] rounded-full top-10 right-20 opacity-70"
-        animate={{ y: [0, 30, 0], rotate: [0, 180, 360] }}
-        transition={{ duration: 10, ease: 'easeInOut', repeat: Infinity }}
+        className="absolute w-96 h-96 bg-[#3afc7b] rounded-full top-10 right-20 opacity-70"
+        animate={{ y: [0, 50, 0], rotate: [0, 360] }}
+        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
       />
       <motion.div
-        className="absolute w-32 h-32 bg-[#f9b248] rounded-full bottom-20 left-10 opacity-70"
-        animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
-        transition={{ duration: 10, ease: 'easeInOut', repeat: Infinity }}
+        className="absolute w-80 h-80 bg-[#f94848] rounded-full bottom-20 left-10 opacity-70"
+        animate={{ y: [0, -50, 0], rotate: [0, -360] }}
+        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute w-40 h-40 bg-[#85f876] rounded-full top-[50%] right-[40%] opacity-70"
+        animate={{ scale: [1, 1.2, 1], rotate: [0, 360] }}
+        transition={{ duration: 15, ease: 'easeInOut', repeat: Infinity }}
       />
 
-      <div className="relative bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center overflow-hidden">
+      <div className="relative bg-white p-10 rounded-lg shadow-xl w-full max-w-lg text-center z-10">
         {/* Cartoon Illustration */}
         <motion.img
           src="Boy1.png"
           alt="Cartoon Character"
-          className="absolute z-0 top-[10px] left-[20px] w-auto h-20"
+          className="absolute z-0 top-[10px] left-[20px] w-auto h-24 opacity-80"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
         />
-        
+
         <motion.h1
-          className="text-4xl font-bold text-[#0e2431] mb-4"
+          className="text-5xl font-bold text-[#fc3a52] mb-6"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-[#fc3a52]">Welcome Back!</span>
+          Welcome Back!
         </motion.h1>
-        
+
         {message && (
           <motion.p
             className={`mb-4 text-lg ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}
@@ -96,8 +93,8 @@ function LoginPage() {
             {message}
           </motion.p>
         )}
-        
-        <form onSubmit={handleLogin} className="space-y-4">
+
+        <form onSubmit={handleLogin} className="space-y-6">
           <motion.div
             className="form-group"
             initial={{ y: 30, opacity: 0 }}
@@ -113,7 +110,7 @@ function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52] transition-transform transform hover:scale-105"
             />
           </motion.div>
-          
+
           <motion.div
             className="form-group"
             initial={{ y: 30, opacity: 0 }}
@@ -129,11 +126,11 @@ function LoginPage() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52] transition-transform transform hover:scale-105"
             />
           </motion.div>
-          
+
           <motion.button
             type="submit"
             disabled={loggingIn}
-            className="w-full py-3 bg-[#fc3a52] text-white rounded-lg hover:bg-[#f8c731] transition-transform transform hover:scale-105"
+            className="w-full py-3 bg-[#fc3a52] text-white rounded-lg hover:bg-[#f8c731] transition-transform transform hover:scale-105 shadow-lg"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -141,14 +138,17 @@ function LoginPage() {
             {loggingIn ? 'Logging in...' : 'Login'}
           </motion.button>
         </form>
-        
+
         <motion.p
           className="mt-4 text-[#0e2431] text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.8 }}
         >
-          Not a member? <a href="/signup" className="text-[#fc3a52] hover:underline">Register here</a>
+          Not a member?{' '}
+          <a href="/signup" className="text-[#fc3a52] hover:underline transition-colors duration-300">
+            Register here
+          </a>
         </motion.p>
       </div>
     </div>

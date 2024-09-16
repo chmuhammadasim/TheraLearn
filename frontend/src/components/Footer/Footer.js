@@ -46,7 +46,7 @@ const Footer = () => {
             transition={{ duration: 0.8 }}
           >
             <img src="/LOGO.png" alt="Logo" className="h-12 mr-4 rounded-full border-4 border-white shadow-lg" />
-            <h1 className="text-4xl font-extrabold bg-clip-text   tracking-wide">
+            <h1 className="text-4xl font-extrabold bg-clip-text text-gray-800 text-- px-4 tracking-wide">
               TheraLearn
             </h1>
           </motion.div>
