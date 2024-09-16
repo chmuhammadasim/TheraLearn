@@ -147,7 +147,7 @@ export default function Navbar() {
                           <Link
                             to={to}
                             className={`px-2 py-2 ml-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
-                              location.pathname === to ? "text-white" : "text-gray-700 hover:text-white"
+                              location.pathname === to ? "text-white" : "text-gray-900"
                             }`}
                             style={{
                               backgroundColor: location.pathname === to ? color : "transparent",
@@ -232,7 +232,7 @@ export default function Navbar() {
                   <Link
                     to={to}
                     className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
-                      location.pathname === to ? "text-white" : "text-gray-700 hover:text-white"
+                      location.pathname === to ? "text-white" : "text-gray-900"
                     }`}
                     style={{
                       backgroundColor: location.pathname === to ? color : "transparent",
@@ -257,7 +257,7 @@ export default function Navbar() {
                         <Link
                           to={to}
                           className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
-                            location.pathname === to ? "text-white" : "text-gray-700 hover:text-white"
+                            location.pathname === to ? "text-white" : "text-gray-900 "
                           }`}
                           style={{
                             backgroundColor: location.pathname === to ? color : "transparent",
