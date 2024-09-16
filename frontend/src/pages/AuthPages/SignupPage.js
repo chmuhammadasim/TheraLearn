@@ -3,7 +3,7 @@ import { signUpUser } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
-import { FaUserGraduate, FaBriefcase, FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
+import { FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
 
 function SignupPage() {
   const [isPsychologist, setIsPsychologist] = useState(false);
@@ -111,26 +111,37 @@ function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#31f83b] to-[#3afcd2] relative overflow-hidden p-4 md:pt-24 md:pb-24">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
       {/* Animated Background */}
-      {/* Background motion divs here... */}
-      
-      <div className="relative bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-4xl text-center overflow-hidden mt-20 md:mt-0">
+      <motion.div
+        className="absolute inset-0 bg-[#ff7560] opacity-70 rounded-full"
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 5, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute inset-0 bg-[#ffdf60] opacity-70 rounded-full"
+        initial={{ scale: 0.6 }}
+        animate={{ scale: 0.8 }}
+        transition={{ duration: 6, ease: 'easeInOut' }}
+      />
+
+      <div className="relative bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
         <motion.img
           src="LOGO.png"
           alt="Logo"
-          className="mx-auto mb-4 md:mb-6 w-20 h-20 md:w-24 md:h-24"
+          className="mx-auto mb-4 w-24 h-24"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
         />
         <motion.h1
-          className="text-3xl md:text-4xl font-bold text-[#0e2431] mb-2 md:mb-4"
+          className="text-4xl font-bold text-[#2c3e50] mb-4"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-[#fc3a52]">Join Us!</span>
+          <span className="text-[#e74c3c]">Join Us!</span>
         </motion.h1>
         {message && (
           <motion.p
@@ -146,42 +157,42 @@ function SignupPage() {
         {/* Toggle between User and Psychologist */}
         <div className="flex justify-center mb-6">
           <button
-            className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#fc3a52] text-white' : 'bg-gray-200'}`}
+            className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200'}`}
             onClick={() => setIsPsychologist(false)}
           >
             User Signup
           </button>
           <button
-            className={`py-2 px-4 font-semibold rounded-r-lg ${isPsychologist ? 'bg-[#fc3a52] text-white' : 'bg-gray-200'}`}
+            className={`py-2 px-4 font-semibold rounded-r-lg ${isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200'}`}
             onClick={() => setIsPsychologist(true)}
           >
             Psychologist Signup
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Username and Email */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Username:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Username:</label>
               <input
                 type="text"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
                 required
               />
               {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
             </div>
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Email:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Email:</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
                 required
               />
               {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
@@ -189,27 +200,27 @@ function SignupPage() {
           </div>
 
           {/* Password and Confirm Password */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Password:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Password:</label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
                 required
               />
               {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
             </div>
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Confirm Password:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Confirm Password:</label>
               <input
                 type="password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
                 required
               />
               {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword}</span>}
@@ -217,200 +228,190 @@ function SignupPage() {
           </div>
 
           {/* Personal Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">First Name:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">First Name:</label>
               <input
                 type="text"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
                 required
               />
               {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName}</span>}
             </div>
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Last Name:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Last Name:</label>
               <input
                 type="text"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
                 required
               />
               {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
             </div>
           </div>
 
-          {/* Address and City */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Address:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Address:</label>
               <input
                 type="text"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                required
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
               />
             </div>
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">City:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">City:</label>
               <input
                 type="text"
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                required
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
               />
             </div>
-          </div>
-
-          {/* Country and Contact */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Country:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Country:</label>
               <input
                 type="text"
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                required
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
               />
             </div>
             <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#0e2431]">Contact:</label>
+              <label className="block text-left text-lg font-medium text-[#2c3e50]">Contact:</label>
               <input
                 type="text"
                 name="contact"
                 value={formData.contact}
                 onChange={handleChange}
-                className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                required
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
               />
             </div>
           </div>
 
+          {/* Bio */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#2c3e50]">Bio:</label>
+            <textarea
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
+            />
+          </div>
+
+          {/* Profile Picture URL */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#2c3e50]">Profile Picture URL:</label>
+            <input
+              type="text"
+              name="profilePictureUrl"
+              value={formData.profilePictureUrl}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
+            />
+          </div>
+
           {/* Date of Birth */}
           <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Date of Birth:</label>
+            <label className="block text-left text-lg font-medium text-[#2c3e50]">Date of Birth:</label>
             <input
               type="date"
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
               required
             />
             {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
           </div>
 
-          {/* Bio */}
-          <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Bio:</label>
-            <textarea
-              name="bio"
-              value={formData.bio}
-              onChange={handleChange}
-              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-              rows="4"
-            />
-          </div>
-
-          {/* Profile Picture */}
-          <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Profile Picture URL:</label>
-            <input
-              type="url"
-              name="profilePictureUrl"
-              value={formData.profilePictureUrl}
-              onChange={handleChange}
-              className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-            />
-          </div>
-
-          {/* Education and Experience Fields for Psychologist */}
+          {/* Additional Fields for Psychologists */}
           {isPsychologist && (
             <>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#0e2431]">Education:</label>
+              {/* Education Fields */}
+              <div>
+                <label className="block text-left text-lg font-medium text-[#2c3e50]">Education:</label>
                 {formData.educations.map((education, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <FaUserGraduate className="text-[#f8c731] text-2xl" />
+                  <div key={index} className="flex items-center mb-3">
                     <input
                       type="text"
                       value={education}
                       onChange={(e) => handleEducationChange(index, e.target.value)}
-                      className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                      placeholder="Education details"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
+                      placeholder={`Education ${index + 1}`}
                       required
                     />
                     {formData.educations.length > 1 && (
-                      <FaMinusCircle
-                        className="text-red-500 text-2xl cursor-pointer"
+                      <button
+                        type="button"
                         onClick={() => removeEducation(index)}
-                      />
+                        className="ml-2 text-red-500"
+                      >
+                        <FaMinusCircle size={20} />
+                      </button>
                     )}
                   </div>
                 ))}
                 <button
                   type="button"
                   onClick={addEducation}
-                  className="flex items-center text-[#0e2431] hover:text-[#fc3a52] transition duration-200"
+                  className="flex items-center text-[#e74c3c] mb-4"
                 >
-                  <FaPlusCircle className="mr-1" />
-                  Add Education
+                  <FaPlusCircle size={20} className="mr-2" /> Add Education
                 </button>
-                {errors.educations && <span className="text-red-500 text-sm">{errors.educations}</span>}
               </div>
 
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#0e2431]">Experience:</label>
+              {/* Experience Fields */}
+              <div>
+                <label className="block text-left text-lg font-medium text-[#2c3e50]">Experience:</label>
                 {formData.experiences.map((experience, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <FaBriefcase className="text-[#f8c731] text-2xl" />
+                  <div key={index} className="flex items-center mb-3">
                     <input
                       type="text"
                       value={experience}
                       onChange={(e) => handleExperienceChange(index, e.target.value)}
-                      className="w-full p-2 md:p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52]"
-                      placeholder="Experience details"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
+                      placeholder={`Experience ${index + 1}`}
                       required
                     />
                     {formData.experiences.length > 1 && (
-                      <FaMinusCircle
-                        className="text-red-500 text-2xl cursor-pointer"
+                      <button
+                        type="button"
                         onClick={() => removeExperience(index)}
-                      />
+                        className="ml-2 text-red-500"
+                      >
+                        <FaMinusCircle size={20} />
+                      </button>
                     )}
                   </div>
                 ))}
                 <button
                   type="button"
                   onClick={addExperience}
-                  className="flex items-center text-[#0e2431] hover:text-[#fc3a52] transition duration-200"
+                  className="flex items-center text-[#e74c3c] mb-4"
                 >
-                  <FaPlusCircle className="mr-1" />
-                  Add Experience
+                  <FaPlusCircle size={20} className="mr-2" /> Add Experience
                 </button>
-                {errors.experiences && <span className="text-red-500 text-sm">{errors.experiences}</span>}
               </div>
             </>
           )}
 
-          <motion.button
+          <button
             type="submit"
-            className="w-full p-3 md:p-4 bg-[#fc3a52] text-white font-semibold rounded-lg hover:bg-[#0e2431] transition duration-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="w-full py-3 bg-[#e74c3c] text-white font-semibold rounded-lg shadow-md hover:bg-[#c0392b] transition-colors duration-300"
           >
             Sign Up
-          </motion.button>
+          </button>
         </form>
       </div>
     </div>

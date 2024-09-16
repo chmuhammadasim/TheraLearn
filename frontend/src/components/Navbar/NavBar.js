@@ -17,7 +17,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setNavbarOpacity(scrollY > 0 ? 0.8 : 1);
+      setNavbarOpacity(scrollY > 0 ? 0.9 : 1);
     };
     window.addEventListener("scroll", handleScroll);
     return () => {
