@@ -75,7 +75,7 @@ export const likeBlog = async (id) => {
       `${process.env.REACT_APP_API_KEY}/blog/like/${id}`,
       {},
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { authorization: `Bearer ${token}` },
       }
     );
   } catch (error) {
@@ -90,7 +90,7 @@ export const dislikeBlog = async (id) => {
       `${process.env.REACT_APP_API_KEY}/blog/dislike/${id}`,
       {},
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { authorization: `Bearer ${token}` },
       }
     );
   } catch (error) {
@@ -105,7 +105,7 @@ export const submitComment = async (id, comment) => {
       `${process.env.REACT_APP_API_KEY}/blog/comment/${id}`,
       { comment },
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { authorization: `Bearer ${token}` },
       }
     );
     return response.data.comment;

@@ -1,10 +1,12 @@
 import React, { createContext, useState, useEffect } from "react";
+// import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const checkLoginStatus = () => {
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authRole");
     setIsLoggedIn(false);
     setRole(null);
+    // navigate('/');
   };
 
   return (

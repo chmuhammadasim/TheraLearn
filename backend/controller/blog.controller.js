@@ -178,15 +178,19 @@ blogController.toggleBlogActiveStatus = async (req, res) => {
 blogController.likeBlog = async (req, res) => {
   const { blogId } = req.params;
 
+  const userId = req.userData.userId;
+
   try {
     const blog = await Blog.findById(blogId);
 
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-
-    blog.likes += 1; // Increment likes
-    await blog.save();
+    if (blog.dislikedBy.includes(userId) === false && blog.likedBy.includes(userId) === false) {
+      blog.likes += 1; // Increment dislikes
+      blog.likedBy.push(userId);
+      await blog.save();
+    }
 
     res.status(200).json({
       success: true,
@@ -211,8 +215,11 @@ blogController.dislikeBlog = async (req, res) => {
       return res.status(404).json({ message: "Blog not found" });
     }
 
-    blog.dislikes += 1; // Increment dislikes
-    await blog.save();
+    if (blog.dislikedBy.includes(userId)!== false && blog.likedBy.includes(userId) !== false) {
+      blog.dislikes += 1; // Increment dislikes
+      blog.dislikedBy.push(userId);
+      await blog.save();
+    }
 
     res.status(200).json({
       success: true,

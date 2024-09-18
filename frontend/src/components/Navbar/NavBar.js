@@ -65,16 +65,16 @@ export default function Navbar() {
       { to: "/psychologist-blog-form", label: "Blog Form", color: "#e76f51" }, // Muted Red-Orange
     ],
     admin: [
-      { to: "/superadmin", label: "User Dashboard", color: "#ff0054" }, // Hot Pink
-      { to: "/superadminpanel", label: "Admin Panel", color: "#3a86ff" }, // Bright Blue
+      { to: "/superadmin", label: "UserDashboard", color: "#ff0054" }, // Hot Pink
+      { to: "/superadminpanel", label: "ContentPanel", color: "#3a86ff" }, // Bright Blue
       {
         to: "/superadmincontactus",
-        label: "Admin Contact Panel",
+        label: "Feedbacks",
         color: "#8338ec",
       }, // Vivid Violet
       {
         to: "/superadminblogdashboard",
-        label: "Admin Blog Panel",
+        label: "Blog Panel",
         color: "#fb5607",
       }, // Vibrant Orange
     ],
