@@ -63,6 +63,26 @@ function LandingPage() {
         summary: 'How to take care of your furry friends.',
         image: '/LOGO.png',
       },
+      {
+        title: 'Healthy Lifestyle',
+        summary: 'Tips for maintaining a healthy diet.',
+        image: '/LOGO.png',
+      },
+      {
+        title: 'Pet Care',
+        summary: 'How to take care of your furry friends.',
+        image: '/LOGO.png',
+      },
+      {
+        title: 'Healthy Lifestyle',
+        summary: 'Tips for maintaining a healthy diet.',
+        image: '/LOGO.png',
+      },
+      {
+        title: 'Pet Care',
+        summary: 'How to take care of your furry friends.',
+        image: '/LOGO.png',
+      },
     ],
   };
 
