@@ -40,11 +40,11 @@ export default function Navbar() {
   const isPsychologist = role === "psychologist";
 
   const navLinks = [
-    { to: "/", label: "HomePage", color: "#ff6f61" }, // Coral Red
-    { to: "/games", label: "Games", color: "#8ac926" }, // Lime Green
-    { to: "/bloglist", label: "Blogs", color: "#1982c4" }, // Sky Blue
-    { to: "/about", label: "AboutUs", color: "#ffca3a" }, // Golden Yellow
-    { to: "/contact", label: "ContactUs", color: "#ff595e" }, // Watermelon Pink
+    { to: "/", label: "HomePage", color: "#ffb703" },
+    { to: "/games", label: "Games", color: "#023047" },
+    { to: "/bloglist", label: "Blogs", color: "#bc6c25" },
+    { to: "/about", label: "AboutUs", color: "#ff006e" },
+    { to: "/contact", label: "ContactUs", color: "#00b4d8" },
   ];
 
   const roleLinks = {
