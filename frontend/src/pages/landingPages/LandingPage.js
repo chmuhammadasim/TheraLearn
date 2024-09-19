@@ -12,79 +12,8 @@ function LandingPage() {
     cta: {},
     blogs: [],
   });
+  
   const [isLoading, setIsLoading] = useState(true);
-
-  // Default data to show when no data is found
-  const defaultData = {
-    hero: {
-      title: 'Welcome to TheraLearn',
-      subtitle: 'The best platform to learn and play games.',
-      buttonText: 'Let\'s play',
-    },
-    features: [
-      {
-        icon: 'rocket',
-        title: 'Fast Performance',
-        description: 'Boost your workflow with lightning-fast speeds.',
-        image: '/LOGO.png',
-      },
-      {
-        icon: 'puzzle-piece',
-        title: 'Customizable',
-        description: 'Easily adapt features to suit your preferences.',
-        image: '/LOGO.png',
-      },
-      {
-        icon: 'robot',
-        title: 'Automation',
-        description: 'Smart tools to automate your tasks.',
-        image: '/LOGO.png',
-      },
-      {
-        icon: 'gamepad',
-        title: 'Interactive UI',
-        description: 'Engage with an immersive and fun UI.',
-        image: '/LOGO.png',
-      },
-    ],
-    cta: {
-      title: 'Ready to Get Started?',
-      description: 'Join us today and experience the best of our services.',
-      buttonText: 'Sign Up Now',
-    },
-    blogs: [
-      {
-        title: 'Healthy Lifestyle',
-        summary: 'Tips for maintaining a healthy diet.',
-        image: '/LOGO.png',
-      },
-      {
-        title: 'Pet Care',
-        summary: 'How to take care of your furry friends.',
-        image: '/LOGO.png',
-      },
-      {
-        title: 'Healthy Lifestyle',
-        summary: 'Tips for maintaining a healthy diet.',
-        image: '/LOGO.png',
-      },
-      {
-        title: 'Pet Care',
-        summary: 'How to take care of your furry friends.',
-        image: '/LOGO.png',
-      },
-      {
-        title: 'Healthy Lifestyle',
-        summary: 'Tips for maintaining a healthy diet.',
-        image: '/LOGO.png',
-      },
-      {
-        title: 'Pet Care',
-        summary: 'How to take care of your furry friends.',
-        image: '/LOGO.png',
-      },
-    ],
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,5 +60,76 @@ function LandingPage() {
     </div>
   );
 }
+// Default data to show when no data is found
+const defaultData = {
+  hero: {
+    title: 'Welcome to TheraLearn',
+    subtitle: 'The best platform to learn and play games.',
+    buttonText: 'Lets play',
+  },
+  features: [
+    {
+      icon: 'rocket',
+      title: 'Fast Performance',
+      description: 'Boost your workflow with lightning-fast speeds.',
+      image: '/LOGO.png',
+    },
+    {
+      icon: 'puzzle-piece',
+      title: 'Customizable',
+      description: 'Easily adapt features to suit your preferences.',
+      image: '/LOGO.png',
+    },
+    {
+      icon: 'robot',
+      title: 'Automation',
+      description: 'Smart tools to automate your tasks.',
+      image: '/LOGO.png',
+    },
+    {
+      icon: 'gamepad',
+      title: 'Interactive UI',
+      description: 'Engage with an immersive and fun UI.',
+      image: '/LOGO.png',
+    },
+  ],
+  cta: {
+    title: 'Ready to Get Started?',
+    description: 'Join us today and experience the best of our services.',
+    buttonText: 'Sign Up Now',
+  },
+  blogs: [
+    {
+      title: 'Healthy Lifestyle',
+      summary: 'Tips for maintaining a healthy diet.',
+      image: '/LOGO.png',
+    },
+    {
+      title: 'Pet Care',
+      summary: 'How to take care of your furry friends.',
+      image: '/LOGO.png',
+    },
+    {
+      title: 'Healthy Lifestyle',
+      summary: 'Tips for maintaining a healthy diet.',
+      image: '/LOGO.png',
+    },
+    {
+      title: 'Pet Care',
+      summary: 'How to take care of your furry friends.',
+      image: '/LOGO.png',
+    },
+    {
+      title: 'Healthy Lifestyle',
+      summary: 'Tips for maintaining a healthy diet.',
+      image: '/LOGO.png',
+    },
+    {
+      title: 'Pet Care',
+      summary: 'How to take care of your furry friends.',
+      image: '/LOGO.png',
+    },
+  ],
+};
 
 export default LandingPage;

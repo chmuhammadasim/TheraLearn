@@ -24,7 +24,7 @@ function PsychologistListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-green-100 to-yellow-100 p-6">
+    <div className="min-h-screen bg-gradient-to-r pt-16 from-blue-100 via-green-100 to-yellow-100 p-6">
       <header className="text-center py-8">
         <h1 className="text-5xl font-extrabold text-blue-900 mb-4">Our Psychologists</h1>
         <p className="text-xl text-gray-700">Click on a psychologist to view details and contact them.</p>
