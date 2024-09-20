@@ -118,7 +118,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   experience: {
-    type: String, // Description of experience
+    type: [String], // Description of experience
     trim: true,
   },
   specialization: {
