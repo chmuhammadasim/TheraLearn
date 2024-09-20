@@ -17,10 +17,20 @@ const blogRoute = require("./routes/blog.route");
 const gameRoute = require("./routes/game.route");
 const psychologistRoute = require("./routes/psychologist.route");
 const queryRoute = require("./routes/query.route");
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const xssprotection = require('./middleware/xss-protection');
 
 app.use(cors());
 app.use(accessControl);
-
+app.use(helmet());
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	limit: 100, 
+	standardHeaders: 'draft-7',
+	legacyHeaders: false, 
+})
+app.use(limiter)
 app.use(
   bodyParser.urlencoded({
     extended: true,
@@ -43,7 +53,7 @@ if (process.env.NODE_ENV !== "test") {
       );
     });
 }
-
+app.use(xssprotection);
 app.get("/api", function (req, res) {
   res.status(200).send({
     message: "Express backend server",
