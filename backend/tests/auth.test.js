@@ -1,18 +1,19 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const app = require('../app'); // Assuming you export your express app in a file
+const app = require('../app');
 const User = require('../model/user.model');
 const jwt = require('jsonwebtoken');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 
-// Mock environment variables for JWT
 process.env.JWT_KEY = 'test_jwt_secret';
 
 describe('AuthController Tests', () => {
+    let mongoServer;
+
     // Setup an in-memory MongoDB instance
     beforeAll(async () => {
-        const { MongoMemoryServer } = require('mongodb-memory-server');
-        const mongoServer = await MongoMemoryServer.create();
+        mongoServer = await MongoMemoryServer.create();
         await mongoose.connect(mongoServer.getUri(), {
             useNewUrlParser: true,
             useUnifiedTopology: true,
@@ -30,14 +31,14 @@ describe('AuthController Tests', () => {
     });
 
     // Test the Checkapi route
-    test('GET / should return Auth API is working', async () => {
+    test('GET /auth should return "Auth API is working"', async () => {
         const res = await request(app).get('/auth');
         expect(res.statusCode).toEqual(200);
         expect(res.body.message).toBe('Auth API is working');
     });
 
     // Test the Signup route
-    test('POST /signup should create a new user', async () => {
+    test('POST /auth/signup should create a new user', async () => {
         const userData = {
             username: 'testuser',
             email: 'testuser@example.com',
@@ -55,8 +56,7 @@ describe('AuthController Tests', () => {
     });
 
     // Test for email uniqueness during signup
-    test('POST /signup should return 400 for duplicate email', async () => {
-        // Insert a user into the DB
+    test('POST /auth/signup should return 400 for duplicate email', async () => {
         const user = new User({
             username: 'user1',
             email: 'user1@example.com',
@@ -79,8 +79,7 @@ describe('AuthController Tests', () => {
     });
 
     // Test the Login route
-    test('POST /login should log in an existing user', async () => {
-        // Create a new user
+    test('POST /auth/login should log in an existing user', async () => {
         const user = new User({
             username: 'user1',
             email: 'user1@example.com',
@@ -103,8 +102,8 @@ describe('AuthController Tests', () => {
         expect(res.body.role).toBe(user.role);
     });
 
-    // Test login failure with wrong credentials
-    test('POST /login should fail with incorrect password', async () => {
+    // Test login failure with incorrect password
+    test('POST /auth/login should fail with incorrect password', async () => {
         const user = new User({
             username: 'user1',
             email: 'user1@example.com',
@@ -126,7 +125,7 @@ describe('AuthController Tests', () => {
     });
 
     // Test login failure when user does not exist
-    test('POST /login should return 404 when user not found', async () => {
+    test('POST /auth/login should return 404 when user not found', async () => {
         const loginData = {
             email: 'nonexistent@example.com',
             password: 'password123',

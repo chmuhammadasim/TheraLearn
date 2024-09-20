@@ -38,7 +38,7 @@ const ProfilePage = () => {
           country: res.data.country || '',
           contact: res.data.contact || '',
           bio: res.data.bio || '',
-          profilePictureUrl: res.data.profilePictureUrl || 'https://via.placeholder.com/150',
+          profilePictureUrl: res.data.profilePictureUrl || '/LOGO.png',
           dateOfBirth: res.data.dateOfBirth || '',
           createdAt: res.data.createdAt || '',
         });
