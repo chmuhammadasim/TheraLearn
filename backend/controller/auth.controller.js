@@ -55,7 +55,7 @@ AuthController.LogInUser = async (req, res) => {
             const token = jsonwebtoken.sign(
                 { userId: user._id, role: user.role },
                 process.env.JWT_KEY,
-                { expiresIn: '1d' }
+                { expiresIn: '2d' }
             );
 
             res.status(201).send({

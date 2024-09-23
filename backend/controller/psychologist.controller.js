@@ -1,4 +1,5 @@
 const Users = require('../model/user.model');
+const Blog = require('../model/blog.model');
 const psychologistController = {};
 
 psychologistController.Checkapi = (req, res) => {
@@ -49,6 +50,53 @@ psychologistController.getPsychologistById = async (req, res) => {
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 };
+
+
+psychologistController.getBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ psychologistId: req.params.id });
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching blogs' });
+  }
+};
+
+psychologistController.createBlog = async (req, res) => {
+  try {
+    const newBlog = new Blog({
+      ...req.body,
+      psychologistId: req.params.id,
+    });
+    const savedBlog = await newBlog.save();
+    res.status(201).json(savedBlog);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating blog' });
+  }
+};
+
+psychologistController.updateBlog = async (req, res) => {
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.blogId,
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedBlog);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating blog' });
+  }
+};
+
+
+psychologistController.deleteBlog = async (req, res) => {
+  try {
+    await Blog.findByIdAndDelete(req.params.blogId);
+    res.status(200).json({ message: 'Blog deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting blog' });
+  }
+};
+
 
 
 
