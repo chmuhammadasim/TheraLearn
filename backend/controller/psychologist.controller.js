@@ -54,7 +54,7 @@ psychologistController.getPsychologistById = async (req, res) => {
 
 psychologistController.getBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ psychologistId: req.params.id });
+    const blogs = await Blog.find({ author: req.userData.userId });
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching blogs' });
@@ -65,7 +65,7 @@ psychologistController.createBlog = async (req, res) => {
   try {
     const newBlog = new Blog({
       ...req.body,
-      psychologistId: req.params.id,
+      psychologistId: req.userData.userId,
     });
     const savedBlog = await newBlog.save();
     res.status(201).json(savedBlog);
