@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FiEdit, FiTrash, FiSave } from 'react-icons/fi';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { motion } from 'framer-motion';
+import Loading from '../../components/Loading';
 
 const PsychologistBlogPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -16,21 +17,28 @@ const PsychologistBlogPage = () => {
   const [message, setMessage] = useState('');
   const psychologistId = 'psychologist-id'; // Get from context
   const token = localStorage.getItem("authToken");
+  const [loading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/psychologist/${psychologistId}/blogs`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        setBlogs(response.data);
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+      }
+    };
     fetchBlogs();
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+ 
   }, [token]);
 
-  const fetchBlogs = async () => {
-    try {
-      const response = await axios.get(`http://localhost:5000/api/psychologist/${psychologistId}/blogs`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      setBlogs(response.data);
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    }
-  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,7 +96,7 @@ const PsychologistBlogPage = () => {
     });
     setIsCreating(false);
   };
-
+  if (loading) return <Loading />;
   return (
     <div className="max-w-7xl mx-auto p-6 mt-24 mb-24 md:p-10 bg-gradient-to-r from-blue-50 to-purple-50 space-y-6">
       <h1 className="text-4xl md:text-5xl font-bold text-purple-700">Manage Your Blogs</h1>
@@ -209,7 +217,7 @@ const PsychologistBlogPage = () => {
           </div>
           <button 
             onClick={() => updateBlog(editingBlog._id, editingBlog)} 
-            className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-green-600 transition">
+            className="bg-green-500 text-white px-8 py-2 flex rounded-lg mt-4 hover:bg-green-600 transition">
             <FiSave className="mr-2" /> Save Changes
           </button>
         </motion.div>

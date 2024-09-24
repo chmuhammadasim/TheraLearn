@@ -62,7 +62,7 @@ export default function Navbar() {
         label: "Paitent Info",
         color: "#2a9d8f",
       }, // Teal
-      { to: "/psychologist-blog-form", label: "Blog Form", color: "#e76f51" }, // Muted Red-Orange
+      { to: "/PsychologistBlogPage", label: "Blog Panel", color: "#e76f51" }, // Muted Red-Orange
     ],
     admin: [
       { to: "/superadmin", label: "UserDashboard", color: "#ff0054" }, // Hot Pink
