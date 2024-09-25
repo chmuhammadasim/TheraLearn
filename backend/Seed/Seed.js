@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const Blog = require('./models/Blog');
-const Game = require('./models/Game');
-const Question = require('./models/Question');
-const User = require('./models/User');
+const Blog = require('../model/blog.model');
+const Game = require('../model/game.model');
+const Question = require('../model/question.model');
+const User = require('../model/user.model');
 
 // MongoDB connection
 const mongoURI = 'mongodb://localhost:27017/theraLearn'; // Replace with your MongoDB URI
@@ -332,64 +332,79 @@ const seedDatabase = async () => {
         questionText: 'How are you feeling today?',
         psychologistId: psychologists[0]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
       {
         questionText: 'What challenges are you facing?',
         psychologistId: psychologists[1]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
       {
         questionText: 'How did you cope with stress this week?',
         psychologistId: psychologists[2]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
       {
         questionText: 'What is your main goal for therapy?',
         psychologistId: psychologists[3]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
       {
         questionText: 'How do you usually handle conflict?',
         psychologistId: psychologists[0]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
       // More questions
       {
         questionText: 'What makes you happy?',
         psychologistId: psychologists[1]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
       {
         questionText: 'What do you want to improve about yourself?',
         psychologistId: psychologists[2]._id,
         createdAt: new Date(),
+        category:'medicine'
       },
     ]);
 
     // Create blogs
     const blogs = await Blog.insertMany([
       {
-        title: 'Understanding Anxiety',
-        content: 'Anxiety is a common mental health issue...',
         author: psychologists[0]._id,
         createdAt: new Date(),
+        title: 'The Importance of Mental Health',
+        slug: 'importance-mental-health',  // Unique slug
+        content: 'Mental health is crucial for overall well-being...',
+        summary: 'An overview of why mental health matters.',
+        category: 'Health',          // Required category
+        tags: ['mental health', 'wellness'],
+        coverImageUrl: 'https://example.com/mental-health.jpg',
+        publishedDate: new Date(),
+        publicationStatus: 'published',
+        estimatedReadTime: 5,
+        seoTitle: 'Mental Health Overview',
+        seoDescription: 'Learn about the importance of mental health.',
       },
       {
-        title: 'Coping with Stress',
-        content: 'Stress can be managed with various techniques...',
+        title: 'Understanding Anxiety Disorders',
+        slug: 'understanding-anxiety-disorders',
+        content: 'Anxiety disorders are among the most common mental health issues...',
+        summary: 'A deep dive into anxiety disorders and their treatments.',
+        category: 'Health',                 // Required category
+        tags: ['anxiety', 'psychology'],
+        coverImageUrl: 'https://example.com/anxiety.jpg',
+        publishedDate: new Date(),
+        publicationStatus: 'published',
+        estimatedReadTime: 7,
+        seoTitle: 'Anxiety Disorders Explained',
+        seoDescription: 'Explore the types and treatments for anxiety disorders.',
         author: psychologists[1]._id,
-        createdAt: new Date(),
-      },
-      {
-        title: 'The Importance of Therapy',
-        content: 'Therapy can greatly improve mental well-being...',
-        author: psychologists[2]._id,
-        createdAt: new Date(),
-      },
-      {
-        title: 'Building Healthy Relationships',
-        content: 'Relationships are key to emotional health...',
-        author: psychologists[3]._id,
         createdAt: new Date(),
       },
     ]);
