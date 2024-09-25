@@ -9,7 +9,6 @@ const server = http.createServer(app);
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const fs = require("file-system");
 const accessControl = require("./middleware/access-controls");
 const errorHandler = require("./middleware/error-handler");
 const errorMessage = require("./middleware/error-message");
@@ -37,11 +36,14 @@ app.use(helmet());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: "draft-7", // Return rate limit info in the `RateLimit-*` headers
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-app.use(helmet.noSniff()); // Prevent browsers from sniffing MIME types
 app.use(limiter); // Apply rate limiting middleware
+
+// Prevent browsers from sniffing MIME types
+app.use(helmet.noSniff()); 
+app.use(helmet.hidePoweredBy()); // Remove the X-Powered-By header
 
 // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 app.use(
@@ -54,17 +56,21 @@ app.use(bodyParser.json());
 // Connect to MongoDB if not in test environment
 if (process.env.NODE_ENV !== "test") {
   mongoose
-    .connect(process.env.THERALEARN_DB_URL)
+    .connect(process.env.THERALEARN_DB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
     .then(() =>
       console.log(
-        `mongoDB connected successfully on ${process.env.THERALEARN_DB_URL}(app.js)`
+        `MongoDB connected successfully on ${process.env.THERALEARN_DB_URL}(app.js)`
       )
     )
     .catch((error) => {
       console.error(
-        `mongoDB cannot connect on ${process.env.THERALEARN_DB_URL}(app.js)`,
-        error
+        `MongoDB cannot connect on ${process.env.THERALEARN_DB_URL}(app.js):`,
+        error.message
       );
+      process.exit(1); // Exit process with failure
     });
 }
 
@@ -87,15 +93,24 @@ app.use("/api/query", queryRoute);
 app.use("/api/psychologist", psychologistRoute);
 app.use("/api/game", gameRoute);
 
+// Handle 404 errors
+app.use((req, res, next) => {
+  res.status(404).send({
+    error: "Not Found",
+    message: "The requested resource could not be found.",
+  });
+});
+
 // Apply custom error handling middleware
 app.use(errorHandler);
 app.use(errorMessage);
 
 // Start the server and listen on the specified port
-try {
-  server.listen(process.env.PORT_URL || 5000);
-  console.log(`Connect with the port ${process.env.PORT_URL}`);
-} catch (error) {
-  console.log(`Cannot Connect with the port ${process.env.PORT_URL}`);
-  console.log(error);
-}
+server.listen(process.env.PORT_URL || 5000, (error) => {
+  if (error) {
+    console.error(`Cannot Connect with the port ${process.env.PORT_URL}:`, error.message);
+    process.exit(1); // Exit process with failure
+  } else {
+    console.log(`Connected with the port ${process.env.PORT_URL}`);
+  }
+});
