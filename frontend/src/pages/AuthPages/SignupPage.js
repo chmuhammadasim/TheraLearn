@@ -111,7 +111,7 @@
     }
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
+      <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
         {/* Animated Background */}
         <motion.div
           className="absolute inset-0 bg-[#ff7560] opacity-70 rounded-full"
@@ -155,7 +155,7 @@
           )}
 
           {/* Toggle between User and Psychologist */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-6 gap-5">
             <button
               className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200'}`}
               onClick={() => setIsPsychologist(false)}

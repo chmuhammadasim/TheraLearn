@@ -17,8 +17,8 @@ import AuthRoute from "./components/Routes/AuthRoute";
 import ProfilePage from "./pages/Profile/Profile";
 import SuperAdminRoute from "./components/Routes/SuperAdminRoute";
 import SuperAdminPanel from "./pages/superAdmin/SuperAdminPanel";
-import AdminBlogDashboard from './pages/superAdmin/AdminBlogPanel'
-import SuperAdminContactUs from "./pages/superAdmin/SuperAdminContactUs"; 
+import AdminBlogDashboard from "./pages/superAdmin/AdminBlogPanel";
+import SuperAdminContactUs from "./pages/superAdmin/SuperAdminContactUs";
 import PsychologistRoute from "./components/Routes/PsychologistRoute";
 import GamePage from "./pages/Game/Game";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
@@ -100,51 +100,51 @@ function App() {
 
             {isLoggedIn && role === "admin" && (
               <>
-              <Route
-                path="/superadmin"
-                element={
-                  <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
-                    <SuperAdminPanel />
-                  </SuperAdminRoute>
-                }
-              />
-              <Route
-                path="/superadminblogdashboard"
-                element={
-                  <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
-                    <AdminBlogDashboard />
-                  </SuperAdminRoute>
-                }
-              />
-              <Route
-                path="/superadmincontactus"
-                element={
-                  <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
-                    <SuperAdminContactUs />
-                  </SuperAdminRoute>
-                }
-              />
+                <Route
+                  path="/superadmin"
+                  element={
+                    <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
+                      <SuperAdminPanel />
+                    </SuperAdminRoute>
+                  }
+                />
+                <Route
+                  path="/superadminblogdashboard"
+                  element={
+                    <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
+                      <AdminBlogDashboard />
+                    </SuperAdminRoute>
+                  }
+                />
+                <Route
+                  path="/superadmincontactus"
+                  element={
+                    <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
+                      <SuperAdminContactUs />
+                    </SuperAdminRoute>
+                  }
+                />
               </>
             )}
 
             {isLoggedIn && role === "psychologist" && (
               <>
-              <Route
-                path="/psychologist-blog-form"
-                element={
-                  <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
-                    <BlogForm />
-                  </PsychologistRoute>
-                }
-              />
-              <Route
-                path="/PsychologistBlogPage"
-                element={
-                  <PsychologistBlogPage isLoggedIn={isLoggedIn} role={role}>
-                    <BlogForm />
-                  </PsychologistBlogPage>
-                }
-              />
+                <Route
+                  path="/psychologist-blog-form"
+                  element={
+                    <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
+                      <BlogForm />
+                    </PsychologistRoute>
+                  }
+                />
+                <Route
+                  path="/PsychologistBlogPage"
+                  element={
+                    <PsychologistBlogPage isLoggedIn={isLoggedIn} role={role}>
+                      <BlogForm />
+                    </PsychologistBlogPage>
+                  }
+                />
               </>
             )}
 
