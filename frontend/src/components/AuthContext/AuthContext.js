@@ -1,46 +1,83 @@
-import React, { createContext, useState, useEffect } from "react";
-// import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useEffect, useCallback, useMemo } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
-  // const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const checkLoginStatus = () => {
+  const checkTokenValidity = (token) => {
+    // Assuming your token contains expiry information in the payload (JWT).
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const isExpired = payload.exp && Date.now() >= payload.exp * 1000;
+      return !isExpired;
+    } catch (err) {
+      console.error("Token validation error:", err);
+      return false;
+    }
+  };
+
+  const checkLoginStatus = useCallback(() => {
+    try {
       const token = localStorage.getItem("authToken");
       const userRole = localStorage.getItem("authRole");
-      if (token) {
+
+      if (token && checkTokenValidity(token)) {
         setIsLoggedIn(true);
         setRole(userRole);
       } else {
         setIsLoggedIn(false);
         setRole(null);
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("authRole");
       }
-    };
-
-    checkLoginStatus();
+    } catch (err) {
+      console.error("Error checking login status:", err);
+      setError("An error occurred while verifying login status.");
+      setIsLoggedIn(false);
+      setRole(null);
+    }
   }, []);
 
+  useEffect(() => {
+    checkLoginStatus();
+  }, [checkLoginStatus]);
+
   const login = (token, userRole) => {
-    localStorage.setItem("authToken", token);
-    localStorage.setItem("authRole", userRole);
-    setIsLoggedIn(true);
-    setRole(userRole);
+    try {
+      if (checkTokenValidity(token)) {
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("authRole", userRole);
+        setIsLoggedIn(true);
+        setRole(userRole);
+      } else {
+        throw new Error("Invalid or expired token.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Login failed. Invalid token.");
+      logout();
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("authRole");
-    setIsLoggedIn(false);
-    setRole(null);
-    // navigate('/');
+    try {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authRole");
+      setIsLoggedIn(false);
+      setRole(null);
+    } catch (err) {
+      console.error("Logout error:", err);
+      setError("An error occurred during logout.");
+    }
   };
 
+  const authContextValue = useMemo(() => ({ isLoggedIn, role, login, logout, error }), [isLoggedIn, role, error]);
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, role, login, logout }}>
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );
