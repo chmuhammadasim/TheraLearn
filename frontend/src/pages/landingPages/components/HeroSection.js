@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const HeroSection = ({ title, subtitle, buttonText }) => {
   return (
-    <section className="bg-gradient-to-b from-[#78e978] via-[#61e8b3] to-[#78e978] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center relative overflow-hidden">
+    <section className="bg-gradient-to-b from-[#6a11cb] via-[#2575fc] to-[#6a11cb] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center relative overflow-hidden">
       {/* Background Image with Blur Effect */}
       <div className="absolute top-0 left-0 w-full h-full z-[-1] backdrop-blur-md">
         <motion.div
