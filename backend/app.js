@@ -22,6 +22,8 @@ const queryRoute = require("./routes/query.route");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
+const csurf = require('csurf');
+const csrfProtection = csurf({ cookie: true });
 
 // Enable Cross-Origin Resource Sharing (CORS)
 app.use(cors());
@@ -31,6 +33,9 @@ app.use(accessControl);
 
 // Use Helmet to help secure Express apps with various HTTP headers
 app.use(helmet());
+
+// Enable CSRF protection for form submissions
+app.use(csrfProtection);
 
 // Set up rate limiting to prevent abuse
 const limiter = rateLimit({
@@ -53,10 +58,16 @@ app.use(
 );
 app.use(bodyParser.json());
 
+app.use(bodyParser.json({ limit: '10kb' })); // Limit payload size to 10KB
+app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
+
 // Connect to MongoDB if not in test environment
 if (process.env.NODE_ENV !== "test") {
   mongoose
-    .connect(process.env.THERALEARN_DB_URL,)
+    .connect(process.env.THERALEARN_DB_URL, {
+      retryWrites: true,
+      w: 'majority',
+    })
     .then(() =>
       console.log(
         `MongoDB connected successfully on ${process.env.THERALEARN_DB_URL}(app.js)`
