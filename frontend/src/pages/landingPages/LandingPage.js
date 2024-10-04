@@ -56,7 +56,7 @@ function LandingPage() {
         description={data.cta.description || defaultData.cta.description}
         buttonText={data.cta.buttonText || defaultData.cta.buttonText}
       />
-      <BlogSection blogs={data.blogs.length > 0 ? data.blogs : defaultData.blogs} />
+      <BlogSection />
     </div>
   );
 }
