@@ -56,10 +56,7 @@ app.use(bodyParser.json());
 // Connect to MongoDB if not in test environment
 if (process.env.NODE_ENV !== "test") {
   mongoose
-    .connect(process.env.THERALEARN_DB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    .connect(process.env.THERALEARN_DB_URL,)
     .then(() =>
       console.log(
         `MongoDB connected successfully on ${process.env.THERALEARN_DB_URL}(app.js)`
