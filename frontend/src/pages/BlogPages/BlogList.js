@@ -31,7 +31,7 @@ const BlogList = () => {
   };
 
   return (
-    <div className="relative min-h-screen pt-20 bg-gradient-to-r from-blue-200 via-teal-400 to-green-200 overflow-hidden">
+    <div className="relative min-h-screen pt-20 bg-gradient-to-r from-[#f9d423] via-[#ff6338] to-[#f9d423] overflow-hidden">
       {/* Full-screen background elements */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
@@ -52,7 +52,7 @@ const BlogList = () => {
       </motion.div>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
-        <h1 className="text-5xl font-extrabold text-blue-900 mb-12 text-center relative z-10">
+        <h1 className="p-6 bg-black bg-opacity-20 rounded-full text-5xl font-extrabold text-white mb-12 text-center relative z-10">
           Our Blog
         </h1>
 
