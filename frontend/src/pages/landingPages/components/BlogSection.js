@@ -27,7 +27,7 @@ const BlogSection = () => {
   }, []);
 
   const handleBlogClick = (id) => {
-    navigate(`/blog/${id}`);
+    navigate(`/blog/${id}`); // Navigate to the blog detail page
   };
 
   if (loading) {
@@ -65,11 +65,11 @@ const BlogSection = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
+              whileHover={{ scale: 1.05 }} // Adds a subtle zoom effect on hover
+              className="cursor-pointer"
+              onClick={() => handleBlogClick(blog._id)} // Ensures navigation works on click
             >
-              <BlogCard
-                {...blog}
-                onClick={() => handleBlogClick(blog._id)}
-              />
+              <BlogCard {...blog} />
             </motion.div>
           ))}
         </div>

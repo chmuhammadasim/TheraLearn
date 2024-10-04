@@ -1,15 +1,28 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const CTASection = ({ title, description, buttonText }) => {
+const CTASection = ({ title, description, buttonText, benefits }) => {
   return (
     <section
       id="cta"
-      className="bg-[#ff347f] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center relative overflow-hidden"
+      className="relative bg-gradient-to-r from-[#ff347f] to-[#ff7096] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center items-center overflow-hidden"
     >
-      <div className="container mx-auto px-6 text-center">
+      {/* Background Animated Elements */}
+      <motion.div
+        className="absolute top-0 left-1/4 w-64 h-64 bg-[#fdd365] opacity-20 rounded-full filter blur-xl"
+        animate={{ y: [0, 20, 0] }}
+        transition={{ repeat: Infinity, duration: 6 }}
+      />
+      <motion.div
+        className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#61d4b3] opacity-20 rounded-full filter blur-xl"
+        animate={{ y: [0, -20, 0] }}
+        transition={{ repeat: Infinity, duration: 6 }}
+      />
+      
+      {/* Content Container */}
+      <div className="container mx-auto px-6 text-center z-10">
         <motion.h2
-          className="text-4xl md:text-5xl font-extrabold mb-4"
+          className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -24,15 +37,32 @@ const CTASection = ({ title, description, buttonText }) => {
         >
           {description}
         </motion.p>
+
+        {/* Call to Action Button */}
         <motion.a
           href="#contact"
-          className="bg-[#fdd365] text-[#61d4b3] px-8 py-4 rounded-full text-lg font-semibold hover:bg-[#fbbf2d] transition-transform duration-300 transform hover:scale-110"
+          className="inline-block bg-[#fdd365] text-[#ff347f] px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-[#fbbf2d] hover:shadow-2xl transition-transform duration-300 transform hover:scale-110"
           initial={{ scale: 1 }}
           whileHover={{ scale: 1.15 }}
           transition={{ duration: 0.3 }}
         >
           {buttonText}
         </motion.a>
+
+        {/* Benefits Section */}
+        <motion.div
+          className="mt-12 text-left grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+        >
+          {benefits.map((benefit, index) => (
+            <div key={index} className="p-4 bg-white bg-opacity-10 rounded-lg shadow-md hover:bg-opacity-20 transition duration-300">
+              <h3 className="text-xl font-semibold mb-2">{benefits.title}</h3>
+              <p className="text-sm">{benefit.description}</p>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

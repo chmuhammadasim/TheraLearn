@@ -55,6 +55,7 @@ function LandingPage() {
         title={data.cta.title || defaultData.cta.title}
         description={data.cta.description || defaultData.cta.description}
         buttonText={data.cta.buttonText || defaultData.cta.buttonText}
+        benefits={data.cta.benefits || defaultData.cta.benefits}
       />
       <BlogSection />
     </div>
@@ -95,8 +96,14 @@ const defaultData = {
   ],
   cta: {
     title: 'Ready to Get Started?',
-    description: 'Join us today and experience the best of our services.',
-    buttonText: 'Sign Up Now',
+  description: 'Join us today and experience the best of our services.',
+  buttonText: 'Sign Up Now',
+  benefits: [
+    { title: '24/7 Support', description: 'We provide round-the-clock support for all your needs.' },
+    { title: 'Seamless Integration', description: 'Easily integrate with our platform without any hassle.' },
+    { title: 'Top-notch Security', description: 'Your data is protected with the highest security standards.' },
+    { title: 'Affordable Pricing', description: 'Enjoy our services at competitive pricing plans.' }
+  ],
   },
   blogs: [
     {
