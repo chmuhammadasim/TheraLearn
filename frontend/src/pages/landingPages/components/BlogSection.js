@@ -51,7 +51,7 @@ const BlogSection = () => {
     <section className="py-16 md:py-24 bg-gradient-to-br from-gray-100 via-white to-gray-200 min-h-screen">
       <div className="container mx-auto px-6 text-center">
         <motion.h2
-          className="text-4xl md:text-5xl font-bold mb-12 text-gray-800"
+          className=" text-4xl md:text-5xl font-bold mb-12 text-gray-800"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}

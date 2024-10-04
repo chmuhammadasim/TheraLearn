@@ -22,7 +22,7 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
       {/* Content Container */}
       <div className="container mx-auto px-6 text-center z-10">
         <motion.h2
-          className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2"
+          className=" p-6 bg-white bg-opacity-10 text-4xl md:text-5xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
