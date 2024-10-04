@@ -45,7 +45,19 @@ export const AuthProvider = ({ children }) => {
     checkLoginStatus();
   }, [checkLoginStatus]);
 
-  const login = (token, userRole) => {
+  const logout = useCallback(() => {
+    try {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authRole");
+      setIsLoggedIn(false);
+      setRole(null);
+    } catch (err) {
+      console.error("Logout error:", err);
+      setError("An error occurred during logout.");
+    }
+  }, []);
+
+  const login = useCallback((token, userRole) => {
     try {
       if (checkTokenValidity(token)) {
         localStorage.setItem("authToken", token);
@@ -60,21 +72,11 @@ export const AuthProvider = ({ children }) => {
       setError("Login failed. Invalid token.");
       logout();
     }
-  };
+  }, [logout]);
 
-  const logout = () => {
-    try {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("authRole");
-      setIsLoggedIn(false);
-      setRole(null);
-    } catch (err) {
-      console.error("Logout error:", err);
-      setError("An error occurred during logout.");
-    }
-  };
+  
 
-  const authContextValue = useMemo(() => ({ isLoggedIn, role, login, logout, error }), [isLoggedIn, role, error]);
+  const authContextValue = useMemo(() => ({ isLoggedIn, role, login, logout, error }), [isLoggedIn, role, login, logout, error]);
 
   return (
     <AuthContext.Provider value={authContextValue}>
