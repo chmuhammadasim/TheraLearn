@@ -65,6 +65,8 @@ export default function Navbar() {
       { to: "/PsychologistBlogPage", label: "Blog Panel", color: "#e76f51" }, // Muted Red-Orange
     ],
     admin: [
+      { to: "/", label: "HomePage", color: "#ffb703" },
+      { to: "/games", label: "Games", color: "#023047" },
       { to: "/superadmin", label: "UserDashboard", color: "#ff0054" }, // Hot Pink
       { to: "/superadminpanel", label: "ContentPanel", color: "#3a86ff" }, // Bright Blue
       {
@@ -112,27 +114,31 @@ export default function Navbar() {
 
               {/* Centered Links */}
               <div className="hidden sm:flex sm:space-x-6">
-                {navLinks.map(({ to, label, color }) => (
-                  <motion.div
-                    key={to}
-                    className="relative"
-                    initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Link
-                      to={to}
-                      className={`px-2 py-2 ml-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
-                        location.pathname === to ? "text-white" : `text-gray-900` 
-                      }`}
-                      style={{
-                        backgroundColor: location.pathname === to ? color : "transparent",
-                      }}
+                {!isSuperAdmin &&
+                  navLinks.map(({ to, label, color }) => (
+                    <motion.div
+                      key={to}
+                      className="relative"
+                      initial={{ scale: 1 }}
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        to={to}
+                        className={`px-2 py-2 ml-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
+                          location.pathname === to
+                            ? "text-white"
+                            : `text-gray-900`
+                        }`}
+                        style={{
+                          backgroundColor:
+                            location.pathname === to ? color : "transparent",
+                        }}
+                      >
+                        {label}
+                      </Link>
+                    </motion.div>
+                  ))}
                 {isLoggedIn && (
                   <>
                     {(isUser || isPsychologist || isSuperAdmin) &&
@@ -147,10 +153,15 @@ export default function Navbar() {
                           <Link
                             to={to}
                             className={`px-2 py-2 ml-2 rounded-md text-md font-medium transition duration-300 ease-in-out ${
-                              location.pathname === to ? "text-white" : "text-gray-900"
+                              location.pathname === to
+                                ? "text-white"
+                                : "text-gray-900"
                             }`}
                             style={{
-                              backgroundColor: location.pathname === to ? color : "transparent",
+                              backgroundColor:
+                                location.pathname === to
+                                  ? color
+                                  : "transparent",
                             }}
                           >
                             {label}
@@ -221,28 +232,32 @@ export default function Navbar() {
           {/* Mobile Menu */}
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              {navLinks.map(({ to, label, color }) => (
-                <motion.div
-                  key={to}
-                  className="relative"
-                  initial={{ scale: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Link
-                    to={to}
-                    className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
-                      location.pathname === to ? "text-white" : "text-gray-900"
-                    }`}
-                    style={{
-                      backgroundColor: location.pathname === to ? color : "transparent",
-                    }}
-                    onClick={() => setOpen(false)}
+              {!isSuperAdmin &&
+                navLinks.map(({ to, label, color }) => (
+                  <motion.div
+                    key={to}
+                    className="relative"
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    {label}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      to={to}
+                      className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
+                        location.pathname === to
+                          ? "text-white"
+                          : "text-gray-900"
+                      }`}
+                      style={{
+                        backgroundColor:
+                          location.pathname === to ? color : "transparent",
+                      }}
+                      onClick={() => setOpen(false)}
+                    >
+                      {label}
+                    </Link>
+                  </motion.div>
+                ))}
               {isLoggedIn && (
                 <>
                   {(isUser || isPsychologist || isSuperAdmin) &&
@@ -257,10 +272,13 @@ export default function Navbar() {
                         <Link
                           to={to}
                           className={`block px-4 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out ${
-                            location.pathname === to ? "text-white" : "text-gray-900 "
+                            location.pathname === to
+                              ? "text-white"
+                              : "text-gray-900 "
                           }`}
                           style={{
-                            backgroundColor: location.pathname === to ? color : "transparent",
+                            backgroundColor:
+                              location.pathname === to ? color : "transparent",
                           }}
                           onClick={() => setOpen(false)}
                         >

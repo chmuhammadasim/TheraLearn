@@ -77,7 +77,7 @@ function GamePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: 'easeOut' }}
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold text-indigo-800 mb-6 drop-shadow-2xl">
+        <h1 className="p-6 bg-black bg-opacity-20 rounded-full text-5xl md:text-6xl font-extrabold text-indigo-800 mb-6 drop-shadow-2xl">
           Explore Fun Games
         </h1>
         <p className="text-lg text-gray-700">Discover exciting games to play and challenge yourself!</p>
