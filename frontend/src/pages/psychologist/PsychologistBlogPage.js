@@ -52,7 +52,7 @@ const PsychologistBlogPage = () => {
 
   const createBlog = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/psychologist/${psychologistId}/blogs`, newBlog, {
+      const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/${psychologistId}/blogs`, newBlog, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setBlogs([...blogs, response.data]);
@@ -65,7 +65,7 @@ const PsychologistBlogPage = () => {
 
   const updateBlog = async (blogId, updatedData) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/psychologist/${psychologistId}/blogs/${blogId}`, updatedData, {
+      const response = await axios.put(`${process.env.REACT_APP_API_KEY}/psychologist/${psychologistId}/blogs/${blogId}`, updatedData, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setBlogs(blogs.map(blog => blog._id === blogId ? response.data : blog));
@@ -78,7 +78,7 @@ const PsychologistBlogPage = () => {
 
   const deleteBlog = async (blogId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/psychologist/${psychologistId}/blogs/${blogId}`, {
+      await axios.delete(`${process.env.REACT_APP_API_KEY}/psychologist/${psychologistId}/blogs/${blogId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setBlogs(blogs.filter(blog => blog._id !== blogId));

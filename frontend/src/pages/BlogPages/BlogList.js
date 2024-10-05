@@ -10,7 +10,7 @@ const BlogList = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/blog/all');
+        const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/all`);
         setBlogs(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -24,7 +24,7 @@ const BlogList = () => {
 
   const handleBlogClick = async (blogId) => {
     try {
-      await axios.post(`http://localhost:5000/api/blog/increment-views/${blogId}`);
+      await axios.post(`${process.env.REACT_APP_API_KEY}/blog/increment-views/${blogId}`);
     } catch (error) {
       console.error('Error incrementing view count:', error);
     }

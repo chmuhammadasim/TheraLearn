@@ -108,9 +108,8 @@ function ContactUsPage() {
 
   return (
     <div className="contact-container min-h-screen relative overflow-hidden">
-      <div className=" w-full h-full pt-20 bg-gradient-to-r from-[#e0f7fa] to-[#f1f8e9] opacity-20 z-[-1]"></div>
       <motion.h1
-        className="text-5xl font-extrabold mb-12 text-center"
+        className="text-5xl font-extrabold mb-12 text-center mt-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -218,7 +217,7 @@ function ContactUsPage() {
             <motion.button
               type="button"
               onClick={handleReset}
-              className="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-semibold ml-4 hover:bg-gray-400 transition-transform transform hover:scale-105"
+              className="bg-gray-300 text-white px-6 py-3 rounded-lg text-lg font-semibold ml-4 hover:bg-gray-400 transition-transform transform hover:scale-105"
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}

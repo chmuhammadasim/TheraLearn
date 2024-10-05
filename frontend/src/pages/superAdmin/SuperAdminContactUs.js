@@ -12,7 +12,7 @@ const SuperAdminContactUs = () => {
   useEffect(() => {
     const fetchQueries = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/query/all', {
+        const response = await axios.get(`${process.env.REACT_APP_API_KEY}/query/all`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`
           }
@@ -35,7 +35,7 @@ const SuperAdminContactUs = () => {
   const handleSendReply = async (email) => {
     try {
       await axios.post(
-        'http://localhost:5000/api/query/reply',
+        `${process.env.REACT_APP_API_KEY}/query/reply`,
         { email, subject: reply.subject, replyMessage: reply.replyMessage },
         {
           headers: {
