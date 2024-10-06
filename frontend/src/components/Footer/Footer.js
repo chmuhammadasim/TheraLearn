@@ -73,14 +73,6 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col items-center mb-8">
-          <motion.p
-            className="text-center mb-4 text-xs md:text-sm font-light"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            &copy; {new Date().getFullYear()} <span className="font-semibold">TheraLearn</span>. All rights reserved.
-          </motion.p>
           <motion.div
             className="flex gap-6 md:gap-8"
             initial={{ opacity: 0, y: 20 }}
@@ -97,14 +89,26 @@ const Footer = () => {
               <motion.a
                 key={idx}
                 href={url}
-                className={`text-2xl md:text-4xl text-[${color}] hover:text-yellow-300 transition-transform transform hover:scale-125`}
+                className={`text-2xl md:text-4xl hover:text-white transition-transform transform hover:scale-125`}
                 whileHover={{ scale: 1.3, rotate: 20 }}
                 whileTap={{ scale: 0.9 }}
+                style={{
+                  backgroundColor: color,
+                  padding: 5,
+                }}
               >
                 <Icon />
               </motion.a>
             ))}
           </motion.div>
+          <motion.p
+            className="text-center mt-10 text-xs md:text-sm font-light"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            &copy; {new Date().getFullYear()} <span className="font-semibold">TheraLearn</span>. All rights reserved.
+          </motion.p>
         </div>
       </div>
     </footer>

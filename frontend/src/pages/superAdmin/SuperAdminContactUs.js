@@ -67,7 +67,7 @@ const SuperAdminContactUs = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, ease: 'easeInOut' }}
             whileHover={{ scale: 1.05 }}
-            className="bg-white shadow-lg rounded-xl p-6 hover:shadow-3xl transition-shadow duration-300 relative transform border-l-4 border-blue-500"
+            className="bg-white shadow-lg rounded-xl p-6 hover:shadow-3xl transition-shadow duration-300 relative transform border-x-4 border-purple-500"
           >
             <div className="mb-4 text-left">
               <p className="font-bold text-2xl flex items-center text-blue-700 mb-2">

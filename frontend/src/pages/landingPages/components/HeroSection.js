@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const HeroSection = ({ title, subtitle, buttonText }) => {
   return (
-    <section className="bg-gradient-to-b from-[#6a11cb] via-[#2575fc] to-[#6a11cb] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center relative overflow-hidden">
+    <section className="bg-gradient-to-b from-[#6a11cb] via-[#2575fc] to-[#6a11cb] text-white py-16 md:py-24 md:p-12 min-h-screen flex flex-col justify-center relative overflow-hidden">
       {/* Background Image with Blur Effect */}
       <div className="absolute top-0 left-0 w-full h-full z-[-1] backdrop-blur-md">
         <motion.div
@@ -16,7 +16,7 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
 
       {/* Floating Emojis for Fun */}
       <motion.div
-        className="absolute top-13 left-10 text-6xl"
+        className="absolute bottom-10 left-10 text-6xl"
         animate={{ y: [0, -20, 0], x: [0, 20, 0] }}
         transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
       >
@@ -30,7 +30,7 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
         🚀
       </motion.div>
       <motion.div
-        className="absolute bottom-10 left-1/4 text-6xl"
+        className="absolute bottom-10 left-1/2 text-6xl"
         animate={{ y: [0, -30, 0], rotate: [0, 360, 0] }}
         transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
       >
@@ -39,7 +39,7 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
 
       {/* Floating Heart Shape */}
       <motion.div
-        className="absolute top-15 right-32 text-4xl"
+        className="absolute top-20 left-32 text-4xl"
         animate={{ y: [0, -15, 0], rotate: [0, 360, 0] }}
         transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
       >
@@ -70,10 +70,10 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
           href="#cta"
           className="bg-gradient-to-r from-[#ff6ec7] to-[#ff4081] text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-[0_0_30px_#ff6ec7] transition-transform duration-300 transform hover:scale-110"
           initial={{ scale: 1 }}
-          whileHover={{ scale: 1.2, rotate: [0, 10, -10, 0] }}
+          whileHover={{ scale: 2.2, rotate: [0, 20, -20, 0] }}
           transition={{ duration: 0.3 }}
         >
-          {buttonText} 🚀
+          🚀 {buttonText} 🚀
         </motion.a>
       </div>
 
@@ -85,6 +85,11 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
       />
       <motion.div
         className="absolute top-1/4 right-1/4 bg-[#9fc1ff] w-48 h-48 rounded-full opacity-30"
+        animate={{ y: [0, -20, 0], rotate: [0, 360, 0] }}
+        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-3.5 right-1/4 bg-[#bed0f1] w-40 h-40 rounded-full opacity-30"
         animate={{ y: [0, -20, 0], rotate: [0, 360, 0] }}
         transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
       />
