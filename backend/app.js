@@ -19,6 +19,7 @@ const blogRoute = require("./routes/blog.route");
 const gameRoute = require("./routes/game.route");
 const psychologistRoute = require("./routes/psychologist.route");
 const queryRoute = require("./routes/query.route");
+const contentRoute = require("./routes/content.route");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
@@ -93,6 +94,7 @@ app.use("/api/blog", blogRoute);
 app.use("/api/query", queryRoute);
 app.use("/api/psychologist", psychologistRoute);
 app.use("/api/game", gameRoute);
+app.use("/api/content", contentRoute);
 
 // Handle 404 errors
 app.use((req, res, next) => {
