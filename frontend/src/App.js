@@ -19,6 +19,7 @@ import SuperAdminRoute from "./components/Routes/SuperAdminRoute";
 import SuperAdminPanel from "./pages/superAdmin/SuperAdminPanel";
 import AdminBlogDashboard from "./pages/superAdmin/AdminBlogPanel";
 import SuperAdminContactUs from "./pages/superAdmin/SuperAdminContactUs";
+import SuperAdminContentPanel from "./pages/superAdmin/adminContentPanel";
 import PsychologistRoute from "./components/Routes/PsychologistRoute";
 import GamePage from "./pages/Game/Game";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
@@ -105,6 +106,14 @@ function App() {
                   element={
                     <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
                       <SuperAdminPanel />
+                    </SuperAdminRoute>
+                  }
+                />
+                <Route
+                  path="/superadminpanel"
+                  element={
+                    <SuperAdminRoute isLoggedIn={isLoggedIn} role={role}>
+                      <SuperAdminContentPanel />
                     </SuperAdminRoute>
                   }
                 />

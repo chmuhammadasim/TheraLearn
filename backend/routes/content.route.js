@@ -8,7 +8,7 @@ router.put("/update-hero",checkAuth,admin, contentController.updateHero);
 router.put("/update-feature/:index",checkAuth,admin, contentController.updateFeatureByIndex);
 router.delete("/delete-feature/:index",checkAuth,admin, contentController.deleteFeatureByIndex);
 router.put("/update-cta",checkAuth,admin, contentController.updateCta);
-router.get("/",checkAuth,admin, contentController.getAllContent);
+router.get("/", contentController.getAllContent);
 router.get("/hero",checkAuth,admin, contentController.getHero);
 router.get("/features",checkAuth,admin, contentController.getFeatures);
 router.get("/cta",checkAuth,admin, contentController.getCta);
