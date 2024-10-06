@@ -18,10 +18,11 @@ function LandingPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/mainPageData'); // Assuming the endpoint
+        const response = await fetch(`${process.env.REACT_APP_API_KEY}/content`); // Assuming the endpoint
         if (response.ok) {
           const result = await response.json();
-          setData(result);
+          console.log(result.content);
+          //setData(result.content);
         } else {
           setData(defaultData); // Use default data if the API call fails
         }
