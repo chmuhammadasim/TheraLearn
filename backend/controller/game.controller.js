@@ -58,7 +58,7 @@ gameController.getGameById = async (req, res) => {
   const userId = req.userData.userId; 
 
   try {
-    const game = await Game.findOne({ userId }); 
+    const game = await Game.find({ userId }); 
     
     if (!game) {
       return res.status(404).json({
