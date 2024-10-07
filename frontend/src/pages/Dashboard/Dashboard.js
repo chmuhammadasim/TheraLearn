@@ -19,7 +19,7 @@ function Dashboard() {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
         setUserData(user.data);
         setUserGames(games.data);
-        console.log(games.data);
+        console.log(user.data, games.data);
         
         setLoading(false);
       } catch (error) {
@@ -90,7 +90,7 @@ function Dashboard() {
     scales: {
       x: {
         grid: {
-          display: false,
+          display: true,
         },
         ticks: {
           color: '#FF6347',
@@ -110,7 +110,7 @@ function Dashboard() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-r from-blue-100 to-yellow-100 p-6 flex flex-col items-center"
+      className="min-h-screen bg-gradient-to-b from-[#51c26f] to-[#f2e901] p-6 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -168,6 +168,17 @@ function Dashboard() {
                   <div>
                     <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
                     <p><strong>Highest Score:</strong> {game.overallResults.highestScore || 'N/A'}</p>
+                    <p><strong>Total Score:</strong> {game.overallResults.totalScore || 'N/A'}</p>
+                    <p><strong>total Attempts:</strong> {game.overallResults.totalAttempts || 'N/A'}</p>
+                      {game.sessions.map((sessions) => (
+                        <li key={sessions._id} className="p-4 bg-yellow-100 rounded-lg shadow-sm flex items-center gap-4 transition-transform transform hover:scale-105">
+                          <div className="text-gray-800">
+                            <p><strong>Date Played:</strong> {new Date(sessions.datePlayed).toLocaleDateString() || 'N/A'}</p>
+                            <p><strong>Score:</strong> {sessions.score || 'N/A'}</p>
+                            <p><strong>Attempts:</strong> {sessions.attempts || 'N/A'}</p>
+                          </div>
+                        </li>
+                      ))}
                   </div>
                 </li>
               ))}
