@@ -48,15 +48,18 @@ const BlogSection = () => {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-100 via-white to-gray-200 min-h-screen">
-      <div className="container mx-auto px-6 text-center">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 min-h-screen relative overflow-hidden">
+      <div className="container mx-auto px-6 text-center relative z-10">
+        {/* Floating Decorative Shapes */}
+        <div className="absolute top-0 left-0 w-20 h-20 bg-yellow-300 rounded-full animate-bounce"></div>
+        <div className="absolute bottom-0 right-0 w-24 h-24 bg-green-200 rounded-full animate-pulse"></div>
         <motion.h2
-          className=" text-4xl md:text-5xl font-bold mb-12 text-gray-800"
+          className="text-4xl md:text-5xl font-bold mb-12 text-purple-900"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          From Our Blog
+          Explore Our Fun Blogs!
         </motion.h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {blogs.map((blog, index) => (
@@ -65,15 +68,18 @@ const BlogSection = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              whileHover={{ scale: 1.05 }} // Adds a subtle zoom effect on hover
-              className="cursor-pointer"
-              onClick={() => handleBlogClick(blog._id)} // Ensures navigation works on click
+              whileHover={{ scale: 1.1, rotate: 3 }} // Adds a playful zoom and tilt effect
+              className="cursor-pointer transform hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden bg-white p-4 relative z-20"
+              onClick={() => handleBlogClick(blog._id)}
             >
               <BlogCard {...blog} />
             </motion.div>
           ))}
         </div>
       </div>
+      {/* More Floating Decorations */}
+      <div className="absolute top-1/3 left-1/4 w-40 h-40 bg-purple-200 rounded-full animate-float"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-blue-300 rounded-full animate-float"></div>
     </section>
   );
 };

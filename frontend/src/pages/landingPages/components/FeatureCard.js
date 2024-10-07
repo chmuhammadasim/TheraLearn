@@ -27,7 +27,7 @@ const FeatureCard = ({ icon, title, description, image, color }) => {
         whileHover={{ rotate: 360 }}
         transition={{ type: 'spring', stiffness: 200 }}
       >
-        {icon}
+        {/* {icon} */}
       </motion.div>
 
       {/* Title and description */}

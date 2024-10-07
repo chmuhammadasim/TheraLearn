@@ -11,7 +11,6 @@ export const getUserData = async () => {
         'Content-Type': 'application/json'
       }
     });
-    
     return response.data;
   } catch (error) {
     throw new Error('Failed to fetch user data: ' + error.message);
