@@ -5,11 +5,12 @@ import { getUserGames } from '../../services/gameService';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import { motion } from 'framer-motion';
+import { FaStar, FaGamepad, FaTrophy } from 'react-icons/fa';
 
 function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [userGames, setUserGames] = useState(null);
+  const [userGames, setUserGames] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -18,21 +19,18 @@ function Dashboard() {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
         setUserData(user.data);
         setUserGames(games.data);
-        console.log(userGames);
+        console.log(games.data);
         
-
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         setError("There was an issue retrieving data. Please try again later.");
         setLoading(false);
-        setUserData(null);
-        setUserGames([]);
       }
     };
 
     fetchData();
-  }, [userGames]);
+  }, []);
 
   if (loading) {
     return <Loading />;
@@ -45,7 +43,7 @@ function Dashboard() {
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
           <p className="text-gray-700 mb-4">{error}</p>
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
             onClick={() => window.location.reload()}
           >
             Retry
@@ -62,10 +60,10 @@ function Dashboard() {
         label: 'Game Scores Over Time',
         data: userGames.length > 0 ? userGames.map(game => game.overallResults.totalScore) : [],
         fill: true,
-        backgroundColor: 'rgba(252, 58, 82, 0.2)',
-        borderColor: '#fc3a52',
-        pointBackgroundColor: '#0e2431',
-        pointBorderColor: '#fc3a52',
+        backgroundColor: 'rgba(253, 184, 19, 0.2)',
+        borderColor: '#FDB813',
+        pointBackgroundColor: '#FF6347',
+        pointBorderColor: '#FDB813',
         tension: 0.4,
       },
     ],
@@ -78,14 +76,14 @@ function Dashboard() {
         display: true,
         position: 'top',
         labels: {
-          color: '#0e2431',
+          color: '#FF6347',
         },
       },
       tooltip: {
-        backgroundColor: '#fc3a52',
+        backgroundColor: '#FDB813',
         titleColor: '#fff',
         bodyColor: '#fff',
-        borderColor: '#0e2431',
+        borderColor: '#FF6347',
         borderWidth: 1,
       },
     },
@@ -95,16 +93,16 @@ function Dashboard() {
           display: false,
         },
         ticks: {
-          color: '#0e2431',
+          color: '#FF6347',
         },
       },
       y: {
         grid: {
           borderDash: [5, 5],
-          color: '#e8e8e8',
+          color: '#FFD700',
         },
         ticks: {
-          color: '#0e2431',
+          color: '#FF6347',
         },
       },
     },
@@ -112,34 +110,34 @@ function Dashboard() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gray-50 p-6 flex flex-col items-center"
+      className="min-h-screen bg-gradient-to-r from-blue-100 to-yellow-100 p-6 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-4xl bg-white p-8 shadow-lg rounded-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">User Dashboard</h1>
+      <div className="mt-16 w-full max-w-4xl bg-white p-8 shadow-lg rounded-lg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-pink-200 to-purple-200 opacity-40 rounded-lg"></div>
+        <h1 className="text-4xl font-extrabold text-pink-600 mb-6 flex items-center gap-2 z-10 relative">
+          <FaGamepad className="text-yellow-400" /> User Dashboard
+        </h1>
 
         {userData ? (
           <motion.div
-            className="mb-8"
+            className="mb-8 z-10 relative"
             initial={{ opacity: 0, translateY: -20 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">User Information</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h2 className="text-3xl font-bold text-gray-700 mb-4">User Information</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-pink-100 p-4 rounded-lg shadow-md">
               <p><strong>Username:</strong> {userData.username || 'N/A'}</p>
               <p><strong>Email:</strong> {userData.email || 'N/A'}</p>
-              <p><strong>Password:</strong> **********</p> {/* Hiding actual password for security */}
-              <p><strong>Contact:</strong> {userData.contact || 'N/A'}</p>
               <p><strong>First Name:</strong> {userData.firstName || 'N/A'}</p>
               <p><strong>Last Name:</strong> {userData.lastName || 'N/A'}</p>
-              <p><strong>Address:</strong> {userData.address || 'N/A'}</p>
+              <p><strong>Contact:</strong> {userData.contact || 'N/A'}</p>
               <p><strong>City:</strong> {userData.city || 'N/A'}</p>
               <p><strong>Country:</strong> {userData.country || 'N/A'}</p>
-              <p><strong>Date of Birth:</strong> {userData.dateOfBirth ? new Date(userData.dateOfBirth).toLocaleDateString() : 'N/A'}</p>
-              <p><strong>Created At:</strong> {userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}</p>
+              <p><strong>Joined:</strong> {new Date(userData.createdAt).toLocaleDateString() || 'N/A'}</p>
             </div>
           </motion.div>
         ) : (
@@ -147,45 +145,45 @@ function Dashboard() {
             initial={{ opacity: 0, translateY: -20 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.5 }}
+            className="text-xl text-gray-600 z-10 relative"
           >
             No user data available.
           </motion.p>
         )}
 
         <motion.div
-          className="mb-8"
+          className="mb-8 z-10 relative"
           initial={{ opacity: 0, translateY: -20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Games Played</h2>
+          <h2 className="text-3xl font-bold text-gray-700 mb-4 flex items-center gap-2">
+            <FaTrophy className="text-yellow-400" /> Games Played
+          </h2>
           {userGames.length > 0 ? (
             <ul className="space-y-4">
               {userGames.map((game) => (
-                <li key={game._id} className="p-4 bg-gray-100 rounded-lg shadow-sm">
-                  <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
-                  <p><strong>Status:</strong> {game.sessions[0]?.status || 'N/A'}</p>
-                  <p><strong>Highest Score:</strong> {game.overallResults.highestScore || 'N/A'}</p>
-                  <p><strong>Attempts:</strong> {game.overallResults.totalAttempts || 'N/A'}</p>
-                  <p><strong>Date Played:</strong> {game.sessions[0]?.datePlayed ? new Date(game.sessions[0].datePlayed).toLocaleDateString() : 'N/A'}</p>
-                  <p><strong>Level:</strong> {game.sessions[0]?.level || 'N/A'}</p>
-                  <p><strong>Score:</strong> {game.sessions[0]?.score || 'N/A'}</p>
-                  <p><strong>Duration:</strong> {game.sessions[0]?.duration || 'N/A'} seconds</p>
+                <li key={game._id} className="p-4 bg-yellow-100 rounded-lg shadow-sm flex items-center gap-4 transition-transform transform hover:scale-105">
+                  <FaStar className="text-yellow-500" />
+                  <div>
+                    <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
+                    <p><strong>Highest Score:</strong> {game.overallResults.highestScore || 'N/A'}</p>
+                  </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No games played yet.</p>
+            <p className="text-lg text-gray-600">No games played yet.</p>
           )}
         </motion.div>
 
         <motion.div
-          className="mb-8"
+          className="mb-8 z-10 relative"
           initial={{ opacity: 0, translateY: -20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Game Score Trends</h2>
+          <h2 className="text-3xl font-bold text-gray-700 mb-4">Game Score Trends</h2>
           {userGames.length > 0 ? (
             <Line data={gameData} options={chartOptions} />
           ) : (

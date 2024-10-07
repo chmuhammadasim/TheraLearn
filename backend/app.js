@@ -36,11 +36,11 @@ app.use(helmet());
 // Set up rate limiting to prevent abuse
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  limit: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-app.use(limiter); // Apply rate limiting middleware
+//  app.use(limiter); // Apply rate limiting middleware
 
 // Prevent browsers from sniffing MIME types
 app.use(helmet.noSniff());

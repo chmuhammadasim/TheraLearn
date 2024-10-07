@@ -27,11 +27,13 @@ export const AuthProvider = ({ children }) => {
       if (token && checkTokenValidity(token)) {
         setIsLoggedIn(true);
         setRole(userRole);
+        
       } else {
         setIsLoggedIn(false);
         setRole(null);
         localStorage.removeItem("authToken");
         localStorage.removeItem("authRole");
+        
       }
     } catch (err) {
       console.error("Error checking login status:", err);
