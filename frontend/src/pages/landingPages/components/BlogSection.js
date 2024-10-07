@@ -32,7 +32,7 @@ const BlogSection = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="border-b-8 border-neutral-500 flex justify-center items-center min-h-screen">
         <motion.div
           className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"
           initial={{ rotate: 0 }}

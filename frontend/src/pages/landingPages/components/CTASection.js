@@ -5,7 +5,7 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
   return (
     <section
       id="cta"
-      className="relative bg-gradient-to-t from-[rgb(89,207,192)] via-[#7079ff] to-[rgb(89,207,192)] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center items-center overflow-hidden"
+      className="border-b-8 border-lime-500 relative bg-gradient-to-t from-[rgb(89,207,192)] via-[#7079ff] to-[rgb(89,207,192)] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center items-center overflow-hidden"
     >
       {/* Background Animated Elements */}
       <motion.div
