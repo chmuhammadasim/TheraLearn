@@ -21,8 +21,8 @@ function LandingPage() {
         const response = await fetch(`${process.env.REACT_APP_API_KEY}/content`); // Assuming the endpoint
         if (response.ok) {
           const result = await response.json();
-          console.log(result.content);
-          //setData(result.content);
+          //console.log(result.content);
+          setData(result.content);
         } else {
           setData(defaultData); // Use default data if the API call fails
         }

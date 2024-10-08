@@ -7,6 +7,7 @@ const SuperAdminContentPanel = () => {
   const [cta, setCta] = useState({ title: '', description: '', buttonText: '', features: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem('authToken');
 
   // Fetch all content
   useEffect(() => {
@@ -48,7 +49,16 @@ const SuperAdminContentPanel = () => {
       return;
     }
     try {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-hero`, hero);
+      
+      console.log(hero);
+      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-hero`, hero,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        }
+      );
       alert('Hero section updated successfully!');
     } catch (err) {
       alert('Error updating hero section: ' + err.message);
@@ -62,7 +72,12 @@ const SuperAdminContentPanel = () => {
       return;
     }
     try {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`, features[index]);
+      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`, features[index],{
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        }
+      });
       alert('Feature updated successfully!');
     } catch (err) {
       alert('Error updating feature: ' + err.message);
@@ -72,7 +87,14 @@ const SuperAdminContentPanel = () => {
   // Delete Feature
   const deleteFeature = async (index) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`);
+      await axios.delete(`${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        }
+      );
       setFeatures(features.filter((_, i) => i !== index));
       alert('Feature deleted successfully!');
     } catch (err) {
@@ -87,7 +109,14 @@ const SuperAdminContentPanel = () => {
       return;
     }
     try {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-cta`, cta);
+      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-cta`, cta,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
+        }
+      );
       alert('CTA section updated successfully!');
     } catch (err) {
       alert('Error updating CTA section: ' + err.message);

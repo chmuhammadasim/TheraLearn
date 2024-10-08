@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("authRole", userRole);
         setIsLoggedIn(true);
         setRole(userRole);
+        
       } else {
         throw new Error("Invalid or expired token.");
       }
