@@ -65,22 +65,24 @@ function AdminBlogDashboard() {
   );
 
   return (
-    <div className="bg-gray-100 text-gray-900 min-h-screen p-6">
-      <div className="max-w-7xl mx-auto mt-16 mb-16"> {/* Added margin for navbar and footer */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-4xl font-extrabold text-indigo-600">Admin Blog Dashboard</h1>
+    <div className="bg-gray-50 text-gray-800 min-h-screen p-8">
+      <div className="max-w-7xl mx-auto mt-10 mb-10">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-5xl font-bold text-gray-700">Admin Blog Dashboard</h1>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
+        {/* Search and Filter Section */}
+        <div className="flex justify-between items-center mb-8">
           <input
             type="text"
             placeholder="Search blogs..."
             value={searchQuery}
             onChange={handleSearch}
-            className="border rounded-lg px-4 py-2 w-1/3 shadow-md focus:ring-2 focus:ring-indigo-500 transition"
+            className="border rounded-lg px-4 py-2 w-1/3 shadow focus:ring-2 focus:ring-indigo-500 transition focus:outline-none"
           />
           <select
-            className="border rounded-lg px-4 py-2 shadow-md focus:ring-2 focus:ring-indigo-500 transition"
+            className="border rounded-lg px-4 py-2 shadow focus:ring-2 focus:ring-indigo-500 transition focus:outline-none"
             onChange={(e) => setFilterStatus(e.target.value)}
           >
             <option value="all">All Status</option>
@@ -89,11 +91,12 @@ function AdminBlogDashboard() {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Blog Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredBlogs.map(blog => (
             <div
               key={blog._id}
-              className="bg-white border-l-4 border-indigo-500 shadow-lg rounded-lg p-4 relative hover:shadow-xl transition-shadow duration-300"
+              className="bg-white border-l-4 border-indigo-500 shadow rounded-lg p-6 hover:shadow-lg transition-shadow duration-300"
             >
               <BlogCard
                 blog={blog}
@@ -114,7 +117,7 @@ function AdminBlogDashboard() {
           ))}
         </div>
 
-        {/* Improved Pagination Design */}
+        {/* Pagination */}
         <Pagination 
           totalItems={blogs.length} 
           itemsPerPage={blogsPerPage} 
@@ -122,17 +125,18 @@ function AdminBlogDashboard() {
           onPageChange={handlePageChange} 
         />
 
-        <div className="mt-6 flex justify-between">
+        {/* Bulk Action Buttons */}
+        <div className="mt-8 flex justify-end space-x-4">
           <button
             onClick={handleBulkDelete}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg mr-4 hover:bg-red-600 transition transform hover:scale-105"
+            className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-red-700 transition-transform transform hover:scale-105"
             disabled={selectedBlogs.length === 0}
           >
             Delete Selected
           </button>
           <button
             onClick={() => handleBulkStatusChange('published')}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-green-600 transition transform hover:scale-105"
+            className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105"
             disabled={selectedBlogs.length === 0}
           >
             Publish Selected
@@ -140,6 +144,7 @@ function AdminBlogDashboard() {
         </div>
       </div>
 
+      {/* Blog Preview Modal */}
       {showPreview && (
         <BlogPreviewModal
           blog={previewBlog}

@@ -53,7 +53,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("authRole");
       setIsLoggedIn(false);
       setRole(null);
-      window.location.reload();
     } catch (err) {
       console.error("Logout error:", err);
       setError("An error occurred during logout.");
