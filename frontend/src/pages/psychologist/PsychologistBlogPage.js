@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiEdit, FiTrash, FiSave } from 'react-icons/fi';
+import { FiEdit, FiTrash } from 'react-icons/fi';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import Loading from '../../components/Loading';
@@ -37,8 +37,6 @@ const PsychologistBlogPage = () => {
     return () => clearTimeout(timer);
  
   }, [token]);
-
-  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -96,23 +94,25 @@ const PsychologistBlogPage = () => {
     });
     setIsCreating(false);
   };
-  if (loading) return <Loading />;
-  return (
-    <div className="max-w-7xl mx-auto p-6 mt-24 mb-24 md:p-10 bg-gradient-to-r from-blue-50 to-purple-50 space-y-6">
-      <h1 className="text-4xl md:text-5xl font-bold text-purple-700">Manage Your Blogs</h1>
 
-      {message && <div className="bg-green-100 text-green-700 p-4 rounded-lg">{message}</div>}
+  if (loading) return <Loading />;
+
+  return (
+    <div className="max-w-7xl mx-auto p-6 mt-24 mb-24 md:p-10 bg-gradient-to-r from-gray-50 to-gray-100 space-y-6">
+      <h1 className="text-4xl md:text-5xl font-bold text-gray-800">Manage Your Blogs</h1>
+
+      {message && <div className="bg-gray-100 text-gray-800 p-4 rounded-lg shadow-md">{message}</div>}
 
       <button 
         onClick={() => setIsCreating(true)} 
-        className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-purple-700 transition">
+        className="bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-800 transition">
         <AiOutlinePlusCircle size={24} />
         <span>Create New Blog</span>
       </button>
 
       {isCreating && (
         <motion.div 
-          className="p-6 bg-white rounded-lg shadow-xl border-l-4 border-purple-500"
+          className="p-6 bg-gray-100 rounded-lg shadow-lg border-l-4 border-gray-500"
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }} 
           exit={{ opacity: 0, y: -10 }}
@@ -122,7 +122,7 @@ const PsychologistBlogPage = () => {
             className="top-2 right-2 text-red-600 hover:text-red-800 transition">
             X
           </button>
-          <h2 className="text-3xl font-bold mb-4 text-purple-600">Create New Blog</h2>
+          <h2 className="text-3xl font-bold mb-4 text-gray-700">Create New Blog</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {['title', 'slug', 'summary', 'content', 'tags', 'coverImageUrl', 'videoUrl', 'audioUrl', 'seoTitle', 'seoDescription'].map((field, index) => (
               <div key={index} className="flex flex-col">
@@ -132,7 +132,7 @@ const PsychologistBlogPage = () => {
                   value={newBlog[field]}
                   onChange={handleInputChange}
                   placeholder={`Enter ${field}`}
-                  className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-purple-500 transition"
+                  className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-gray-500 transition"
                 />
               </div>
             ))}
@@ -142,13 +142,13 @@ const PsychologistBlogPage = () => {
                 type="file"
                 multiple
                 onChange={handleAdditionalImagesChange}
-                className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-purple-500 transition"
+                className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-gray-500 transition"
               />
             </div>
           </div>
           <button 
             onClick={createBlog} 
-            className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-green-600 transition">
+            className="bg-gray-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-gray-800 transition">
             Create Blog
           </button>
         </motion.div>
@@ -158,15 +158,15 @@ const PsychologistBlogPage = () => {
         {blogs.map(blog => (
           <motion.div 
             key={blog._id} 
-            className="p-4 bg-white shadow-lg rounded-lg transition transform hover:scale-105"
+            className="p-4 bg-gray-100 shadow-lg rounded-lg transition transform hover:scale-105"
             whileHover={{ scale: 1.02 }}
           >
-            <h2 className="text-2xl font-bold mb-2 text-purple-600">{blog.title}</h2>
+            <h2 className="text-2xl font-bold mb-2 text-gray-700">{blog.title}</h2>
             <p className="mb-4 text-gray-600">{blog.summary}</p>
             <div className="flex space-x-4">
               <button 
                 onClick={() => setEditingBlog(blog)} 
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-yellow-600 transition">
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-600 transition">
                 <FiEdit className="mr-2" /> Edit
               </button>
               <button 
@@ -181,7 +181,7 @@ const PsychologistBlogPage = () => {
 
       {editingBlog && (
         <motion.div 
-          className="p-6 bg-white rounded-lg shadow-xl border-l-4 border-purple-500"
+          className="p-6 bg-gray-100 rounded-lg shadow-lg border-l-4 border-gray-500"
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }} 
           exit={{ opacity: 0, y: -10 }}
@@ -191,7 +191,7 @@ const PsychologistBlogPage = () => {
             className="top-2 right-2 text-red-600 hover:text-red-800 transition">
             X
           </button>
-          <h2 className="text-3xl font-bold mb-4 text-purple-600">Edit Blog</h2>
+          <h2 className="text-3xl font-bold mb-4 text-gray-700">Edit Blog</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {['title', 'slug', 'summary', 'content', 'tags', 'coverImageUrl', 'videoUrl', 'audioUrl', 'seoTitle', 'seoDescription'].map((field, index) => (
               <div key={index} className="flex flex-col">
@@ -199,9 +199,9 @@ const PsychologistBlogPage = () => {
                 <input
                   name={field}
                   value={editingBlog[field]}
-                  onChange={(e) => setEditingBlog({ ...editingBlog, [field]: e.target.value })}
-                  placeholder={`Edit ${field}`}
-                  className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-purple-500 transition"
+                  onChange={handleInputChange}
+                  placeholder={`Enter ${field}`}
+                  className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-gray-500 transition"
                 />
               </div>
             ))}
@@ -210,15 +210,15 @@ const PsychologistBlogPage = () => {
               <input
                 type="file"
                 multiple
-                onChange={(e) => setEditingBlog({ ...editingBlog, additionalImages: Array.from(e.target.files) })}
-                className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-purple-500 transition"
+                onChange={handleAdditionalImagesChange}
+                className="p-3 border border-gray-300 rounded-md focus:ring focus:ring-gray-500 transition"
               />
             </div>
           </div>
           <button 
             onClick={() => updateBlog(editingBlog._id, editingBlog)} 
-            className="bg-green-500 text-white px-8 py-2 flex rounded-lg mt-4 hover:bg-green-600 transition">
-            <FiSave className="mr-2" /> Save Changes
+            className="bg-gray-700 text-white px-4 py-2 rounded-lg mt-4 hover:bg-gray-800 transition">
+            Save Changes
           </button>
         </motion.div>
       )}
