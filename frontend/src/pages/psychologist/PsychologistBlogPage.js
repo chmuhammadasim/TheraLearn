@@ -23,7 +23,7 @@ const PsychologistBlogPage = () => {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/psychologist/${psychologistId}/blogs`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'authorization': `Bearer ${token}`,"Content-Type": "application/json", }
         });
         setBlogs(response.data);
       } catch (error) {
