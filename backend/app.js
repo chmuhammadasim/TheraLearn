@@ -1,7 +1,5 @@
-// Load environment variables from .env file
 require("dotenv").config();
 
-// Import required modules
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -24,29 +22,23 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
 
-// Enable Cross-Origin Resource Sharing (CORS)
 app.use(cors());
 
-// Apply custom access control middleware
 app.use(accessControl);
 
-// Use Helmet to help secure Express apps with various HTTP headers
 app.use(helmet());
 
-// Set up rate limiting to prevent abuse
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  windowMs: 15 * 60 * 1000,
+  limit: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
-//  app.use(limiter); // Apply rate limiting middleware
+//  app.use(limiter);
 
-// Prevent browsers from sniffing MIME types
 app.use(helmet.noSniff());
-app.use(helmet.hidePoweredBy()); // Remove the X-Powered-By header
+app.use(helmet.hidePoweredBy()); 
 
-// Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 app.use(
   bodyParser.urlencoded({
     extended: true,
@@ -54,11 +46,9 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.use(bodyParser.json({ limit: "10kb" })); // Limit payload size to 10KB
-app.use(bodyParser.urlencoded({ extended: true, limit: "10kb", }));
+app.use(bodyParser.json({ limit: "10kb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10kb" }));
 
-
-// Connect to MongoDB if not in test environment
 if (process.env.NODE_ENV !== "test") {
   mongoose
     .connect(process.env.THERALEARN_DB_URL)
@@ -76,17 +66,14 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 
-// Apply custom XSS protection middleware
 app.use(xssprotection);
 
-// Define a simple route to test the server
 app.get("/api", function (req, res) {
   res.status(200).send({
     message: "Express backend server",
   });
 });
 
-// Define routes for different parts of the application
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/superadmin", superadmin);
@@ -96,7 +83,6 @@ app.use("/api/psychologist", psychologistRoute);
 app.use("/api/game", gameRoute);
 app.use("/api/content", contentRoute);
 
-// Handle 404 errors
 app.use((req, res, next) => {
   res.status(404).send({
     error: "Not Found",
@@ -104,18 +90,16 @@ app.use((req, res, next) => {
   });
 });
 
-// Apply custom error handling middleware
 app.use(errorHandler);
 app.use(errorMessage);
 
-// Start the server and listen on the specified port
 server.listen(process.env.PORT_URL || 5000, (error) => {
   if (error) {
     console.error(
       `Cannot Connect with the port ${process.env.PORT_URL}:`,
       error.message
     );
-    process.exit(1); // Exit process with failure
+    process.exit(1);
   } else {
     console.log(`Connected with the port ${process.env.PORT_URL}`);
   }
