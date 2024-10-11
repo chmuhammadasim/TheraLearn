@@ -9,7 +9,6 @@ const SuperAdminContentPanel = () => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem('authToken');
 
-  // Fetch all content
   useEffect(() => {
     const fetchContent = async () => {
       try {
@@ -29,54 +28,41 @@ const SuperAdminContentPanel = () => {
     fetchContent();
   }, []);
 
-  // Validate input fields
-  const validateHero = () => {
-    return hero.title && hero.subtitle && hero.buttonText;
-  };
+  const validateHero = () => hero.title && hero.subtitle && hero.buttonText;
 
-  const validateFeature = (feature) => {
-    return feature.icon && feature.title && feature.description && feature.image;
-  };
+  const validateFeature = (feature) => feature.icon && feature.title && feature.description && feature.image;
 
-  const validateCta = () => {
-    return cta.title && cta.description && cta.buttonText;
-  };
+  const validateCta = () => cta.title && cta.description && cta.buttonText;
 
-  // Update Hero Section
   const updateHero = async () => {
     if (!validateHero()) {
       alert('All hero fields are required.');
       return;
     }
     try {
-      
-      console.log(hero);
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-hero`, hero,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          }
-        }
-      );
+      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-hero`, hero, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       alert('Hero section updated successfully!');
     } catch (err) {
       alert('Error updating hero section: ' + err.message);
     }
   };
 
-  // Update Features Section
   const updateFeature = async (index) => {
     if (!validateFeature(features[index])) {
       alert('All feature fields are required.');
       return;
     }
     try {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`, features[index],{
+      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`, features[index], {
         headers: {
           authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        }
+        },
       });
       alert('Feature updated successfully!');
     } catch (err) {
@@ -84,17 +70,14 @@ const SuperAdminContentPanel = () => {
     }
   };
 
-  // Delete Feature
   const deleteFeature = async (index) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          }
-        }
-      );
+      await axios.delete(`${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       setFeatures(features.filter((_, i) => i !== index));
       alert('Feature deleted successfully!');
     } catch (err) {
@@ -102,28 +85,24 @@ const SuperAdminContentPanel = () => {
     }
   };
 
-  // Update CTA Section
   const updateCta = async () => {
     if (!validateCta()) {
       alert('All CTA fields are required.');
       return;
     }
     try {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-cta`, cta,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          }
-        }
-      );
+      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-cta`, cta, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       alert('CTA section updated successfully!');
     } catch (err) {
       alert('Error updating CTA section: ' + err.message);
     }
   };
 
-  // Add a new Feature
   const addFeature = () => {
     setFeatures([...features, { icon: '', title: '', description: '', image: '' }]);
   };
@@ -132,44 +111,44 @@ const SuperAdminContentPanel = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className=" p-8 mt-16 bg-gray-50 min-h-screen">
-      <h2 className="text-4xl font-bold text-center text-blue-600 mb-10">Super Admin Panel</h2>
+    <div className="p-8 mt-16 bg-gray-300 min-h-screen">
+      <h2 className="text-4xl text-center font-bold text-gray-900 mb-10">Super Admin Panel</h2>
 
       {/* Hero Section */}
-      <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-        <h3 className="text-3xl font-semibold text-gray-800 mb-6">Hero Section</h3>
+      <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
+        <h3 className="text-2xl font-medium text-gray-900 mb-6">Hero Section</h3>
         <input
           type="text"
           value={hero.title}
           onChange={(e) => setHero({ ...hero, title: e.target.value })}
           placeholder="Hero Title"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <input
           type="text"
           value={hero.subtitle}
           onChange={(e) => setHero({ ...hero, subtitle: e.target.value })}
           placeholder="Hero Subtitle"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <input
           type="text"
           value={hero.buttonText}
           onChange={(e) => setHero({ ...hero, buttonText: e.target.value })}
           placeholder="Hero Button Text"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <button
           onClick={updateHero}
-          className="w-full px-4 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
+          className="w-full px-4 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-150"
         >
           Update Hero
         </button>
       </section>
 
       {/* Features Section */}
-      <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
-        <h3 className="text-3xl font-semibold text-gray-800 mb-6">Features Section</h3>
+      <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
+        <h3 className="text-2xl font-medium text-gray-900 mb-6">Features Section</h3>
         {features.map((feature, index) => (
           <div key={index} className="mb-6 border-b pb-4">
             <input
@@ -180,7 +159,7 @@ const SuperAdminContentPanel = () => {
                 setFeatures(features.map((f, i) => (i === index ? updatedFeature : f)));
               }}
               placeholder="Icon"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
             <input
               type="text"
@@ -190,7 +169,7 @@ const SuperAdminContentPanel = () => {
                 setFeatures(features.map((f, i) => (i === index ? updatedFeature : f)));
               }}
               placeholder="Title"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
             <input
               type="text"
@@ -200,7 +179,7 @@ const SuperAdminContentPanel = () => {
                 setFeatures(features.map((f, i) => (i === index ? updatedFeature : f)));
               }}
               placeholder="Description"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
             <input
               type="text"
@@ -210,18 +189,18 @@ const SuperAdminContentPanel = () => {
                 setFeatures(features.map((f, i) => (i === index ? updatedFeature : f)));
               }}
               placeholder="Image URL"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
             />
             <div className="flex justify-between mt-4">
               <button
                 onClick={() => updateFeature(index)}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-200"
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-150"
               >
                 Update Feature
               </button>
               <button
                 onClick={() => deleteFeature(index)}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200"
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-150"
               >
                 Delete Feature
               </button>
@@ -230,43 +209,42 @@ const SuperAdminContentPanel = () => {
         ))}
         <button
           onClick={addFeature}
-          className="mt-4 w-full px-4 py-3 bg-purple-600 text-white rounded hover:bg-purple-700 transition duration-200"
+          className="mt-4 w-full px-4 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-150"
         >
           Add New Feature
         </button>
       </section>
 
       {/* CTA Section */}
-      <section className="p-6 bg-white rounded-lg shadow-md">
-        <h3 className="text-3xl font-semibold text-gray-800 mb-6">CTA Section</h3>
+      <section className="p-6 bg-gray-50 rounded-lg shadow-lg">
+        <h3 className="text-2xl font-medium text-gray-900 mb-6">CTA Section</h3>
         <input
           type="text"
           value={cta.title}
           onChange={(e) => setCta({ ...cta, title: e.target.value })}
           placeholder="CTA Title"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <input
           type="text"
           value={cta.description}
           onChange={(e) => setCta({ ...cta, description: e.target.value })}
           placeholder="CTA Description"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <input
           type="text"
           value={cta.buttonText}
           onChange={(e) => setCta({ ...cta, buttonText: e.target.value })}
           placeholder="CTA Button Text"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <button
           onClick={updateCta}
-          className="w-full px-4 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
+          className="w-full px-4 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-150"
         >
           Update CTA
         </button>
-        
       </section>
     </div>
   );

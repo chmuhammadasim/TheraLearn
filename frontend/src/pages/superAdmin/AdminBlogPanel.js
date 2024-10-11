@@ -65,11 +65,11 @@ function AdminBlogDashboard() {
   );
 
   return (
-    <div className="bg-gray-50 text-gray-800 min-h-screen p-8">
-      <div className="max-w-7xl mx-auto mt-10 mb-10">
+    <div className="bg-gray-300 text-gray-800 min-h-screen p-8">
+      <div className="max-w-7xl mx-auto mt-16 mb-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-5xl font-bold text-gray-700">Admin Blog Dashboard</h1>
+          <h1 className="text-5xl font-bold text-gray-900">Admin Blog Dashboard</h1>
         </div>
 
         {/* Search and Filter Section */}

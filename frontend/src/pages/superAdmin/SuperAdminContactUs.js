@@ -55,8 +55,8 @@ const SuperAdminContactUs = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 mt-16 mb-8">
-      <h1 className="text-center text-4xl font-bold mb-12 text-gray-800">Super Admin - User Queries</h1>
+    <div className="container bg-gray-300 mx-auto p-6 pt-16 pb-16">
+      <h1 className="text-center text-4xl mt-16 font-bold mb-12 text-gray-900">Super Admin - User Queries</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {queries.map((query) => (

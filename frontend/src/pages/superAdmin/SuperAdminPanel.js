@@ -46,47 +46,47 @@ const SuperAdminPanel = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <RiLoader4Line className="text-6xl text-[#0e2431] animate-spin" />
+      <div className="flex justify-center items-center min-h-screen bg-gray-200">
+        <RiLoader4Line className="text-6xl text-gray-700 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#f8c731] to-[#fc3a52] py-10 px-5">
+    <div className="min-h-screen bg-gray-300 py-10 px-5">
       <ToastContainer />
-      <div className="max-w-7xl mt-20 mb-20 mx-auto bg-white shadow-xl rounded-lg overflow-hidden animate-fadeIn">
-        <div className="bg-[#0e2431] text-white p-6 text-center">
-          <h2 className="text-3xl font-bold">Super Admin Panel</h2>
-          <p>Manage user accounts, activate or deactivate them.</p>
+      <div className="max-w-7xl mt-20 mb-20 mx-auto bg-white shadow-lg rounded-lg overflow-hidden animate-fadeIn">
+        <div className="bg-gray-800 text-white p-6 text-center">
+          <h2 className="text-3xl font-semibold">Super Admin Panel</h2>
+          <p className="text-gray-300">Manage user accounts, activate or deactivate them.</p>
         </div>
 
         {error && (
-          <div className="text-red-600 p-4">
+          <div className="text-red-600 p-4 text-center">
             {error}
           </div>
         )}
 
         <div className="overflow-x-auto">
           <table className="w-full bg-white text-left table-auto border-collapse">
-            <thead className="bg-[#0e2431] text-white">
+            <thead className="bg-gray-700 text-white">
               <tr>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Username</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Email</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">First Name</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Last Name</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Contact</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">City</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Country</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Status</th>
-                <th className="px-4 py-2 border-b-2 border-[#f8c731]">Actions</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Username</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Email</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">First Name</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Last Name</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Contact</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">City</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Country</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Status</th>
+                <th className="px-4 py-2 border-b-2 border-gray-600">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map(user => (
                 <tr key={user._id} className="hover:bg-gray-100 transition duration-300 ease-in-out">
                   <td className="border-t px-4 py-2 flex items-center space-x-2">
-                    <FaUserAlt className="text-[#f8c731]" />
+                    <FaUserAlt className="text-gray-600" />
                     <span>{user.username}</span>
                   </td>
                   <td className="border-t px-4 py-2">{user.email}</td>
@@ -97,12 +97,12 @@ const SuperAdminPanel = () => {
                   <td className="border-t px-4 py-2">{user.country || 'N/A'}</td>
                   <td className="border-t px-4 py-2 flex items-center">
                     {user.isActive ? (
-                      <span className="flex items-center space-x-2 text-green-600">
+                      <span className="flex items-center space-x-2 text-green-500">
                         <FaCheck />
                         <span>Active</span>
                       </span>
                     ) : (
-                      <span className="flex items-center space-x-2 text-red-600">
+                      <span className="flex items-center space-x-2 text-red-500">
                         <FaTimes />
                         <span>Inactive</span>
                       </span>
@@ -111,7 +111,9 @@ const SuperAdminPanel = () => {
                   <td className="border-t px-4 py-2">
                     <button
                       onClick={() => handleStatusChange(user._id, user.isActive)}
-                      className={`px-4 py-2 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 ${user.isActive ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
+                      className={`px-4 py-2 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 ${
+                        user.isActive ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+                      }`}
                     >
                       {user.isActive ? 'Deactivate' : 'Activate'}
                     </button>
