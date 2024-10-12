@@ -46,8 +46,8 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.use(bodyParser.json({ limit: "10kb" }));
-app.use(bodyParser.urlencoded({ extended: true, limit: "10kb" }));
+app.use(bodyParser.json({ limit: "100kb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "100kb" }));
 
 if (process.env.NODE_ENV !== "test") {
   mongoose

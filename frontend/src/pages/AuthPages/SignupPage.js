@@ -1,13 +1,29 @@
-  import React, { useState, useEffect } from 'react';
-  import { signUpUser } from '../../services/authService';
-  import { useNavigate } from 'react-router-dom';
-  import Loading from '../../components/Loading';
-  import { motion } from 'framer-motion';
-  import { FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { signUpUser } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/Loading';
+import { motion } from 'framer-motion';
+import { FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
+// import { Cloudinary } from '@cloudinary/url-gen';
 
-  function SignupPage() {
-    const [isPsychologist, setIsPsychologist] = useState(false);
-    const [formData, setFormData] = useState({
+const App = () => {
+  //const cld = new Cloudinary({ cloud: { cloudName: 'do7z15tdv' } });
+  const [isPsychologist, setIsPsychologist] = useState(false);
+  const [formData, setFormData] = useState(initialFormData());
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false); // State to manage upload status
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  function initialFormData() {
+    return {
       username: '',
       email: '',
       password: '',
@@ -24,398 +40,269 @@
       role: 'user',
       educations: [''],
       experiences: [''],
-    });
-
-    const [errors, setErrors] = useState({});
-    const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-    }, []);
-
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setFormData({ ...formData, [name]: value });
     };
-
-    const handleEducationChange = (index, value) => {
-      const newEducations = [...formData.educations];
-      newEducations[index] = value;
-      setFormData({ ...formData, educations: newEducations });
-    };
-
-    const handleExperienceChange = (index, value) => {
-      const newExperiences = [...formData.experiences];
-      newExperiences[index] = value;
-      setFormData({ ...formData, experiences: newExperiences });
-    };
-
-    const addEducation = () => {
-      setFormData({ ...formData, educations: [...formData.educations, ''] });
-    };
-
-    const removeEducation = (index) => {
-      const newEducations = formData.educations.filter((_, i) => i !== index);
-      setFormData({ ...formData, educations: newEducations });
-    };
-
-    const addExperience = () => {
-      setFormData({ ...formData, experiences: [...formData.experiences, ''] });
-    };
-
-    const removeExperience = (index) => {
-      const newExperiences = formData.experiences.filter((_, i) => i !== index);
-      setFormData({ ...formData, experiences: newExperiences });
-    };
-
-    const validate = () => {
-      const newErrors = {};
-      if (!formData.username) newErrors.username = 'Username is required';
-      if (!formData.email) newErrors.email = 'Email is required';
-      if (!formData.password) newErrors.password = 'Password is required';
-      if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords must match';
-      if (!formData.firstName) newErrors.firstName = 'First name is required';
-      if (!formData.lastName) newErrors.lastName = 'Last name is required';
-      if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-
-      if (isPsychologist) {
-        if (formData.educations.some((education) => !education)) newErrors.educations = 'All education fields are required';
-        if (formData.experiences.some((experience) => !experience)) newErrors.experiences = 'All experience fields are required';
-      }
-
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      if (validate()) {
-        try {
-          const response = await signUpUser({ ...formData, role: isPsychologist ? 'psychologist' : 'user' });
-          if (response.status === '201') {
-            setMessage('Signup successful');
-            navigate('/login');
-          }
-        } catch (error) {
-          setMessage(error.message || 'An error occurred');
-        }
-      }
-    };
-
-    if (loading) {
-      return <Loading />;
-    }
-
-    return (
-      <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
-        {/* Animated Background */}
-        {/* <motion.div
-          className="absolute inset-0 bg-[#ff7560] opacity-70 rounded-full"
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 5, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute inset-0 bg-[#ffdf60] opacity-70 rounded-full"
-          initial={{ scale: 0.6 }}
-          animate={{ scale: 0.8 }}
-          transition={{ duration: 6, ease: 'easeInOut' }}
-        /> */}
-
-        <div className="relative bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
-          <motion.img
-            src="LOGO.png"
-            alt="Logo"
-            className="mx-auto mb-4 w-24 h-24"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-          />
-          <motion.h1
-            className="text-4xl font-bold text-[#2c3e50] mb-4"
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="text-[#e74c3c]">Join Us!</span>
-          </motion.h1>
-          {message && (
-            <motion.p
-              className={`mb-4 text-lg ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-            >
-              {message}
-            </motion.p>
-          )}
-
-          {/* Toggle between User and Psychologist */}
-          <div className="flex justify-center mb-6 gap-5">
-            <button
-              className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200 text-gray-700'}`}
-              onClick={() => setIsPsychologist(false)}
-            >
-              User Signup
-            </button>
-            <button
-              className={`py-2 px-4 font-semibold rounded-r-lg ${isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200 text-gray-700'}`}
-              onClick={() => setIsPsychologist(true)}
-            >
-              Psychologist Signup
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Username and Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Username:</label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                  required
-                />
-                {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
-              </div>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                  required
-                />
-                {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
-              </div>
-            </div>
-
-            {/* Password and Confirm Password */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Password:</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                  required
-                />
-                {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
-              </div>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Confirm Password:</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                  required
-                />
-                {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword}</span>}
-              </div>
-            </div>
-
-            {/* Personal Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">First Name:</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                  required
-                />
-                {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName}</span>}
-              </div>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Last Name:</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                  required
-                />
-                {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Address:</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                />
-              </div>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">City:</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                />
-              </div>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Country:</label>
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                />
-              </div>
-              <div className="form-group">
-                <label className="block text-left text-lg font-medium text-[#2c3e50]">Contact:</label>
-                <input
-                  type="text"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                />
-              </div>
-            </div>
-
-            {/* Bio */}
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#2c3e50]">Bio:</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-              />
-            </div>
-
-            {/* Profile Picture URL */}
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#2c3e50]">Profile Picture URL:</label>
-              <input
-                type="text"
-                name="profilePictureUrl"
-                value={formData.profilePictureUrl}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-              />
-            </div>
-
-            {/* Date of Birth */}
-            <div className="form-group">
-              <label className="block text-left text-lg font-medium text-[#2c3e50]">Date of Birth:</label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                required
-              />
-              {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
-            </div>
-
-            {/* Additional Fields for Psychologists */}
-            {isPsychologist && (
-              <>
-                {/* Education Fields */}
-                <div>
-                  <label className="block text-left text-lg font-medium text-[#2c3e50]">Education:</label>
-                  {formData.educations.map((education, index) => (
-                    <div key={index} className="flex items-center mb-3">
-                      <input
-                        type="text"
-                        value={education}
-                        onChange={(e) => handleEducationChange(index, e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                        placeholder={`Education ${index + 1}`}
-                        required
-                      />
-                      {formData.educations.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeEducation(index)}
-                          className="ml-2 text-red-500"
-                        >
-                          <FaMinusCircle size={20} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={addEducation}
-                    className="flex items-center text-[#fff]  mb-4"
-                  >
-                    <FaPlusCircle size={20} className="mr-2" /> Add Education
-                  </button>
-                </div>
-
-                {/* Experience Fields */}
-                <div>
-                  <label className="block text-left text-lg font-medium text-[#2c3e50]">Experience:</label>
-                  {formData.experiences.map((experience, index) => (
-                    <div key={index} className="flex items-center mb-3">
-                      <input
-                        type="text"
-                        value={experience}
-                        onChange={(e) => handleExperienceChange(index, e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                        placeholder={`Experience ${index + 1}`}
-                        required
-                      />
-                      {formData.experiences.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeExperience(index)}
-                          className="ml-2 text-red-500"
-                        >
-                          <FaMinusCircle size={20} />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={addExperience}
-                    className="flex items-center text-[#ffffff] mb-4 bg-slate-400"
-                  >
-                    <FaPlusCircle size={20} className="mr-2" /> Add Experience
-                  </button>
-                </div>
-              </>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-[#e74c3c] text-white font-semibold rounded-lg shadow-md hover:bg-[#c0392b] transition-colors duration-300"
-            >
-              Sign Up
-            </button>
-          </form>
-        </div>
-      </div>
-    );
   }
 
-  export default SignupPage;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleArrayChange = (type, index, value) => {
+    setFormData((prev) => {
+      const newArray = [...prev[type]];
+      newArray[index] = value;
+      return { ...prev, [type]: newArray };
+    });
+  };
+
+  const addArrayItem = (type) => {
+    setFormData((prev) => ({ ...prev, [type]: [...prev[type], ''] }));
+  };
+
+  const removeArrayItem = (type, index) => {
+    setFormData((prev) => ({
+      ...prev,
+      [type]: prev[type].filter((_, i) => i !== index),
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    const requiredFields = [
+      'username', 'email', 'password', 'confirmPassword', 'firstName', 'lastName', 'dateOfBirth'
+    ];
+
+    requiredFields.forEach(field => {
+      if (!formData[field]) newErrors[field] = `${capitalizeFirstLetter(field)} is required`;
+    });
+
+    // Validate password
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords must match';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
+    }
+
+    // Validate email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailPattern.test(formData.email)) {
+      newErrors.email = 'Email is not valid';
+    }
+
+    // Validate psychologist specific fields
+    if (isPsychologist) {
+      if (formData.educations.some((edu) => !edu)) newErrors.educations = 'All education fields are required';
+      if (formData.experiences.some((exp) => !exp)) newErrors.experiences = 'All experience fields are required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validate()) {
+      if (isUploading) return; // Prevent submission if uploading
+      try {
+        const response = await signUpUser({ ...formData, profilePictureUrl: uploadedImage, role: isPsychologist ? 'psychologist' : 'user' });
+        if (response.status) {
+          setMessage('Signup successful');
+          navigate('/login');
+        }
+      } catch (error) {
+        setMessage(error.message || 'An error occurred');
+      }
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'ml_default');
+
+      setIsUploading(true); // Set uploading state
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/do7z15tdv/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.secure_url) {
+          setUploadedImage(data.secure_url);
+          console.log(data);
+          
+          setFormData((prev) => ({ ...prev, profilePictureUrl: data.secure_url }));
+        } else {
+          console.error('Image upload failed:', data);
+          setMessage('Image upload failed, please try again.');
+        }
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        setMessage('Image upload failed, please try again.');
+      } finally {
+        setIsUploading(false); // Reset uploading state
+      }
+    }
+  };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  if (loading) return <Loading />;
+
+  return (
+    <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
+      <div className="relative bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
+        <motion.img
+          src="LOGO.png"
+          alt="Logo"
+          className="mx-auto mb-4 w-24 h-24"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+        />
+        <motion.h1
+          className="text-4xl font-bold text-[#2c3e50] mb-4"
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-[#e74c3c]">Join Us!</span>
+        </motion.h1>
+        {message && (
+          <motion.p
+            className={`mb-4 text-lg ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            {message}
+          </motion.p>
+        )}
+
+        <div className="flex justify-center mb-6 gap-5">
+          <ToggleButton active={!isPsychologist} label="User Signup" onClick={() => setIsPsychologist(false)} />
+          <ToggleButton active={isPsychologist} label="Psychologist Signup" onClick={() => setIsPsychologist(true)} />
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <InputGroup title="Username" name="username" value={formData.username} onChange={handleChange} error={errors.username} />
+          <InputGroup title="Email" type="email" name="email" value={formData.email} onChange={handleChange} error={errors.email} />
+          <InputGroup title="Password" type="password" name="password" value={formData.password} onChange={handleChange} error={errors.password} />
+          <InputGroup title="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
+
+          <InputGroup title="First Name" name="firstName" value={formData.firstName} onChange={handleChange} error={errors.firstName} />
+          <InputGroup title="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} error={errors.lastName} />
+
+          <AddressGroup formData={formData} handleChange={handleChange} />
+
+          {/* Image Upload Field */}
+          <div className="form-group">
+            <label className="block text-left text-lg font-medium text-[#2c3e50]">Profile Picture:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#64ff8b]"
+            />
+            {isUploading && <p className='text font-semibold text-cyan-950'>Checking Profile Image...</p>}
+            {uploadedImage && <p className='text font-semibold text-cyan-950'>Successfully Checked Image</p>}
+          </div>
+
+          <InputGroup title="Date of Birth" type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} error={errors.dateOfBirth} />
+
+          {isPsychologist && (
+            <div>
+              <h2 className="text-2xl font-bold text-[#2c3e50] mb-2">Education:</h2>
+              {formData.educations.map((education, index) => (
+                <EducationInput key={index} index={index} value={education} onChange={handleArrayChange} onRemove={removeArrayItem} />
+              ))}
+              <button type="button" onClick={() => addArrayItem('educations')} className="flex items-center text-blue-500">
+                <FaPlusCircle className="mr-2" /> Add Education
+              </button>
+              {errors.educations && <p className="text-red-500">{errors.educations}</p>}
+            </div>
+          )}
+
+          {isPsychologist && (
+            <div>
+              <h2 className="text-2xl font-bold text-[#2c3e50] mb-2">Experience:</h2>
+              {formData.experiences.map((experience, index) => (
+                <ExperienceInput key={index} index={index} value={experience} onChange={handleArrayChange} onRemove={removeArrayItem} />
+              ))}
+              <button type="button" onClick={() => addArrayItem('experiences')} className="flex items-center text-blue-500">
+                <FaPlusCircle className="mr-2" /> Add Experience
+              </button>
+              {errors.experiences && <p className="text-red-500">{errors.experiences}</p>}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full py-3 mt-4 text-white bg-[#e74c3c] rounded-lg shadow-lg hover:bg-[#c0392b] transition duration-300"
+            disabled={isUploading}
+          >
+            {isUploading ? 'Wait Checking Profile Image...' : 'Sign Up'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const ToggleButton = ({ active, label, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex-1 py-2 font-semibold rounded-lg transition-colors ${active ? 'bg-[#e74c3c] text-white' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
+  >
+    {label}
+  </button>
+);
+
+const InputGroup = ({ title, name, value, onChange, error, type = 'text' }) => (
+  <div className="form-group">
+    <label className="block text-left text-lg font-medium text-[#2c3e50]">{title}:</label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#64ff8b] ${error ? 'border-red-500' : ''}`}
+    />
+    {error && <p className="text-red-500">{error}</p>}
+  </div>
+);
+
+const AddressGroup = ({ formData, handleChange }) => (
+  <div className="grid grid-cols-2 gap-4">
+    <InputGroup title="Address" name="address" value={formData.address} onChange={handleChange} />
+    <InputGroup title="City" name="city" value={formData.city} onChange={handleChange} />
+    <InputGroup title="Country" name="country" value={formData.country} onChange={handleChange} />
+    <InputGroup title="Contact" name="contact" value={formData.contact} onChange={handleChange} />
+    <InputGroup title="Bio" name="bio" value={formData.bio} onChange={handleChange} />
+  </div>
+);
+
+const EducationInput = ({ index, value, onChange, onRemove }) => (
+  <div className="flex items-center mb-2">
+    <InputGroup title={`Education ${index + 1}`} name={`educations-${index}`} value={value} onChange={(e) => onChange('educations', index, e.target.value)} />
+    <button type="button" onClick={() => onRemove('educations', index)} className="ml-2 text-red-500 hover:text-red-700">
+      <FaMinusCircle />
+    </button>
+  </div>
+);
+
+const ExperienceInput = ({ index, value, onChange, onRemove }) => (
+  <div className="flex items-center mb-2">
+    <InputGroup title={`Experience ${index + 1}`} name={`experiences-${index}`} value={value} onChange={(e) => onChange('experiences', index, e.target.value)} />
+    <button type="button" onClick={() => onRemove('experiences', index)} className="ml-2 text-red-500 hover:text-red-700">
+      <FaMinusCircle />
+    </button>
+  </div>
+);
+
+export default App;
