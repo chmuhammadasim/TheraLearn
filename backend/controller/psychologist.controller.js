@@ -62,7 +62,6 @@ psychologistController.getBlogs = async (req, res) => {
 };
 
 psychologistController.createBlog = async (req, res) => {
-  console.log(req.body);
   try {
     const newBlog = new Blog({
       ...req.body,

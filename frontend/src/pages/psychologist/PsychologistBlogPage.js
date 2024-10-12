@@ -15,7 +15,7 @@ const PsychologistBlogPage = () => {
   const [editingBlog, setEditingBlog] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [message, setMessage] = useState('');
-  const psychologistId = 'psychologist-id'; // Get from context
+  const psychologistId = 'psychologist-id';
   const token = localStorage.getItem("authToken");
   const [loading, setIsLoading] = useState(true);
 
@@ -51,7 +51,7 @@ const PsychologistBlogPage = () => {
   const createBlog = async () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/${psychologistId}/blogs`, newBlog, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'authorization': `Bearer ${token}`,"Content-Type": "application/json", }
       });
       setBlogs([...blogs, response.data]);
       resetBlogForm();
@@ -64,7 +64,7 @@ const PsychologistBlogPage = () => {
   const updateBlog = async (blogId, updatedData) => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_API_KEY}/psychologist/${psychologistId}/blogs/${blogId}`, updatedData, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'authorization': `Bearer ${token}`,"Content-Type": "application/json", }
       });
       setBlogs(blogs.map(blog => blog._id === blogId ? response.data : blog));
       setEditingBlog(null);
@@ -77,7 +77,7 @@ const PsychologistBlogPage = () => {
   const deleteBlog = async (blogId) => {
     try {
       await axios.delete(`${process.env.REACT_APP_API_KEY}/psychologist/${psychologistId}/blogs/${blogId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 'authorization': `Bearer ${token}`,"Content-Type": "application/json", }
       });
       setBlogs(blogs.filter(blog => blog._id !== blogId));
       setMessage('Blog deleted successfully!');
