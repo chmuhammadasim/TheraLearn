@@ -28,11 +28,7 @@ const blogSchema = new mongoose.Schema({
     trim: true,
     maxLength: 300,
   },
-  category: {
-    type: String,
-    enum: ['Education', 'Technology', 'Health', 'Lifestyle', 'Travel', 'Food', 'Other'], // Expanded categories
-    required: true,
-  },
+
   tags: [
     {
       type: String,
@@ -43,18 +39,9 @@ const blogSchema = new mongoose.Schema({
     type: String,
     default: '', // URL for the cover image
   },
-  additionalImages: [
-    {
-      type: String, // URLs for additional images
-    },
-  ],
   videoUrl: {
     type: String,
     default: '', // URL for an embedded video related to the blog
-  },
-  audioUrl: {
-    type: String,
-    default: '', // URL for an embedded audio file related to the blog
   },
   likes: {
     type: Number,
@@ -89,12 +76,6 @@ const blogSchema = new mongoose.Schema({
       },
     },
   ],
-  relatedBlogs: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog',
-    },
-  ],
   publishedAt: {
     type: Date,
     default: Date.now,
@@ -113,39 +94,18 @@ const blogSchema = new mongoose.Schema({
       return Math.ceil(this.content.split(' ').length / 200); // Assuming an average reading speed of 200 words per minute
     },
   },
-  seoTitle: {
-    type: String,
-    trim: true,
-    maxLength: 60,
-  },
-  seoDescription: {
-    type: String,
-    trim: true,
-    maxLength: 160,
-  },
-  featured: {
-    type: Boolean,
-    default: false,
-  },
+
   allowComments: {
     type: Boolean,
     default: true,
   },
-  language: {
-    type: String,
-    enum: ['English', 'Spanish', 'French', 'German', 'Other'], // Example languages
-    default: 'English',
-  },
+
   createdAt: {
     type: Date,
     default: Date.now,
   },
   updatedAt: {
     type: Date,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
   },
 });
 

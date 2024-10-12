@@ -3,6 +3,7 @@ const router = express.Router();
 const blogController = require("../controller/blog.controller");
 const { psychologistadmin, admin } = require("../middleware/authMiddleware");
 const checkAuth = require("../middleware/check-auth");
+
 router.get("/", blogController.Checkapi);
 router.get("/all", blogController.getAllBlogs);
 router.get("/getbyid/:id", blogController.getBlogById);

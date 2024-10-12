@@ -156,7 +156,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
-      <div className="relative bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
+      <div className="relative bg-white m-6 py-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
         <motion.img
           src="LOGO.png"
           alt="Logo"
@@ -184,7 +184,7 @@ const App = () => {
           </motion.p>
         )}
 
-        <div className="flex justify-center mb-6 gap-5">
+        <div className="flex h-15 justify-between m-6 gap-5">
           <ToggleButton active={!isPsychologist} label="User Signup" onClick={() => setIsPsychologist(false)} />
           <ToggleButton active={isPsychologist} label="Psychologist Signup" onClick={() => setIsPsychologist(true)} />
         </div>
