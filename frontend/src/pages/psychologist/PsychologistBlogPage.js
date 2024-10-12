@@ -290,6 +290,12 @@ const PsychologistBlogPage = () => {
           >
             <h2 className="text-xl font-bold">{blog.title}</h2>
             <p className="text-sm text-gray-600">{blog.summary}</p>
+            <p className="text-sm text-gray-600">Tags: {blog.slug}</p>
+            <p className="text-sm text-gray-600">Content: {blog.content}</p>
+            <p className="text-sm text-gray-600">
+              Published: {blog.isPublished ? "Yes" : "No"}
+            </p>
+
             <img
               src={blog.coverImageUrl}
               alt={blog.title}
