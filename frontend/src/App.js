@@ -25,6 +25,7 @@ import GamePage from "./pages/Game/Game";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
 import PsychologistDetailsPage from "./pages/PsychologistList/PsychologistDetailsPage";
 import PsychologistBlogPage from "./pages/psychologist/PsychologistBlogPage";
+import PsychologistPatientDashboard from "./pages/psychologist/PsychologistPatientDashboard";
 import { AuthProvider } from "./components/AuthContext/AuthContext";
 
 function App() {
@@ -143,6 +144,14 @@ function App() {
                   element={
                     <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
                       <BlogForm />
+                    </PsychologistRoute>
+                  }
+                />
+                <Route
+                  path="/psychologist-dashboard"
+                  element={
+                    <PsychologistRoute isLoggedIn={isLoggedIn} role={role}>
+                      <PsychologistPatientDashboard />
                     </PsychologistRoute>
                   }
                 />

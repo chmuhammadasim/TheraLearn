@@ -26,8 +26,6 @@ psychologistController.getAllPsychologists = async (req, res) => {
 
 psychologistController.getPsychologistById = async (req, res) => {
   const id  = req.headers.psychologistid;
-  
-
   try {
     const psychologist = await Users.findById(id);
 
@@ -97,6 +95,88 @@ psychologistController.deleteBlog = async (req, res) => {
   }
 };
 
+psychologistController.fetchPatientsByPsychologistId = async (req, res) => {
+  const { id } = req.headers.psychologistid; 
+  try {
+    const patients = await getPatientsByPsychologistId(id); // Call service function
+    return res.status(200).json(patients); // Return the list of patients
+  } catch (error) {
+    console.error('Error fetching patients:', error);
+    return res.status(500).json({ message: 'Error fetching patients' }); // Error response
+  }
+};
+
+// Controller to send a message to a specific patient
+psychologistController.handleSendMessageToPatient = async (req, res) => {
+  const { patientId } = req.params; // Get patient ID from URL parameters
+  const { message } = req.body; // Get message content from request body
+  try {
+    const response = await sendMessageToPatient(patientId, message); // Call service function
+    return res.status(200).json(response); // Return success response
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return res.status(500).json({ message: 'Error sending message to patient' }); // Error response
+  }
+};
+
+// Controller to assign a psychologist to a patient
+psychologistController.handleAssignPsychologistToPatient = async (req, res) => {
+  const { psychologistId } = req.headers.psychologistid; // Get psychologist ID from URL parameters
+  try {
+    const response = await assignPsychologistToPatient(psychologistId); // Call service function
+    return res.status(200).json(response); // Return success response
+  } catch (error) {
+    console.error('Error assigning psychologist:', error);
+    return res.status(500).json({ message: 'Error assigning psychologist' }); // Error response
+  }
+};
+
+// Controller to fetch the questionnaire for a specific psychologist
+psychologistController.fetchQuestionnaire = async (req, res) => {
+  const { psychologistId } = req.headers.psychologistid; // Get psychologist ID from URL parameters
+  try {
+    const questionnaire = await getQuestionnaire(psychologistId); // Call service function
+    return res.status(200).json(questionnaire); // Return the questionnaire
+  } catch (error) {
+    console.error('Error fetching questionnaire:', error);
+    return res.status(500).json({ message: 'Error fetching questionnaire' }); // Error response
+  }
+};
+
+psychologistController.handleSubmitAnswer = async (req, res) => {
+  const { psychologistId } = req.headers.psychologistid; // Get psychologist ID from URL parameters
+  const { answers } = req.body; // Get answers from request body
+  try {
+    const response = await submitAnswer(psychologistId, answers); // Call service function
+    return res.status(200).json(response); // Return success response
+  } catch (error) {
+    console.error('Error submitting answers:', error);
+    return res.status(500).json({ message: 'Error submitting answers' }); // Error response
+  }
+};
+
+psychologistController.fetchQnA = async (req, res) => {
+  const { psychologistId } = req.headers.psychologistid; // Get psychologist ID from URL parameters
+  try {
+    const qna = await getQnA(psychologistId); // Call service function
+    return res.status(200).json(qna); // Return the Q&A
+  } catch (error) {
+    console.error('Error fetching Q&A:', error);
+    return res.status(500).json({ message: 'Error fetching Q&A' }); // Error response
+  }
+};
+
+psychologistController.handleAskQuestion = async (req, res) => {
+  const { psychologistId } = req.headers.psychologistid; // Get psychologist ID from URL parameters
+  const { question } = req.body; // Get question from request body
+  try {
+    const response = await askQuestion(psychologistId, question); // Call service function
+    return res.status(200).json(response); // Return success response
+  } catch (error) {
+    console.error('Error submitting question:', error);
+    return res.status(500).json({ message: 'Error submitting question' }); // Error response
+  }
+};
 
 
 

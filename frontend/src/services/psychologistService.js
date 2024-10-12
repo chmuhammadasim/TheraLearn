@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Retrieve the authentication token from local storage
 const token = localStorage.getItem('authToken');
 
 // Fetch all psychologists
@@ -11,8 +12,6 @@ export const getPsychologists = async () => {
         'Content-Type': 'application/json'
       }
     });
-    
-    
     return response.data;
   } catch (error) {
     console.error('Error fetching psychologists:', error);
@@ -20,7 +19,7 @@ export const getPsychologists = async () => {
   }
 };
 
-// Fetch a specific psychologist by ID (ID passed in headers)
+// Fetch a specific psychologist by ID
 export const getPsychologistById = async (id) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologist/getbyid`, {
@@ -37,7 +36,44 @@ export const getPsychologistById = async (id) => {
   }
 };
 
-// Assign psychologist to a patient (ID passed in headers)
+// Fetch the list of patients assigned to a psychologist
+export const getPatientsByPsychologistId = async (id) => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologist/patients`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'psychologist-id': id
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching patients:', error);
+    throw error;
+  }
+};
+
+// Send a message to a specific patient
+export const sendMessageToPatient = async (patientId, message) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/messages`, 
+      { message }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patient-id': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};
+
+// Assign a psychologist to a patient (optional, if needed)
 export const assignPsychologistToPatient = async (psychologistId) => {
   try {
     const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/patients/assign`, {}, {
@@ -54,14 +90,14 @@ export const assignPsychologistToPatient = async (psychologistId) => {
   }
 };
 
-// Fetch the questionnaire (ID passed in headers)
+// Fetch the questionnaire (optional, if needed)
 export const getQuestionnaire = async (psychologistId) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologist/questionnaire`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': psychologistId  // Pass psychologist ID in headers
+        'psychologist-id': psychologistId
       }
     });
     return response.data;
@@ -71,14 +107,14 @@ export const getQuestionnaire = async (psychologistId) => {
   }
 };
 
-// Submit answers to the questionnaire (ID passed in headers)
+// Submit answers to the questionnaire (optional, if needed)
 export const submitAnswer = async (psychologistId, answers) => {
   try {
     const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/questionnaire/answers`, { answers }, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': psychologistId  // Pass psychologist ID in headers
+        'psychologist-id': psychologistId
       }
     });
     return response.data;
@@ -88,14 +124,14 @@ export const submitAnswer = async (psychologistId, answers) => {
   }
 };
 
-// Fetch the Q&A (ID passed in headers)
+// Fetch the Q&A (optional, if needed)
 export const getQnA = async (psychologistId) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologist/qna`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': psychologistId  // Pass psychologist ID in headers
+        'psychologist-id': psychologistId
       }
     });
     return response.data;
@@ -105,14 +141,14 @@ export const getQnA = async (psychologistId) => {
   }
 };
 
-// Ask a new question in Q&A (ID passed in headers)
+// Ask a new question in Q&A (optional, if needed)
 export const askQuestion = async (psychologistId, question) => {
   try {
     const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/qna`, { question }, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': psychologistId  // Pass psychologist ID in headers
+        'psychologist-id': psychologistId
       }
     });
     return response.data;
