@@ -113,7 +113,7 @@
     return (
       <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
         {/* Animated Background */}
-        <motion.div
+        {/* <motion.div
           className="absolute inset-0 bg-[#ff7560] opacity-70 rounded-full"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
@@ -124,7 +124,7 @@
           initial={{ scale: 0.6 }}
           animate={{ scale: 0.8 }}
           transition={{ duration: 6, ease: 'easeInOut' }}
-        />
+        /> */}
 
         <div className="relative bg-white p-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
           <motion.img
@@ -157,13 +157,13 @@
           {/* Toggle between User and Psychologist */}
           <div className="flex justify-center mb-6 gap-5">
             <button
-              className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200'}`}
+              className={`py-2 px-4 font-semibold rounded-l-lg ${!isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200 text-gray-700'}`}
               onClick={() => setIsPsychologist(false)}
             >
               User Signup
             </button>
             <button
-              className={`py-2 px-4 font-semibold rounded-r-lg ${isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200'}`}
+              className={`py-2 px-4 font-semibold rounded-r-lg ${isPsychologist ? 'bg-[#e74c3c] text-white' : 'bg-gray-200 text-gray-700'}`}
               onClick={() => setIsPsychologist(true)}
             >
               Psychologist Signup
@@ -365,7 +365,7 @@
                   <button
                     type="button"
                     onClick={addEducation}
-                    className="flex items-center text-[#e74c3c] mb-4"
+                    className="flex items-center text-[#fff]  mb-4"
                   >
                     <FaPlusCircle size={20} className="mr-2" /> Add Education
                   </button>
@@ -398,7 +398,7 @@
                   <button
                     type="button"
                     onClick={addExperience}
-                    className="flex items-center text-[#e74c3c] mb-4"
+                    className="flex items-center text-[#ffffff] mb-4 bg-slate-400"
                   >
                     <FaPlusCircle size={20} className="mr-2" /> Add Experience
                   </button>
