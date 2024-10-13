@@ -2,10 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import Loading from '../../components/Loading';
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -29,6 +40,10 @@ const BlogList = () => {
       console.error('Error incrementing view count:', error);
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="relative min-h-screen pt-20 bg-gradient-to-r from-[#f9d423] via-[#ff6338] to-[#f9d423] overflow-hidden">

@@ -8,7 +8,8 @@ import { motion } from 'framer-motion';
 import { FaStar, FaGamepad, FaTrophy } from 'react-icons/fa';
 
 function Dashboard() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setIsLoading] = useState(true);
+
   const [userData, setUserData] = useState(null);
   const [userGames, setUserGames] = useState([]);
   const [error, setError] = useState(null);
@@ -19,17 +20,21 @@ function Dashboard() {
         const [user, games] = await Promise.all([getUserData(), getUserGames()]);
         setUserData(user.data);
         setUserGames(games.data);
-        console.log(user.data, games.data);
-        
-        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         setError("There was an issue retrieving data. Please try again later.");
-        setLoading(false);
       }
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {

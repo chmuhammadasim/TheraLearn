@@ -75,7 +75,7 @@ function PsychologistDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#eeddf3] via-[#ee92b1] to-[#6330b4] p-6">
+    <div className="min-h-screen bg-gradient-to-r from-[#FFDEE9] to-[#B5EAD7] p-6">
       <div className="max-w-4xl mt-24 mb-16 mx-auto bg-white p-8 rounded-lg shadow-2xl transform hover:scale-105 transition duration-500">
         <div className="flex flex-col md:flex-row items-center">
           <img
@@ -84,13 +84,13 @@ function PsychologistDetailsPage() {
             className="w-48 h-48 object-cover rounded-full shadow-lg border-4 border-indigo-500 hover:scale-110 transition duration-300"
           />
           <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
-            <h1 className="text-5xl font-extrabold text-blue-900">{psychologist.firstName} {psychologist.lastName}</h1>
+            <h1 className="text-5xl font-extrabold text-indigo-600 font-fun">{psychologist.firstName} {psychologist.lastName}</h1>
             <p className="text-pink-600 text-xl font-medium mt-2">{psychologist.specialization}</p>
             <p className="text-gray-500 mt-4 flex items-center justify-center md:justify-start">
-              <FiPhone className="mr-2" /> {psychologist.phone}
+              <FiPhone className="mr-2 text-blue-500" /> {psychologist.phone}
             </p>
             <p className="text-gray-500 flex items-center justify-center md:justify-start">
-              <FiMail className="mr-2" /> {psychologist.contact}
+              <FiMail className="mr-2 text-blue-500" /> {psychologist.contact}
             </p>
             <p className="text-gray-600 mt-2">
               {psychologist.city}, {psychologist.country}
@@ -113,7 +113,7 @@ function PsychologistDetailsPage() {
           {!isDoctorSelected ? (
             <button
               onClick={handleSelectDoctor}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-600 transform hover:scale-110 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-[#6EE7B7] to-[#3B82F6] text-white px-6 py-3 rounded-lg shadow-lg hover:from-[#34D399] hover:to-[#2563EB] transform hover:scale-110 transition-all duration-300"
             >
               Select as My Doctor
             </button>
