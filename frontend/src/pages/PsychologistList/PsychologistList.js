@@ -4,10 +4,19 @@ import { getPsychologists } from '../../services/psychologistService';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 
+
 function PsychologistListPage() {
   const [psychologists, setPsychologists] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const fetchPsychologists = async () => {
@@ -17,7 +26,6 @@ function PsychologistListPage() {
       } catch (error) {
         console.error('Error fetching psychologists:', error);
       } finally {
-        setIsLoading(false);
       }
     };
 

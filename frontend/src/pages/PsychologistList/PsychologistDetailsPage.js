@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPsychologistById, assignPsychologistToPatient, getQuestionnaire, submitAnswer, getQnA, askQuestion } from '../../services/psychologistService';
+import {
+  getPsychologistById,
+  assignPsychologistToPatient,
+  getQuestionnaire,
+  submitAnswer,
+  getQnA,
+  askQuestion,
+} from '../../services/psychologistService';
 import { FiPhone, FiMail } from 'react-icons/fi';
 
 function PsychologistDetailsPage() {
@@ -10,7 +17,7 @@ function PsychologistDetailsPage() {
   const [questionnaire, setQuestionnaire] = useState([]);
   const [answers, setAnswers] = useState({});
   const [qna, setQnA] = useState([]);
-  const [newQuestion, setNewQuestion] = useState("");
+  const [newQuestion, setNewQuestion] = useState('');
 
   useEffect(() => {
     const fetchPsychologist = async () => {
@@ -60,7 +67,7 @@ function PsychologistDetailsPage() {
   const handleQuestionSubmit = async () => {
     try {
       await askQuestion(id, newQuestion);
-      setNewQuestion("");
+      setNewQuestion('');
       const updatedQnA = await getQnA(id);
       setQnA(updatedQnA);
       alert('Question submitted successfully!');
@@ -75,17 +82,17 @@ function PsychologistDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#FFDEE9] to-[#B5EAD7] p-6">
-      <div className="max-w-4xl mt-24 mb-16 mx-auto bg-white p-8 rounded-lg shadow-2xl transform hover:scale-105 transition duration-500">
+    <div className="min-h-screen bg-gradient-to-r from-[#FFDEE9] to-[#B5EAD7] p-4 md:p-6">
+      <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-12 mb-16">
         <div className="flex flex-col md:flex-row items-center">
           <img
             src={psychologist.profilePictureUrl}
             alt={psychologist.name}
-            className="w-48 h-48 object-cover rounded-full shadow-lg border-4 border-indigo-500 hover:scale-110 transition duration-300"
+            className="w-32 h-32 md:w-48 md:h-48 object-cover rounded-full shadow-lg border-4 border-indigo-500"
           />
-          <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
-            <h1 className="text-5xl font-extrabold text-indigo-600 font-fun">{psychologist.firstName} {psychologist.lastName}</h1>
-            <p className="text-pink-600 text-xl font-medium mt-2">{psychologist.specialization}</p>
+          <div className="md:ml-6 mt-4 md:mt-0 text-center md:text-left">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-600">{psychologist.firstName} {psychologist.lastName}</h1>
+            <p className="text-pink-600 text-lg md:text-xl font-medium mt-2">{psychologist.specialization}</p>
             <p className="text-gray-500 mt-4 flex items-center justify-center md:justify-start">
               <FiPhone className="mr-2 text-blue-500" /> {psychologist.phone}
             </p>
@@ -113,7 +120,7 @@ function PsychologistDetailsPage() {
           {!isDoctorSelected ? (
             <button
               onClick={handleSelectDoctor}
-              className="w-full bg-gradient-to-r from-[#6EE7B7] to-[#3B82F6] text-white px-6 py-3 rounded-lg shadow-lg hover:from-[#34D399] hover:to-[#2563EB] transform hover:scale-110 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-[#6EE7B7] to-[#3B82F6] text-white px-6 py-3 rounded-lg shadow-lg hover:from-[#34D399] hover:to-[#2563EB] transition-all duration-300"
             >
               Select as My Doctor
             </button>
@@ -129,20 +136,21 @@ function PsychologistDetailsPage() {
           <h2 className="text-3xl font-bold text-indigo-700">Questionnaire</h2>
           <div className="mt-4 space-y-4">
             {questionnaire.map((question) => (
-              <div key={question._id} className="bg-pink-100 p-4 rounded-lg shadow hover:bg-pink-200 transition duration-300">
+              <div key={question._id} className="bg-pink-100 p-4 rounded-lg shadow">
                 <p className="text-gray-800 font-semibold">{question.text}</p>
                 <input
                   type="text"
                   value={answers[question._id] || ""}
                   onChange={(e) => handleAnswerChange(question._id, e.target.value)}
-                  className="w-full mt-2 p-2 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full mt-2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Your answer..."
                 />
               </div>
             ))}
           </div>
           <button
             onClick={handleSubmitAnswers}
-            className="mt-4 bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600 transform hover:scale-105 transition-all duration-300"
+            className="mt-4 bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600"
           >
             Submit Answers
           </button>
@@ -153,7 +161,7 @@ function PsychologistDetailsPage() {
           <h2 className="text-3xl font-bold text-indigo-700">Q&A</h2>
           <div className="mt-4 space-y-4">
             {qna.map((item) => (
-              <div key={item._id} className="bg-yellow-100 p-4 rounded-lg shadow hover:bg-yellow-200 transition duration-300">
+              <div key={item._id} className="bg-yellow-100 p-4 rounded-lg shadow">
                 <p className="text-gray-800 font-semibold">{item.question}</p>
                 {item.answers.map((answer) => (
                   <div key={answer._id} className="bg-white mt-2 p-2 rounded-lg shadow">
@@ -168,11 +176,11 @@ function PsychologistDetailsPage() {
               value={newQuestion}
               onChange={(e) => setNewQuestion(e.target.value)}
               placeholder="Ask a question..."
-              className="w-full p-4 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <button
               onClick={handleQuestionSubmit}
-              className="mt-2 bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600 transform hover:scale-105 transition-all duration-300"
+              className="mt-2 bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600"
             >
               Submit Question
             </button>
@@ -182,7 +190,7 @@ function PsychologistDetailsPage() {
         <div className="mt-8 text-center">
           <a
             href={`mailto:${psychologist.contact}`}
-            className="inline-block bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600 transform hover:scale-110 transition-all duration-300"
+            className="inline-block bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600"
           >
             Contact Now
           </a>
