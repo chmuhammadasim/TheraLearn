@@ -46,7 +46,7 @@ function App() {
     };
 
     checkLoginStatus();
-  }, [isLoggedIn, role]);
+  }, []);
 
   return (
     <AuthProvider>

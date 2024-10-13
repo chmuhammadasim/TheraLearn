@@ -6,7 +6,6 @@ blogController.Checkapi = (req, res) => {
     message: "blog API is working",
   });
 };
-// Controller to get all blogs
 blogController.getAllBlogs = async (req, res) => {
   try {
     // Fetch blogs from the database
@@ -50,7 +49,6 @@ blogController.getAllBlogs = async (req, res) => {
     });
   }
 };
-
 blogController.getBlogById = async (req, res) => {
   const { id } = req.params;
 
@@ -82,8 +80,6 @@ blogController.getBlogById = async (req, res) => {
     });
   }
 };
-
-// Delete a blog by ID
 blogController.deleteBlog = async (req, res) => {
   const { blogId } = req.params;
 
@@ -106,8 +102,6 @@ blogController.deleteBlog = async (req, res) => {
       .json({ message: "Failed to delete blog", error: error.message });
   }
 };
-
-// Update blog status
 blogController.updateBlogStatus = async (req, res) => {
   const { blogId } = req.params;
   const { status } = req.body;
@@ -174,7 +168,6 @@ blogController.toggleBlogActiveStatus = async (req, res) => {
     });
   }
 };
-
 blogController.likeBlog = async (req, res) => {
   const { blogId } = req.params;
 
@@ -264,5 +257,4 @@ blogController.submitComment = async (req, res) => {
     });
   }
 };
-
 module.exports = blogController;

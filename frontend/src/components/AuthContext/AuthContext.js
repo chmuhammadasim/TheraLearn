@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const checkTokenValidity = (token) => {
-    // Assuming your token contains expiry information in the payload (JWT).
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const isExpired = payload.exp && Date.now() >= payload.exp * 1000;
@@ -27,13 +26,11 @@ export const AuthProvider = ({ children }) => {
       if (token && checkTokenValidity(token)) {
         setIsLoggedIn(true);
         setRole(userRole);
-        
       } else {
         setIsLoggedIn(false);
         setRole(null);
         localStorage.removeItem("authToken");
         localStorage.removeItem("authRole");
-        
       }
     } catch (err) {
       console.error("Error checking login status:", err);
@@ -53,6 +50,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("authRole");
       setIsLoggedIn(false);
       setRole(null);
+      window.location.href = "/";
     } catch (err) {
       console.error("Logout error:", err);
       setError("An error occurred during logout.");
@@ -66,7 +64,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("authRole", userRole);
         setIsLoggedIn(true);
         setRole(userRole);
-        
+        window.location.href = "/";
       } else {
         throw new Error("Invalid or expired token.");
       }

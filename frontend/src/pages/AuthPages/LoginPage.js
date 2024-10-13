@@ -33,7 +33,6 @@ function LoginPage() {
       localStorage.setItem('authRole', data.role);
       login(data.token, data.role);
       navigate('/');
-      //navigate('/').then(()=>{window.location.reload()});
     } catch (error) {
       setMessage(error.message);
     } finally {
