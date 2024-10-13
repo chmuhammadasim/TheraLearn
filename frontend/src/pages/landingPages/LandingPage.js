@@ -56,7 +56,7 @@ function LandingPage() {
         title={data.cta.title || defaultData.cta.title}
         description={data.cta.description || defaultData.cta.description}
         buttonText={data.cta.buttonText || defaultData.cta.buttonText}
-        benefits={data.cta.benefits || defaultData.cta.benefits}
+        benefits={data.cta.features || defaultData.cta.benefits}
       />
       <BlogSection />
     </div>

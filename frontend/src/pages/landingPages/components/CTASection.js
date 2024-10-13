@@ -5,16 +5,16 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
   return (
     <section
       id="cta"
-      className="border-b-8 border-lime-500 relative bg-gradient-to-t from-[rgb(89,207,192)] via-[#7079ff] to-[rgb(89,207,192)] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center items-center overflow-hidden"
+      className="border-b-8 border-lime-500 relative bg-gradient-to-t from-[#1d9d8a] via-[#4e76f5] to-[#1d9d8a] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center items-center overflow-hidden"
     >
       {/* Background Animated Elements */}
       <motion.div
-        className="absolute top-0 left-1/4 w-64 h-64 bg-[#fdd365] opacity-20 rounded-full filter blur-xl"
+        className="absolute top-0 left-1/4 w-72 h-72 bg-[#fdd365] opacity-20 rounded-full filter blur-xl"
         animate={{ y: [0, 20, 0] }}
         transition={{ repeat: Infinity, duration: 6 }}
       />
       <motion.div
-        className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#61d4b3] opacity-20 rounded-full filter blur-xl"
+        className="absolute bottom-0 right-1/4 w-72 h-72 bg-[#61d4b3] opacity-20 rounded-full filter blur-xl"
         animate={{ y: [0, -20, 0] }}
         transition={{ repeat: Infinity, duration: 6 }}
       />
@@ -22,15 +22,15 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
       {/* Content Container */}
       <div className="container mx-auto px-6 text-center z-10">
         <motion.h2
-          className=" p-6 bg-white bg-opacity-15 rounded-full text-4xl md:text-5xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2"
+          className="p-6 bg-white bg-opacity-25 rounded-full text-5xl md:text-6xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2 shadow-lg animate-bounce"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <span>🚀</span> {title} <span>✨</span>
+          <span role="img" aria-label="rocket">🚀</span> {title} <span role="img" aria-label="sparkles">✨</span>
         </motion.h2>
         <motion.p
-          className="text-lg md:text-xl mb-8 font-light"
+          className="text-lg md:text-xl mb-8 font-light animate-fadeIn"
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -41,9 +41,9 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
         {/* Call to Action Button */}
         <motion.a
           href="#contact"
-          className="inline-block bg-gradient-to-r from-[#fdd365] to-[#ffae34] text-[#ff347f] px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-[0_0_20px_#ffae34] transition-transform duration-300 transform hover:scale-110"
+          className="inline-block bg-gradient-to-r from-[#fdd365] to-[#ffae34] text-[#ff347f] px-10 py-4 rounded-full text-lg font-bold shadow-lg hover:shadow-[0_0_20px_#ffae34] transition-transform duration-300 transform hover:scale-110"
           initial={{ scale: 1 }}
-          whileHover={{ scale: 1.2 }}
+          whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
           transition={{ duration: 0.3 }}
         >
           {buttonText} 💥
@@ -59,14 +59,14 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
           {benefits.map((benefit, index) => (
             <motion.div
               key={index}
-              className="p-6 bg-white bg-opacity-10 rounded-lg shadow-lg hover:bg-opacity-20 transition duration-300 hover:scale-105 cursor-pointer"
+              className="p-6 bg-white bg-opacity-15 rounded-lg shadow-lg hover:bg-opacity-25 transition duration-300 hover:scale-105 cursor-pointer"
               whileHover={{ rotate: [0, 2, -2, 0], scale: 1.05 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
-              <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
-                🌟 {benefit.title}
+              <h3 className="text-xl font-bold mb-2 flex items-center gap-2 text-[#ff347f]">
+                <span role="img" aria-label="star">🌟</span> {benefit.title}
               </h3>
-              <p className="text-sm">{benefit.description}</p>
+              <p className="text-sm text-gray-200">{benefit.description}</p>
             </motion.div>
           ))}
         </motion.div>

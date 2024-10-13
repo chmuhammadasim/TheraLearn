@@ -3,61 +3,80 @@ import { motion } from "framer-motion";
 
 const HeroSection = ({ title, subtitle, buttonText }) => {
   return (
-    <section className=" border-b-8 border-pink-500 bg-gradient-to-b from-[#6a11cb] via-[#2575fc] to-[#6a11cb] text-white py-16 md:py-24 md:p-12 min-h-screen flex flex-col justify-center relative overflow-hidden">
-      {/* Background Image with Blur Effect */}
-      <div className="absolute top-0 left-0 w-full h-full z-[-1] backdrop-blur-md">
-        <motion.div
-          initial={{ opacity: 0.2 }}
-          animate={{ opacity: 0.5 }}
-          transition={{ duration: 15, ease: "easeInOut", repeat: Infinity }}
-          className="bg-[url('https://www.fmiblog.com/wp-content/uploads/2023/04/Stuffed-Plush-Toys-Market.jpg')] bg-cover bg-center h-full"
-        />
-      </div>
+    <section className="border-b-8 border-blue-600 bg-gradient-to-b from-[#330867] to-[#30cfd0] text-white py-20 md:py-28 px-6 md:px-12 min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
+      {/* Background with a Smooth Glow Animation */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-full z-[-1] backdrop-blur-md"
+        initial={{ opacity: 0.4 }}
+        animate={{ opacity: 0.8 }}
+        transition={{ duration: 12, repeat: Infinity }}
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1592194996307-3c1b4509d847?auto=format&fit=crop&w=1740&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
 
-      {/* Floating Emojis for Fun */}
-      <motion.div
-        className="absolute bottom-10 left-10 text-6xl"
-        animate={{ y: [0, -20, 0], x: [0, 20, 0] }}
-        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-      >
-        🎉
-      </motion.div>
-      <motion.div
-        className="absolute top-20 right-20 text-6xl"
-        animate={{ y: [-10, 10, -10] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-      >
-        🚀
-      </motion.div>
-      <motion.div
-        className="absolute bottom-10 left-1/2 text-6xl"
-        animate={{ y: [0, -30, 0], rotate: [0, 360, 0] }}
-        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-      >
-        🌟
-      </motion.div>
+      {/* Floating Emojis */}
+      {[
+        {
+          emoji: "🎉",
+          xRange: [0, 20, -20, 0],
+          yRange: [0, -30, 30, 0],
+          rotateRange: [0, 360, 0],
+          duration: 5,
+        },
+        {
+          emoji: "🦄",
+          xRange: [0, 10, -10, 0],
+          yRange: [0, -40, 20, 0],
+          rotateRange: [0, 180, 0],
+          duration: 6,
+        },
+        {
+          emoji: "🍭",
+          xRange: [0, 30, -30, 0],
+          yRange: [0, -20, 20, 0],
+          rotateRange: [0, -360, 0],
+          duration: 4,
+        },
+        {
+          emoji: "🌈",
+          xRange: [0, 40, -40, 0],
+          yRange: [0, -25, 25, 0],
+          rotateRange: [0, 360, 0],
+          duration: 5.5,
+        },
+        {
+          emoji: "🎂",
+          xRange: [0, 25, -25, 0],
+          yRange: [0, -35, 35, 0],
+          rotateRange: [0, 360, 0],
+          duration: 5,
+        },
+      ].map((item, index) => (
+        <FloatingEmoji key={index} {...item} />
+      ))}
 
-      {/* Floating Heart Shape */}
-      <motion.div
-        className="absolute top-20 left-32 text-4xl"
-        animate={{ y: [0, -15, 0], rotate: [0, 360, 0] }}
-        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-      >
-        ❤️
-      </motion.div>
+      {/* Confetti Rain */}
+      {Array.from({ length: 40 }).map((_, index) => (
+        <Confetti key={index} />
+      ))}
 
-      {/* Content Container */}
-      <div className="container mx-auto px-6 text-center">
+      {/* Main Content */}
+      <div className="text-center z-10">
         <motion.h1
-          className=" p-6 bg-black bg-opacity-20 rounded-lg text-5xl md:text-6xl font-extrabold mb-4 tracking-wide flex justify-center items-center gap-4"
+          className="bg-black bg-opacity-30 p-8 md:p-12 rounded-2xl text-5xl md:text-7xl font-extrabold mb-6 tracking-wider leading-tight shadow-lg transition-transform hover:scale-105"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <span>🎈</span> {title} <span>✨</span>
+          🎈 {title} 🎉
         </motion.h1>
+
         <motion.p
-          className="text-xl md:text-2xl mb-8 font-light"
+          className="text-lg md:text-2xl mb-10 font-light px-6 md:px-16"
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.9 }}
@@ -65,36 +84,117 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
           {subtitle} 😊
         </motion.p>
 
-        {/* Call to Action Button with Bounce Effect */}
+        {/* Call-to-Action Button */}
         <motion.a
           href="#cta"
-          className="bg-gradient-to-r from-[#ff6ec7] to-[#ff4081] text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-[0_0_30px_#ff6ec7] transition-transform duration-300 transform hover:scale-110"
+          className="bg-gradient-to-r from-[#89f7fe] to-[#66a6ff] text-white px-8 py-4 rounded-full text-xl font-semibold shadow-xl hover:shadow-[0_0_40px_#ff6ec7] transition-transform hover:scale-110"
           initial={{ scale: 1 }}
-          whileHover={{ scale: 2.2, rotate: [0, 20, -20, 0] }}
-          transition={{ duration: 0.3 }}
+          whileHover={{ scale: 1.5, rotate: [0, 15, -15, 0] }}
+          transition={{ duration: 0.4 }}
         >
           🚀 {buttonText} 🚀
         </motion.a>
       </div>
 
-      {/* Floating Background Shapes */}
-      <motion.div
-        className="absolute top-1/3 left-1/4 bg-[#ffdbac] w-36 h-36 rounded-full opacity-40"
-        animate={{ y: [0, 40, 0], x: [0, 20, 0] }}
-        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute top-1/4 right-1/4 bg-[#9fc1ff] w-48 h-48 rounded-full opacity-30"
-        animate={{ y: [0, -20, 0], rotate: [0, 360, 0] }}
-        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-3.5 right-1/4 bg-[#bed0f1] w-40 h-40 rounded-full opacity-30"
-        animate={{ y: [0, -20, 0], rotate: [0, 360, 0] }}
-        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-      />
+      {/* Floating Colorful Shapes */}
+      <FloatingShape size="w-32 h-32" color="#fbe7c6" />
+      <FloatingShape size="w-44 h-44" color="#9fc1ff" rotate />
+      <FloatingShape size="w-52 h-52" color="#ffdbac" />
+
+      {/* Starburst Effect */}
+      <Starburst />
     </section>
   );
 };
+
+/* Floating Emoji Component */
+const FloatingEmoji = ({ emoji, xRange, yRange, rotateRange, duration }) => (
+  <motion.div
+    className="absolute text-6xl"
+    animate={{
+      x: xRange,
+      y: yRange,
+      rotate: rotateRange,
+    }}
+    transition={{ duration, repeat: Infinity, ease: "easeInOut" }}
+    style={{
+      top: `${Math.random() * 85}%`,
+      left: `${Math.random() * 85}%`,
+    }}
+  >
+    {emoji}
+  </motion.div>
+);
+
+/* Confetti Component */
+const colors = [
+  "#FF5733",
+  "#33FF57",
+  "#3357FF",
+  "#FF33A1",
+  "#FFD633",
+  "#33FFF9",
+  "#FF3333",
+  "#A133FF",
+];
+
+const Confetti = () => {
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+  return (
+    <motion.div
+      className="absolute w-2 h-2 rounded-full"
+      style={{
+        backgroundColor: randomColor,
+        top: `${Math.random() * 10}%`,
+        left: `${Math.random() * 100}%`,
+      }}
+      initial={{ y: -10 }}
+      animate={{ y: [0, 800], x: [0, Math.random() * 800 - 400] }}
+      transition={{
+        repeat: Infinity,
+        duration: Math.random() * 6 + 4,
+        ease: "linear",
+      }}
+    />
+  );
+};
+
+/* Floating Shape Component */
+const FloatingShape = ({ size, color, rotate = false }) => (
+  <motion.div
+    className={`absolute ${size} rounded-full opacity-30`}
+    style={{
+      backgroundColor: color,
+      top: `${Math.random() * 80}%`,
+      left: `${Math.random() * 80}%`,
+    }}
+    animate={{
+      y: [0, 25, 0],
+      rotate: rotate ? [0, 360, 0] : 0,
+    }}
+    transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
+  />
+);
+
+/* Starburst Effect */
+const Starburst = () => (
+  <motion.div
+    className="absolute bg-blue-300 w-12 h-12 rounded-full"
+    animate={{
+      scale: [1, 3, 1],
+      opacity: [1, 0.5, 1],
+    }}
+    transition={{
+      repeat: Infinity,
+      duration: 3,
+      ease: "easeInOut",
+    }}
+    style={{
+      top: `${Math.random() * 80}%`,
+      left: `${Math.random() * 80}%`,
+    }}
+  />
+);
 
 export default HeroSection;
