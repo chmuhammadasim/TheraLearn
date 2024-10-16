@@ -22,6 +22,8 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
 
+
+const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 app.use(cors());
 
 app.use(accessControl);
@@ -51,7 +53,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "100kb" }));
 
 if (process.env.NODE_ENV !== "test") {
   mongoose
-    .connect(process.env.THERALEARN_DB_URL)
+    .connect(process.env.THERALEARN_DB_URL, clientOptions)
     .then(() =>
       console.log(
         `MongoDB connected successfully on ${process.env.THERALEARN_DB_URL}(app.js)`
