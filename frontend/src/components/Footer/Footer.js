@@ -4,7 +4,7 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaGithub } from 'rea
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-600 text-white py-12 md:py-16 relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-600 text-white py-8 md:py-12 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <motion.svg
@@ -28,7 +28,7 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           {/* Logo and Brand Name */}
           <motion.div
             className="flex items-center mb-6 md:mb-0"
@@ -45,22 +45,6 @@ const Footer = () => {
               TheraLearn
             </h1>
           </motion.div>
-
-          {/* Navigation Links */}
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-8 mb-8 md:mb-0 text-center">
-            {["Home", "About", "Services", "Contact"].map((link) => (
-              <motion.a
-                key={link}
-                href={`#${link.toLowerCase()}`}
-                className="text-lg font-medium text-white px-4 py-2 rounded hover:bg-white hover:text-blue-600 transition-transform transform hover:scale-105"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {link}
-              </motion.a>
-            ))}
-          </div>
         </div>
 
         {/* Social Icons */}
@@ -81,7 +65,7 @@ const Footer = () => {
               <motion.a
                 key={idx}
                 href={url}
-                className={`text-2xl md:text-3xl hover:text-white transition-transform transform hover:scale-125`}
+                className="text-2xl md:text-3xl hover:text-white transition-transform transform hover:scale-125"
                 whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
                 style={{
