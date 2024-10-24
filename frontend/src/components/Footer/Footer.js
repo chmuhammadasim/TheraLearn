@@ -72,7 +72,7 @@ const Footer = () => {
               >
                 <Icon />
                 {/* Glowing Effect */}
-                <span className="absolute inset-0 rounded-full border border-white opacity-0 group-hover:opacity-100 group-hover:shadow-lg group-hover:shadow-white transition duration-300"></span>
+                <span className="absolute inset-0 rounded-full border border-white opacity-0 group-hover:opacity-100 group-hover:shadow-lg group-hover:shadow-black transition duration-300"></span>
               </motion.a>
             ))}
           </motion.div>
