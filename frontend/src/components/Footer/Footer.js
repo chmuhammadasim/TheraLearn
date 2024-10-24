@@ -4,53 +4,49 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaGithub } from 'rea
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-600 text-white py-8 md:py-12 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full z-0">
-        <motion.svg
-          className="absolute top-10 left-10 w-1/3 md:w-1/4 opacity-20"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 350 350"
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        >
-          <circle cx="100" cy="100" r="90" fill="#ffffff" />
-        </motion.svg>
-        <motion.svg
-          className="absolute top-6 right-6 w-1/4 md:w-1/6 opacity-15"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 350 350"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <rect x="20" y="20" width="160" height="160" fill="#ffffff" />
-        </motion.svg>
+    <footer className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 text-white py-5 md:py-16 overflow-hidden">
+      {/* Rotating Background Circles */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <motion.div
+          className="absolute w-96 h-96 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full opacity-50 blur-2xl"
+          style={{ top: '-100px', left: '-100px' }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.div
+          className="absolute w-80 h-80 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-full opacity-50 blur-2xl"
+          style={{ bottom: '-150px', right: '-100px' }}
+          animate={{ rotate: -360 }}
+          transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
+        />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+      <div className="relative z-10 container mx-auto px-6">
+        <div className="flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Brand Name */}
           <motion.div
-            className="flex items-center mb-6 md:mb-0"
+            className="flex items-center space-x-4 mb-6 md:mb-0"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <img
+            <motion.img
               src="/LOGO.png"
               alt="Logo"
-              className="h-12 w-12 md:h-14 mr-4 rounded-full border-4 border-white shadow-lg"
+              className="h-14 w-14 rounded-full border-4 border-white shadow-lg"
+              animate={{ y: [0, -5, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
             />
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-wide">
+            <h1 className="text-4xl font-extrabold tracking-wide text-white">
               TheraLearn
             </h1>
           </motion.div>
         </div>
 
-        {/* Social Icons */}
-        <div className="flex flex-col items-center mb-8">
+        {/* Social Icons with Glowing Effect */}
+        <div className="flex flex-col items-center mb-10">
           <motion.div
-            className="flex gap-6 md:gap-8"
+            className="flex gap-6 md:gap-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -65,22 +61,25 @@ const Footer = () => {
               <motion.a
                 key={idx}
                 href={url}
-                className="text-2xl md:text-3xl hover:text-white transition-transform transform hover:scale-125"
+                className="text-3xl md:text-4xl transition-transform transform hover:scale-125 relative group"
                 whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
                 style={{
                   backgroundColor: color,
-                  padding: '8px',
+                  padding: '10px',
                   borderRadius: '50%',
                 }}
               >
                 <Icon />
+                {/* Glowing Effect */}
+                <span className="absolute inset-0 rounded-full border border-white opacity-0 group-hover:opacity-100 group-hover:shadow-lg group-hover:shadow-white transition duration-300"></span>
               </motion.a>
             ))}
           </motion.div>
 
+          {/* Footer Text */}
           <motion.p
-            className="text-center mt-8 text-xs md:text-sm font-light"
+            className="mt-10 text-center text-sm md:text-base font-light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
