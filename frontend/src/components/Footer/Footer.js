@@ -77,7 +77,7 @@ const Footer = () => {
             ))}
           </motion.div>
 
-          {/* Footer Text */}
+      
           <motion.p
             className="mt-10 text-center text-sm md:text-base font-light"
             initial={{ opacity: 0 }}
