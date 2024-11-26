@@ -11,6 +11,7 @@ function LoginPage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [loggingIn, setLoggingIn] = useState(false);
+  const [errors, setErrors] = useState({});
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -20,8 +21,22 @@ function LoginPage() {
     }, 2000);
   }, []);
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) newErrors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format';
+    
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setLoggingIn(true);
     setMessage('');
 
@@ -34,7 +49,7 @@ function LoginPage() {
       login(data.token, data.role);
       navigate('/');
     } catch (error) {
-      setMessage(error.message);
+      setMessage(error.message || 'Something went wrong, please try again.');
     } finally {
       setLoggingIn(false);
     }
@@ -64,15 +79,6 @@ function LoginPage() {
       />
 
       <div className="relative bg-white p-10 rounded-lg shadow-xl w-full max-w-lg text-center z-10">
-        {/* Cartoon Illustration */}
-        <motion.img
-          src="Boy1.png"
-          alt="Cartoon Character"
-          className="absolute z-0 top-[10px] left-[20px] w-auto h-24 opacity-80"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-        />
 
         <motion.h1
           className="text-5xl font-bold text-[#fc3a52] mb-6"
@@ -107,8 +113,9 @@ function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52] transition-transform transform hover:scale-105"
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#fc3a52]'}`}
             />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </motion.div>
 
           <motion.div
@@ -123,8 +130,9 @@ function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc3a52] transition-transform transform hover:scale-105"
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#fc3a52]'}`}
             />
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </motion.div>
 
           <motion.button
@@ -135,7 +143,12 @@ function LoginPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            {loggingIn ? 'Logging in...' : 'Login'}
+            {loggingIn ? (
+              <div className="flex justify-center items-center">
+                <svg className="animate-spin h-5 w-5 mr-3 border-t-2 border-white rounded-full" viewBox="0 0 24 24"></svg>
+                Logging in...
+              </div>
+            ) : 'Login'}
           </motion.button>
         </form>
 
