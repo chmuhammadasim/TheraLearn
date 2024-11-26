@@ -4,10 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 import { FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
-// import { Cloudinary } from '@cloudinary/url-gen';
 
 const App = () => {
-  //const cld = new Cloudinary({ cloud: { cloudName: 'do7z15tdv' } });
   const [isPsychologist, setIsPsychologist] = useState(false);
   const [formData, setFormData] = useState(initialFormData());
   const [errors, setErrors] = useState({});
@@ -15,7 +13,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [isUploading, setIsUploading] = useState(false); // State to manage upload status
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
@@ -132,18 +130,14 @@ const App = () => {
         const data = await res.json();
         if (data.secure_url) {
           setUploadedImage(data.secure_url);
-          console.log(data);
-          
           setFormData((prev) => ({ ...prev, profilePictureUrl: data.secure_url }));
         } else {
-          console.error('Image upload failed:', data);
           setMessage('Image upload failed, please try again.');
         }
       } catch (error) {
-        console.error('Image upload failed:', error);
         setMessage('Image upload failed, please try again.');
       } finally {
-        setIsUploading(false); // Reset uploading state
+        setIsUploading(false);
       }
     }
   };
@@ -155,8 +149,8 @@ const App = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#64ff8b] via-[#a6c0fe] to-[#9678ff] relative overflow-hidden pt-20">
-      <div className="relative bg-white m-6 py-6 rounded-lg shadow-xl w-full max-w-4xl text-center">
+    <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#8e9eab] via-[#eef2f3] to-[#8e9eab] relative overflow-hidden pt-20">
+      <div className="relative bg-white m-6 py-8 px-10 rounded-lg shadow-xl w-full max-w-4xl text-center">
         <motion.img
           src="LOGO.png"
           alt="Logo"
@@ -166,12 +160,12 @@ const App = () => {
           transition={{ duration: 0.5, ease: 'easeInOut' }}
         />
         <motion.h1
-          className="text-4xl font-bold text-[#2c3e50] mb-4"
+          className="text-5xl font-bold text-[#34495e] mb-6"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-[#e74c3c]">Join Us!</span>
+          <span className="text-[#3498db]">Create Your Account</span>
         </motion.h1>
         {message && (
           <motion.p
@@ -184,7 +178,7 @@ const App = () => {
           </motion.p>
         )}
 
-        <div className="flex h-15 justify-between m-6 gap-5">
+        <div className="flex justify-center gap-5 mb-6">
           <ToggleButton active={!isPsychologist} label="User Signup" onClick={() => setIsPsychologist(false)} />
           <ToggleButton active={isPsychologist} label="Psychologist Signup" onClick={() => setIsPsychologist(true)} />
         </div>
@@ -202,52 +196,60 @@ const App = () => {
 
           {/* Image Upload Field */}
           <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#2c3e50]">Profile Picture:</label>
+            <label className="block text-left text-lg font-medium text-[#34495e]">Profile Picture:</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#64ff8b]"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]"
             />
-            {isUploading && <p className='text font-semibold text-cyan-950'>Checking Profile Image...</p>}
-            {uploadedImage && <p className='text font-semibold text-cyan-950'>Successfully Checked Image</p>}
+            {isUploading && <p className='text font-semibold text-gray-500'>Checking Profile Image...</p>}
+            {uploadedImage && <p className='text font-semibold text-green-500'>Image Successfully Uploaded</p>}
           </div>
 
           <InputGroup title="Date of Birth" type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} error={errors.dateOfBirth} />
 
           {isPsychologist && (
             <div>
-              <h2 className="text-2xl font-bold text-[#2c3e50] mb-2">Education:</h2>
+              <h2 className="text-2xl font-bold text-[#3498db] mb-4">Education & Experience</h2>
               {formData.educations.map((education, index) => (
-                <EducationInput key={index} index={index} value={education} onChange={handleArrayChange} onRemove={removeArrayItem} />
+                <EducationExperienceGroup
+                  key={index}
+                  title={`Education ${index + 1}`}
+                  value={education}
+                  index={index}
+                  type="educations"
+                  handleChange={handleArrayChange}
+                  addItem={addArrayItem}
+                  removeItem={removeArrayItem}
+                  error={errors.educations}
+                />
               ))}
-              <button type="button" onClick={() => addArrayItem('educations')} className="flex items-center text-blue-500">
-                <FaPlusCircle className="mr-2" /> Add Education
-              </button>
-              {errors.educations && <p className="text-red-500">{errors.educations}</p>}
-            </div>
-          )}
-
-          {isPsychologist && (
-            <div>
-              <h2 className="text-2xl font-bold text-[#2c3e50] mb-2">Experience:</h2>
               {formData.experiences.map((experience, index) => (
-                <ExperienceInput key={index} index={index} value={experience} onChange={handleArrayChange} onRemove={removeArrayItem} />
+                <EducationExperienceGroup
+                  key={index}
+                  title={`Experience ${index + 1}`}
+                  value={experience}
+                  index={index}
+                  type="experiences"
+                  handleChange={handleArrayChange}
+                  addItem={addArrayItem}
+                  removeItem={removeArrayItem}
+                  error={errors.experiences}
+                />
               ))}
-              <button type="button" onClick={() => addArrayItem('experiences')} className="flex items-center text-blue-500">
-                <FaPlusCircle className="mr-2" /> Add Experience
-              </button>
-              {errors.experiences && <p className="text-red-500">{errors.experiences}</p>}
             </div>
           )}
 
-          <button
-            type="submit"
-            className="w-full py-3 mt-4 text-white bg-[#e74c3c] rounded-lg shadow-lg hover:bg-[#c0392b] transition duration-300"
-            disabled={isUploading}
-          >
-            {isUploading ? 'Wait Checking Profile Image...' : 'Sign Up'}
-          </button>
+          <div>
+            <button
+              type="submit"
+              disabled={isUploading}
+              className="w-full py-3 bg-[#3498db] text-white font-bold rounded-lg hover:bg-[#2980b9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3498db]"
+            >
+              {isUploading ? 'Processing...' : 'Register'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -257,51 +259,53 @@ const App = () => {
 const ToggleButton = ({ active, label, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex-1 py-2 font-semibold rounded-lg transition-colors ${active ? 'bg-[#e74c3c] text-white' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
+    className={`px-4 py-2 rounded-full font-semibold ${active ? 'bg-[#3498db] text-white' : 'bg-gray-200 text-[#34495e]'}`}
   >
     {label}
   </button>
 );
 
-const InputGroup = ({ title, name, value, onChange, error, type = 'text' }) => (
+const InputGroup = ({ title, type = 'text', name, value, onChange, error }) => (
   <div className="form-group">
-    <label className="block text-left text-lg font-medium text-[#2c3e50]">{title}:</label>
+    <label className="block text-left text-lg font-medium text-[#34495e]">{title}:</label>
     <input
       type={type}
       name={name}
       value={value}
       onChange={onChange}
-      className={`w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#64ff8b] ${error ? 'border-red-500' : ''}`}
+      className={`w-full p-3 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]`}
     />
-    {error && <p className="text-red-500">{error}</p>}
+    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 
 const AddressGroup = ({ formData, handleChange }) => (
-  <div className="grid grid-cols-2 gap-4">
+  <div className="grid grid-cols-3 gap-4">
     <InputGroup title="Address" name="address" value={formData.address} onChange={handleChange} />
     <InputGroup title="City" name="city" value={formData.city} onChange={handleChange} />
     <InputGroup title="Country" name="country" value={formData.country} onChange={handleChange} />
-    <InputGroup title="Contact" name="contact" value={formData.contact} onChange={handleChange} />
-    <InputGroup title="Bio" name="bio" value={formData.bio} onChange={handleChange} />
   </div>
 );
 
-const EducationInput = ({ index, value, onChange, onRemove }) => (
-  <div className="flex items-center mb-2">
-    <InputGroup title={`Education ${index + 1}`} name={`educations-${index}`} value={value} onChange={(e) => onChange('educations', index, e.target.value)} />
-    <button type="button" onClick={() => onRemove('educations', index)} className="ml-2 text-red-500 hover:text-red-700">
-      <FaMinusCircle />
-    </button>
-  </div>
-);
-
-const ExperienceInput = ({ index, value, onChange, onRemove }) => (
-  <div className="flex items-center mb-2">
-    <InputGroup title={`Experience ${index + 1}`} name={`experiences-${index}`} value={value} onChange={(e) => onChange('experiences', index, e.target.value)} />
-    <button type="button" onClick={() => onRemove('experiences', index)} className="ml-2 text-red-500 hover:text-red-700">
-      <FaMinusCircle />
-    </button>
+const EducationExperienceGroup = ({ title, value, index, type, handleChange, addItem, removeItem, error }) => (
+  <div className="form-group mb-4">
+    <label className="block text-left text-lg font-medium text-[#34495e]">{title}:</label>
+    <div className="flex items-center">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => handleChange(type, index, e.target.value)}
+        className={`flex-grow p-3 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]`}
+      />
+      <div className="flex gap-2 ml-2">
+        <button type="button" onClick={() => addItem(type)}>
+          <FaPlusCircle className="text-green-500 text-2xl" />
+        </button>
+        <button type="button" onClick={() => removeItem(type, index)} disabled={index === 0}>
+          <FaMinusCircle className="text-red-500 text-2xl" />
+        </button>
+      </div>
+    </div>
   </div>
 );
 
