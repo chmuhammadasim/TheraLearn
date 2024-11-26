@@ -60,20 +60,20 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#92ffff] to-[#799cfa] text-[#0e2431] relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#92a8d1] to-[#3c6382] text-[#1a374d] relative overflow-hidden">
       {/* Animated Background Shapes */}
       <motion.div
-        className="absolute w-96 h-96 bg-[#3afc7b] rounded-full top-10 right-20 opacity-70"
+        className="absolute w-96 h-96 bg-[#5dade2] rounded-full top-10 right-20 opacity-70"
         animate={{ y: [0, 50, 0], rotate: [0, 360] }}
         transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
       />
       <motion.div
-        className="absolute w-80 h-80 bg-[#f94848] rounded-full bottom-20 left-10 opacity-70"
+        className="absolute w-80 h-80 bg-[#3c6382] rounded-full bottom-20 left-10 opacity-70"
         animate={{ y: [0, -50, 0], rotate: [0, -360] }}
         transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
       />
       <motion.div
-        className="absolute w-40 h-40 bg-[#85f876] rounded-full top-[50%] right-[40%] opacity-70"
+        className="absolute w-40 h-40 bg-[#82ccdd] rounded-full top-[50%] right-[40%] opacity-70"
         animate={{ scale: [1, 1.2, 1], rotate: [0, 360] }}
         transition={{ duration: 15, ease: 'easeInOut', repeat: Infinity }}
       />
@@ -81,7 +81,7 @@ function LoginPage() {
       <div className="relative bg-white p-10 rounded-lg shadow-xl w-full max-w-lg text-center z-10">
 
         <motion.h1
-          className="text-5xl font-bold text-[#fc3a52] mb-6"
+          className="text-5xl font-bold text-[#1f618d] mb-6"
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -107,13 +107,13 @@ function LoginPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Email:</label>
+            <label className="block text-left text-lg font-medium text-[#1a374d]">Email:</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#fc3a52]'}`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#1f618d]'}`}
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </motion.div>
@@ -124,13 +124,13 @@ function LoginPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <label className="block text-left text-lg font-medium text-[#0e2431]">Password:</label>
+            <label className="block text-left text-lg font-medium text-[#1a374d]">Password:</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#fc3a52]'}`}
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#1f618d]'}`}
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </motion.div>
@@ -138,7 +138,7 @@ function LoginPage() {
           <motion.button
             type="submit"
             disabled={loggingIn}
-            className="w-full py-3 bg-[#fc3a52] text-white rounded-lg hover:bg-[#f8c731] transition-transform transform hover:scale-105 shadow-lg"
+            className="w-full py-3 bg-[#1f618d] text-white rounded-lg hover:bg-[#2874a6] transition-transform transform hover:scale-105 shadow-lg"
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -153,13 +153,13 @@ function LoginPage() {
         </form>
 
         <motion.p
-          className="mt-4 text-[#0e2431] text-sm"
+          className="mt-4 text-[#1a374d] text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.8 }}
         >
           Not a member?{' '}
-          <a href="/signup" className="text-[#fc3a52] hover:underline transition-colors duration-300">
+          <a href="/signup" className="text-[#1f618d] hover:underline transition-colors duration-300">
             Register here
           </a>
         </motion.p>
