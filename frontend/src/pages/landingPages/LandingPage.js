@@ -4,6 +4,7 @@ import HeroSection from './components/HeroSection';
 import FeaturesSection from './components/FeaturesSection';
 import CTASection from './components/CTASection';
 import BlogSection from './components/BlogSection';
+import { motion } from "framer-motion";
 
 function LandingPage() {
   const [data, setData] = useState({
@@ -14,25 +15,52 @@ function LandingPage() {
   });
   
   const [isLoading, setIsLoading] = useState(true);
+  const colors = [
+    "#FF5733",
+    "#33FF57",
+    "#3357FF",
+    "#FF33A1",
+    "#FFD633",
+    "#33FFF9",
+    "#FF3333",
+    "#A133FF",
+  ];
+  const Confetti = () => {
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    return (
+      <motion.div
+        className="absolute w-2 h-2 rounded-full"
+        style={{
+          backgroundColor: randomColor,
+          top: `${Math.random() * 10}%`,
+          left: `${Math.random() * 100}%`,
+        }}
+        initial={{ y: -10 }}
+        animate={{ y: [0, 800], x: [0, Math.random() * 800 - 400] }}
+        transition={{
+          repeat: Infinity,
+          duration: Math.random() * 6 + 4,
+          ease: "linear",
+        }}
+      />
+    );
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_KEY}/content`); // Assuming the endpoint
+        const response = await fetch(`${process.env.REACT_APP_API_KEY}/content`);
         if (response.ok) {
           const result = await response.json();
-          //console.log(result.content);
           setData(result.content);
         } else {
-          setData(defaultData); // Use default data if the API call fails
+          setData(defaultData);
         }
       } catch (error) {
-        setData(defaultData); // Fallback to default data in case of error
+        setData(defaultData);
       }
     };
-
     fetchData();
-
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -51,6 +79,7 @@ function LandingPage() {
         subtitle={data.hero.subtitle || defaultData.hero.subtitle}
         buttonText={data.hero.buttonText || defaultData.hero.buttonText}
       />
+      
       <FeaturesSection features={data.features.length > 0 ? data.features : defaultData.features} />
       <CTASection
         title={data.cta.title || defaultData.cta.title}
@@ -59,6 +88,11 @@ function LandingPage() {
         benefits={data.cta.features || defaultData.cta.benefits}
       />
       <BlogSection />
+      <div className="fixed inset-0 overflow-hidden z-50 pointer-events-none">
+      {[...Array(20)].map((_, index) => (
+        <Confetti key={index} />
+      ))}
+    </div>
     </div>
   );
 }

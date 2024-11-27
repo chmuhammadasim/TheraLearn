@@ -5,72 +5,95 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
   return (
     <section
       id="cta"
-      className="border-b-8 border-lime-500 relative bg-gradient-to-t from-[#1d9d8a] via-[#4e76f5] to-[#1d9d8a] text-white py-16 md:py-24 min-h-screen flex flex-col justify-center items-center overflow-hidden"
+      className="border-b-8 border-orange-500 relative bg-gradient-to-bl from-[#2a2a72] via-[#009ffd] to-[#2a2a72] text-white py-20 md:py-32 min-h-screen flex flex-col justify-center items-center overflow-hidden"
+      style={{ perspective: "1500px" }}
     >
-      {/* Background Animated Elements */}
       <motion.div
-        className="absolute top-0 left-1/4 w-72 h-72 bg-[#fdd365] opacity-20 rounded-full filter blur-xl"
-        animate={{ y: [0, 20, 0] }}
-        transition={{ repeat: Infinity, duration: 6 }}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,255,255,0.2) 1%, transparent 20%)",
+          backgroundSize: "20px 20px",
+        }}
+        animate={{ opacity: [0.6, 0.9, 0.6] }}
+        transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
+      />
+      {/* Floating Elements */}
+      <motion.div
+        className="absolute top-0 left-1/4 w-[200px] h-[200px] bg-gradient-to-tr from-pink-500 to-yellow-300 opacity-30 rounded-full filter blur-2xl"
+        animate={{ y: [0, -30, 30], x: [0, 20, -20] }}
+        transition={{ duration: 10, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-0 right-1/4 w-72 h-72 bg-[#61d4b3] opacity-20 rounded-full filter blur-xl"
-        animate={{ y: [0, -20, 0] }}
-        transition={{ repeat: Infinity, duration: 6 }}
+        className="absolute bottom-10 right-1/4 w-[300px] h-[300px] bg-gradient-to-b from-green-400 to-blue-600 opacity-20 rounded-full filter blur-3xl"
+        animate={{ x: [-20, 40, -40], y: [0, 30, -30] }}
+        transition={{ duration: 12, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute top-1/4 left-10 w-96 h-96 bg-gradient-to-r from-pink-500 to-yellow-500 opacity-20 rounded-full filter blur-3xl"
+        animate={{ x: [0, 100, 0] }}
+        transition={{ repeat: Infinity, duration: 7 }}
+      />
+      <motion.div
+        className="absolute bottom-1/4 right-10 w-80 h-80 bg-gradient-to-t from-green-400 to-blue-600 opacity-30 rounded-full filter blur-2xl"
+        animate={{ y: [0, -100, 0] }}
+        transition={{ repeat: Infinity, duration: 7 }}
       />
 
-      {/* Content Container */}
-      <div className="container mx-auto px-6 text-center z-10">
+      {/* Title & Description */}
+      <div className="container mx-auto px-8 text-center z-10">
         <motion.h2
-          className="p-6 bg-white bg-opacity-25 rounded-full text-5xl md:text-6xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2 shadow-lg animate-bounce"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
+          className="p-8 bg-gradient-to-b from-[#ffffff1a] to-[#ffffff08] rounded-2xl shadow-xl backdrop-blur-xl text-4xl md:text-6xl font-extrabold mb-8 tracking-wide text-shadow-md"
+          initial={{ scale: 0.7, opacity: 0, rotateX: -30 }}
+          animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+          transition={{ duration: 1.2 }}
         >
-          <span role="img" aria-label="rocket">🚀</span> {title} <span role="img" aria-label="sparkles">✨</span>
+          {title} <span className="text-yellow-400">🚀</span>
         </motion.h2>
         <motion.p
-          className="text-lg md:text-xl mb-8 font-light animate-fadeIn"
-          initial={{ y: -30, opacity: 0 }}
+          className="p-8 bg-gradient-to-b from-[#ffffff1a] to-[#ffffff08] rounded-2xl shadow-xl backdrop-blur-xl text-2xl md:text-2xl mb-10 font-medium max-w-4xl mx-auto text-gray-100"
+          initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1.5 }}
         >
-          {description} 😊
+          {description}
         </motion.p>
 
         {/* Call to Action Button */}
         <motion.a
           href="#contact"
-          className="inline-block bg-gradient-to-r from-[#fdd365] to-[#ffae34] text-[#ff347f] px-10 py-4 rounded-full text-lg font-bold shadow-lg hover:shadow-[0_0_20px_#ffae34] transition-transform duration-300 transform hover:scale-110"
-          initial={{ scale: 1 }}
-          whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 0.3 }}
+          className="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-16 py-6 rounded-full text-lg font-bold shadow-xl hover:shadow-3xl transform transition-all duration-500 hover:scale-125 hover:rotate-6"
+          whileHover={{ scale: 1.1, rotate: 5 }}
         >
-          {buttonText} 💥
+          {buttonText}
         </motion.a>
-
-        {/* Benefits Section */}
-        <motion.div
-          className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        >
-          {benefits.map((benefit, index) => (
-            <motion.div
-              key={index}
-              className="p-6 bg-white bg-opacity-15 rounded-lg shadow-lg hover:bg-opacity-25 transition duration-300 hover:scale-105 cursor-pointer"
-              whileHover={{ rotate: [0, 2, -2, 0], scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 200 }}
-            >
-              <h3 className="text-xl font-bold mb-2 flex items-center gap-2 text-[#ff347f]">
-                <span role="img" aria-label="star">🌟</span> {benefit.title}
-              </h3>
-              <p className="text-sm text-gray-200">{benefit.description}</p>
-            </motion.div>
-          ))}
-        </motion.div>
       </div>
+
+      {/* Benefits Section */}
+      <motion.div
+        className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-8"
+        initial={{ opacity: 0, rotateY: -30 }}
+        animate={{ opacity: 1, rotateY: 0 }}
+        transition={{ duration: 1.5, delay: 0.5 }}
+      >
+        {benefits.map((benefit, index) => (
+          <motion.div
+            key={index}
+            className="p-8 bg-gradient-to-b from-[#ffffff1a] to-[#ffffff08] rounded-2xl shadow-xl backdrop-blur-xl transform hover:scale-105 hover:rotate-2 transition duration-500 relative"
+            style={{ perspective: "1000px" }}
+          >
+            <motion.div
+              className="absolute inset-0 w-full h-full bg-gradient-to-tr from-yellow-400 to-pink-500 opacity-10 rounded-xl shadow-2xl"
+              animate={{ rotateX: [0, 15, -15, 0], rotateY: [0, -5, 5, 0] }}
+              transition={{ duration: 10, repeat: Infinity }}
+            ></motion.div>
+            <h3 className="text-2xl font-semibold mb-4 text-yellow-300">
+              🌟 {benefit.title}
+            </h3>
+            <p className="text-base text-gray-200">{benefit.description}</p>
+          </motion.div>
+        ))}
+      </motion.div>
     </section>
   );
 };

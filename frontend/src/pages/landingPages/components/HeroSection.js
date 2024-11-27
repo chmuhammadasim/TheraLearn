@@ -60,9 +60,9 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
       ))}
 
       {/* Confetti Rain */}
-      {Array.from({ length: 40 }).map((_, index) => (
+      {/* {Array.from({ length: 40 }).map((_, index) => (
         <Confetti key={index} />
-      ))}
+      ))} */}
 
       {/* Main Content */}
       <div className="text-center z-10">
