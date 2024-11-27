@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -21,36 +20,22 @@ const contentRoute = require("./routes/content.route");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
-
-
-const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+const clientOptions = {
+  serverApi: { version: "1", strict: true, deprecationErrors: true },
+};
 app.use(cors());
-
 app.use(accessControl);
-
 app.use(helmet());
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 1000,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-//  app.use(limiter);
-
 app.use(helmet.noSniff());
-app.use(helmet.hidePoweredBy()); 
-
+app.use(helmet.hidePoweredBy());
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
 app.use(bodyParser.json());
-
 app.use(bodyParser.json({ limit: "100kb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "100kb" }));
-
 if (process.env.NODE_ENV !== "test") {
   mongoose
     .connect(process.env.THERALEARN_DB_URL, clientOptions)
@@ -69,13 +54,11 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 app.use(xssprotection);
-
 app.get("/api", function (req, res) {
   res.status(200).send({
     message: "Express backend server",
   });
 });
-
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/superadmin", superadmin);
@@ -84,17 +67,14 @@ app.use("/api/query", queryRoute);
 app.use("/api/psychologist", psychologistRoute);
 app.use("/api/game", gameRoute);
 app.use("/api/content", contentRoute);
-
 app.use((req, res, next) => {
   res.status(404).send({
     error: "Not Found",
     message: "The requested resource could not be found.",
   });
 });
-
 app.use(errorHandler);
 app.use(errorMessage);
-
 server.listen(process.env.PORT_URL || 5000, (error) => {
   if (error) {
     console.error(

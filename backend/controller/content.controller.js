@@ -1,6 +1,5 @@
-const Content = require("../model/content.model"); 
+const Content = require("../model/content.model");
 const ContentController = {};
-
 ContentController.updateHero = async (req, res) => {
   try {
     const { title, subtitle, buttonText } = req.body;

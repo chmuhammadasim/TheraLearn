@@ -1,6 +1,5 @@
 const Blog = require("../model/blog.model");
 const blogController = {};
-
 blogController.Checkapi = (req, res) => {
   res.status(200).send({
     message: "blog API is working",
@@ -8,50 +7,40 @@ blogController.Checkapi = (req, res) => {
 };
 blogController.getAllBlogs = async (req, res) => {
   try {
-    // Fetch blogs from the database
     const blogs = await Blog.find();
-
     if (!blogs.length) {
       return res.status(404).json({
         success: false,
         message: "No blogs found",
       });
     }
-
-    // Respond with the list of blogs
     res.status(200).json({
       success: true,
       data: blogs,
     });
   } catch (error) {
     console.error("Error fetching blogs:", error);
-
-    // Determine the type of error and respond accordingly
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
         message: "Invalid query parameters",
       });
     }
-
     if (error.name === "MongoError") {
       return res.status(500).json({
         success: false,
         message: "Database error occurred",
       });
     }
-
-    // Handle generic server error
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message, // Include the error message for debugging purposes
+      error: error.message,
     });
   }
 };
 blogController.getBlogById = async (req, res) => {
   const { id } = req.params;
-
   try {
     const blog = await Blog.findById(id);
     if (!blog) {
@@ -60,7 +49,6 @@ blogController.getBlogById = async (req, res) => {
         message: "Blog not found",
       });
     }
-
     res.status(200).json({
       success: true,
       data: blog,
@@ -73,7 +61,6 @@ blogController.getBlogById = async (req, res) => {
         message: "Invalid blog ID format",
       });
     }
-
     res.status(500).json({
       success: false,
       message: "Server Error: Unable to fetch blog",
@@ -82,19 +69,11 @@ blogController.getBlogById = async (req, res) => {
 };
 blogController.deleteBlog = async (req, res) => {
   const { blogId } = req.params;
-
-  // Check if the blogId is a valid MongoDB ObjectId
-  // if (!mongoose.Types.ObjectId.isValid(blogId)) {
-  //   return res.status(400).json({ message: 'Invalid blog ID' });
-  // }
-
   try {
     const blog = await Blog.findByIdAndDelete(blogId);
-
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-
     res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
     res
@@ -105,29 +84,22 @@ blogController.deleteBlog = async (req, res) => {
 blogController.updateBlogStatus = async (req, res) => {
   const { blogId } = req.params;
   const { status } = req.body;
-
-  // Check if the blogId is a valid MongoDB ObjectId
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
     return res.status(400).json({ message: "Invalid blog ID" });
   }
-
-  // Validate the status field
   const validStatuses = ["draft", "published", "archived"];
   if (!validStatuses.includes(status)) {
     return res.status(400).json({ message: "Invalid status value" });
   }
-
   try {
     const blog = await Blog.findByIdAndUpdate(
       blogId,
       { status },
       { new: true }
     );
-
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-
     res.status(200).json(blog);
   } catch (error) {
     res
@@ -138,23 +110,18 @@ blogController.updateBlogStatus = async (req, res) => {
 blogController.toggleBlogActiveStatus = async (req, res) => {
   const { blogId } = req.params;
   const { isActive } = req.body;
-
-  // Check if the blogId is valid
   if (!mongoose.Types.ObjectId.isValid(blogId)) {
     return res.status(400).json({ message: "Invalid blog ID" });
   }
-
   try {
     const blog = await Blog.findByIdAndUpdate(
       blogId,
       { isActive },
       { new: true }
     );
-
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-
     res.status(200).json({
       success: true,
       message: `Blog ${isActive ? "activated" : "deactivated"} successfully`,
@@ -170,21 +137,20 @@ blogController.toggleBlogActiveStatus = async (req, res) => {
 };
 blogController.likeBlog = async (req, res) => {
   const { blogId } = req.params;
-
   const userId = req.userData.userId;
-
   try {
     const blog = await Blog.findById(blogId);
-
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-    if (blog.dislikedBy.includes(userId) === false && blog.likedBy.includes(userId) === false) {
-      blog.likes += 1; // Increment dislikes
+    if (
+      blog.dislikedBy.includes(userId) === false &&
+      blog.likedBy.includes(userId) === false
+    ) {
+      blog.likes += 1;
       blog.likedBy.push(userId);
       await blog.save();
     }
-
     res.status(200).json({
       success: true,
       message: "Blog liked successfully",
@@ -200,20 +166,19 @@ blogController.likeBlog = async (req, res) => {
 };
 blogController.dislikeBlog = async (req, res) => {
   const { blogId } = req.params;
-
   try {
     const blog = await Blog.findById(blogId);
-
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-
-    if (blog.dislikedBy.includes(userId)!== false && blog.likedBy.includes(userId) !== false) {
-      blog.dislikes += 1; // Increment dislikes
+    if (
+      blog.dislikedBy.includes(userId) !== false &&
+      blog.likedBy.includes(userId) !== false
+    ) {
+      blog.dislikes += 1;
       blog.dislikedBy.push(userId);
       await blog.save();
     }
-
     res.status(200).json({
       success: true,
       message: "Blog disliked successfully",
@@ -230,20 +195,16 @@ blogController.dislikeBlog = async (req, res) => {
 blogController.submitComment = async (req, res) => {
   const { blogId } = req.params;
   const { comment } = req.body;
-
   if (!comment || comment.trim() === "") {
     return res.status(400).json({ message: "Comment cannot be empty" });
   }
-
   try {
     const blog = await Blog.findById(blogId);
-
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
     blog.comments.push({ comment: comment, user: req.userData.userId });
     await blog.save();
-
     res.status(200).json({
       success: true,
       message: "Comment submitted successfully",

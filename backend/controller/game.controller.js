@@ -1,65 +1,48 @@
 const Game = require("../model/game.model");
 const gameController = {};
-
 gameController.Checkapi = (req, res) => {
   res.status(200).send({
     message: "game API is working",
   });
 };
-
 gameController.getAllGames = async (req, res) => {
   try {
-    // Fetch blogs from the database
     const game = await Game.find();
-    // .populate("author", "username")
-    // .sort({ publishedAt: -1 });
-
-    // Check if blogs were found
     if (!game.length) {
       return res.status(200).json({
         success: false,
         message: "No game found",
       });
-    }
-
-    // Respond with the list of blogs
+    };
     res.status(200).json({
       success: true,
       data: blogs,
     });
   } catch (error) {
     console.error("Error fetching blogs:", error);
-
-    // Determine the type of error and respond accordingly
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
         message: "Invalid query parameters",
       });
     }
-
     if (error.name === "MongoError") {
       return res.status(500).json({
         success: false,
         message: "Database error occurred",
       });
     }
-
-    // Handle generic server error
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message, // Include the error message for debugging purposes
+      error: error.message,
     });
   }
 };
-
 gameController.getGameById = async (req, res) => {
-  const userId = req.userData.userId; 
-
+  const userId = req.userData.userId;
   try {
-    const game = await Game.find({ userId }); 
-    
+    const game = await Game.find({ userId });
     if (!game) {
       return res.status(404).json({
         success: false,
@@ -67,15 +50,12 @@ gameController.getGameById = async (req, res) => {
         message: "Game not found",
       });
     }
-
     res.status(200).json({
       success: true,
       data: game,
     });
   } catch (error) {
     console.error("Error fetching game:", error);
-
-    // Handling invalid ID format (CastError)
     if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
@@ -83,8 +63,6 @@ gameController.getGameById = async (req, res) => {
         message: "Invalid user ID format",
       });
     }
-
-    // General server error handling
     res.status(500).json({
       success: false,
       data: null,
@@ -92,6 +70,4 @@ gameController.getGameById = async (req, res) => {
     });
   }
 };
-
-
 module.exports = gameController;
