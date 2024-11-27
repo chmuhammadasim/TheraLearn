@@ -32,7 +32,7 @@ const BlogSection = () => {
 
   if (loading) {
     return (
-      <div className=" flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen">
         <motion.div
           className="w-20 h-20 border-t-4 border-blue-500 rounded-full animate-spin"
           initial={{ rotate: 0 }}
@@ -49,15 +49,15 @@ const BlogSection = () => {
 
   return (
     <section className="border-b-8 border-yellow-500 relative py-20 bg-gradient-to-tr from-indigo-300 via-purple-400 to-pink-400 min-h-screen overflow-hidden">
-      {/* Background Particles */}
+      {/* Background Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {[...Array(25)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute bg-white bg-opacity-20 rounded-full shadow-xl filter blur-lg"
             style={{
-              width: `${Math.random() * 50 + 30}px`,
-              height: `${Math.random() * 50 + 30}px`,
+              width: `${Math.random() * 60 + 40}px`,
+              height: `${Math.random() * 60 + 40}px`,
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
             }}
@@ -74,9 +74,10 @@ const BlogSection = () => {
         ))}
       </div>
 
+      {/* Content */}
       <div className="relative z-20 text-center px-6">
         <motion.h2
-          className=" p-8 bg-gradient-to-b from-[#ffffff1a] to-[#ffffff08] rounded-2xl shadow-xl backdrop-blur-xl text-6xl font-extrabold text-white mb-12"
+          className="p-8 bg-gradient-to-b from-[#ffffff1a] to-[#ffffff08] rounded-2xl shadow-xl backdrop-blur-xl text-4xl md:text-6xl font-extrabold text-white mb-12"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -85,7 +86,7 @@ const BlogSection = () => {
         </motion.h2>
 
         {/* Blog Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
           {blogs.map((blog, index) => (
             <motion.div
               key={blog._id}
@@ -106,6 +107,10 @@ const BlogSection = () => {
           ))}
         </div>
       </div>
+
+      {/* Bottom Floating Decor Elements */}
+      <div className="absolute top-1/3 left-1/4 w-24 h-24 bg-gradient-to-r from-teal-300 to-blue-500 rounded-full animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-r from-orange-400 to-red-600 rounded-full animate-bounce" />
     </section>
   );
 };
