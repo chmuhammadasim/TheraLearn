@@ -48,7 +48,7 @@ const BlogSection = () => {
   }
 
   return (
-    <section className="border-b-8 border-yellow-500 relative py-20 bg-gradient-to-tr from-indigo-300 via-purple-400 to-pink-400 min-h-screen overflow-hidden">
+    <section className="border-b-8 border-cyan-500 relative py-20 bg-gradient-to-tr from-indigo-300 via-purple-400 to-pink-400 min-h-screen overflow-hidden">
       {/* Background Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(25)].map((_, i) => (

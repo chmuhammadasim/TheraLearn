@@ -100,46 +100,46 @@ function LandingPage() {
 const defaultData = {
   hero: {
     title: 'Welcome to TheraLearn',
-    subtitle: 'The best platform to learn and play games.',
-    buttonText: 'Lets play',
+    subtitle: 'An educational platform with games and therapy designed for children with Down syndrome.',
+    buttonText: 'Let\'s Play and Learn',
   },
   features: [
     {
-      icon: 'rocket',
-      title: 'Fast Performance',
-      description: 'Boost your workflow with lightning-fast speeds.',
-      image: '/LOGO.png',
-    },
-    {
       icon: 'puzzle-piece',
-      title: 'Customizable',
-      description: 'Easily adapt features to suit your preferences.',
-      image: '/LOGO.png',
+      title: 'Therapeutic Games',
+      description: 'Fun and engaging games that support cognitive development and motor skills.',
+      image: '/therapygame.png', // Replace with actual image
     },
     {
-      icon: 'robot',
-      title: 'Automation',
-      description: 'Smart tools to automate your tasks.',
-      image: '/LOGO.png',
+      icon: 'child',
+      title: 'Specialized Therapy',
+      description: 'Therapeutic activities tailored to the needs of children with Down syndrome.',
+      image: '/therapy.png', // Replace with actual image
     },
     {
-      icon: 'gamepad',
-      title: 'Interactive UI',
-      description: 'Engage with an immersive and fun UI.',
-      image: '/LOGO.png',
+      icon: 'brain',
+      title: 'Cognitive Development',
+      description: 'Games designed to improve memory, problem-solving, and other cognitive skills.',
+      image: '/brain.png', // Replace with actual image
+    },
+    {
+      icon: 'hand-holding-heart',
+      title: 'Emotional Support',
+      description: 'Tools and games focused on boosting emotional intelligence and social skills.',
+      image: '/emotionalsupport.png', // Replace with actual image
     },
   ],
   cta: {
-    title: 'Ready to Get Started?',
-  description: 'Join us today and experience the best of our services.',
-  buttonText: 'Sign Up Now',
-  benefits: [
-    { title: '24/7 Support', description: 'We provide round-the-clock support for all your needs.' },
-    { title: 'Seamless Integration', description: 'Easily integrate with our platform without any hassle.' },
-    { title: 'Top-notch Security', description: 'Your data is protected with the highest security standards.' },
-    { title: 'Affordable Pricing', description: 'Enjoy our services at competitive pricing plans.' }
-  ],
+    title: 'Ready to Start the Journey?',
+    description: 'Join TheraLearn and support your child’s development through play and therapy.',
+    buttonText: 'Sign Up Now',
+    benefits: [
+      { title: 'Personalized Learning', description: 'Each child gets a customized therapy and learning experience.' },
+      { title: 'Fun & Educational', description: 'The best way to learn through interactive and enjoyable games.' },
+      { title: 'Expert-Curated Activities', description: 'Therapy and games designed by experts for children with special needs.' },
+    ],
   },
 };
+
 
 export default LandingPage;

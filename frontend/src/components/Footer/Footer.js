@@ -10,10 +10,10 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 text-white py-5 md:py-16 overflow-hidden">
+    <footer className="relative border-t-2 border-black bg-gradient-to-br from-[#f9d423] to-[#e14fad] text-white py-5 md:py-16 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden z-0">
         <motion.div
-          className="absolute w-96 h-96 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full opacity-50 blur-2xl"
+          className="absolute w-96 h-96 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full opacity-70 blur-2xl"
           style={{ top: "-100px", left: "-100px" }}
           animate={{ rotate: 360 }}
           transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
