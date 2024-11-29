@@ -9,10 +9,10 @@ const FeaturesSection = ({ features }) => {
       <div className="absolute bottom-0 right-0 w-40 h-40 bg-pink-400 rounded-full opacity-50 blur-xl animate-bounce"></div>
 
       <div className="container mx-auto px-6 text-center relative z-10">
-        <h2 className="text-5xl md:text-6xl font-bold mb-8 text-purple-700 drop-shadow-lg animate-wiggle">
+        <h2 className="bg-slate-400 bg-opacity-30 rounded-2xl shadow-xl backdrop-blur-xl p-5 text-5xl md:text-6xl font-bold mb-8 text-purple-700 drop-shadow-lg animate-wiggle">
           🎮 Our Amazing Games 🎉
         </h2>
-        <p className="text-lg md:text-xl mb-12 text-gray-700 animate-fadeIn">
+        <p className="bg-slate-400 bg-opacity-30 rounded-2xl shadow-xl backdrop-blur-xl p-5 text-xl md:text-xl mb-12 text-blue-700 animate-fadeIn">
           Fun, educational, and entertaining games that spark creativity!
         </p>
 
