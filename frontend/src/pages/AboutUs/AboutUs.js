@@ -3,7 +3,7 @@ import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 import { FaUserGraduate, FaChalkboardTeacher, FaBook, FaSmile, FaLightbulb, FaPaintBrush } from 'react-icons/fa';
 
-function AboutUsPage() {
+const AboutUsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,145 +19,90 @@ function AboutUsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[rgb(154,205,255)] via-[#40c9ff] to-[#23ffff] text-[#000000] p-4 md:p-6 flex flex-col items-center justify-center relative">
-      {/* Navbar Space */}
-      <div className="h-16 md:h-20"></div>
-
-      {/* Animated Background Elements */}
+    <div className="min-h-screen pt-20 bg-gradient-to-tr from-[#0f2027] via-[#203a43] to-[#2c5364] text-white p-6 relative overflow-hidden">
+      {/* Background Particles */}
       <motion.div
-        className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 bg-[#f9b248] rounded-full opacity-30"
-        animate={{ x: [-50, 50, -50], y: [0, 100, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-0 left-0 w-56 h-56 bg-blue-500 rounded-full opacity-30 blur-xl"
+        animate={{ x: [-100, 100, -100], y: [0, 50, 0] }}
+        transition={{ duration: 20, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-0 right-20 w-32 h-32 md:w-48 md:h-48 bg-[#42f831] rounded-full opacity-30"
-        animate={{ x: [-50, 50, 50], y: [50, -100, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute bottom-10 right-0 w-64 h-64 bg-purple-500 rounded-full opacity-30 blur-xl"
+        animate={{ x: [100, -100, 100], y: [50, -50, 50] }}
+        transition={{ duration: 15, repeat: Infinity }}
       />
 
       <motion.h1
-        className="text-5xl md:text-6xl font-bold mb-8 md:mb-10 text-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, ease: 'easeInOut' }}
+        className="text-5xl font-extrabold mb-12 text-center"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.5, ease: 'easeOut' }}
       >
         About Us
       </motion.h1>
 
-      <div className="space-y-8 md:space-y-10 max-w-3xl mx-auto relative z-10">
-        {/* Educational Vision */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeInOut' }}
-        >
-          <FaBook className="text-[#fc3a52] text-5xl md:text-6xl mb-4 md:mb-0 md:mr-8 transition-transform transform hover:rotate-12" />
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Our Vision</h2>
-            <p className="text-lg">
-              We strive to create a fun, engaging, and educational environment where kids can learn and grow.
-              Our vision is to empower children with the knowledge and skills they need to succeed in life.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Dedicated Teachers */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: 'easeInOut' }}
-        >
-          <FaChalkboardTeacher className="text-[#f9b248] text-5xl md:text-6xl mb-4 md:mb-0 md:mr-8 transition-transform transform hover:rotate-12" />
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Our Teachers</h2>
-            <p className="text-lg">
-              Our teachers are passionate about education and dedicated to helping each child reach their full potential.
-              With years of experience and a love for teaching, they bring joy and excitement to the learning process.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Happy Students */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: 'easeInOut' }}
-        >
-          <FaSmile className="text-[#f8c731] text-5xl md:text-6xl mb-4 md:mb-0 md:mr-8 transition-transform transform hover:rotate-12" />
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Our Students</h2>
-            <p className="text-lg">
-              Our students are at the heart of everything we do. We believe that every child has the potential to achieve greatness,
-              and we are committed to helping them get there with interactive lessons and engaging activities.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Creative Learning */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.6, ease: 'easeInOut' }}
-        >
-          <FaLightbulb className="text-[#fc3a52] text-5xl md:text-6xl mb-4 md:mb-0 md:mr-8 transition-transform transform hover:rotate-12" />
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Creative Learning</h2>
-            <p className="text-lg">
-              Creativity is at the core of our educational approach. We encourage students to think outside the box
-              and explore new ideas through innovative projects and activities.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Artistic Expression */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.8, ease: 'easeInOut' }}
-        >
-          <FaPaintBrush className="text-[#f9b248] text-5xl md:text-6xl mb-4 md:mb-0 md:mr-8 transition-transform transform hover:rotate-12" />
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Artistic Expression</h2>
-            <p className="text-lg">
-              We believe in nurturing artistic talents in our students. Through art, music, and drama, we provide
-              a platform for students to express themselves and develop their creativity.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Student Achievements */}
-        <motion.div
-          className="flex flex-col items-center bg-white p-6 md:p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-transform"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
-        >
-          <FaUserGraduate className="text-[#fc3a52] text-5xl md:text-6xl mb-4" />
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">Student Achievements</h2>
-          <p className="text-lg mb-4 text-center">
-            Our students have excelled in various fields, including academics, sports, and the arts.
-            We celebrate every achievement, big or small, and encourage our students to keep pushing the boundaries.
-          </p>
-          <motion.a
-            href="#"
-            className="bg-[#fc3a52] text-white px-6 py-2 rounded-full font-bold text-lg hover:bg-[#e04c5d] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Learn More
-          </motion.a>
-        </motion.div>
+      <div className="space-y-12 max-w-5xl mx-auto relative z-10">
+        {/* Section Components */}
+        <AboutCard
+          icon={<FaBook />}
+          title="Our Vision"
+          content="We strive to create a fun, engaging, and educational environment where kids can learn and grow. Our vision is to empower children with the knowledge and skills they need to succeed in life."
+          color="from-red-400 to-pink-500 bg-opacity-10 bg-black"
+        />
+        <AboutCard
+          icon={<FaChalkboardTeacher />}
+          title="Our Teachers"
+          content="Our teachers are passionate about education and dedicated to helping each child reach their full potential. They bring joy and excitement to the learning process."
+          color="from-yellow-400 to-orange-500"
+        />
+        <AboutCard
+          icon={<FaSmile />}
+          title="Our Students"
+          content="Our students are at the heart of everything we do. We believe that every child has the potential to achieve greatness, and we are committed to helping them get there."
+          color="from-green-400 to-teal-500"
+        />
+        <AboutCard
+          icon={<FaLightbulb />}
+          title="Creative Learning"
+          content="Creativity is at the core of our educational approach. We encourage students to think outside the box and explore new ideas through innovative projects."
+          color="from-purple-400 to-indigo-500"
+        />
+        <AboutCard
+          icon={<FaPaintBrush />}
+          title="Artistic Expression"
+          content="We nurture artistic talents through art, music, and drama, providing a platform for students to express themselves and develop their creativity."
+          color="from-blue-400 to-cyan-500"
+        />
+        <AboutCard
+          icon={<FaUserGraduate />}
+          title="Student Achievements"
+          content="Our students excel in various fields, including academics, sports, and the arts. We celebrate every achievement and encourage them to keep pushing boundaries."
+          color="from-pink-400 to-red-500"
+        />
       </div>
-
-      {/* Footer Space */}
-      <div className="h-16 md:h-20"></div>
     </div>
   );
-}
+};
+
+const AboutCard = ({ icon, title, content, color }) => (
+  <motion.div
+    className={`flex flex-col md:flex-row items-center bg-gradient-to-br ${color} p-8 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105 text-white`}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1, ease: 'easeOut' }}
+  >
+    <motion.div
+      className="text-6xl md:text-7xl mb-6 md:mb-0 md:mr-8"
+      whileHover={{ rotate: 15 }}
+      transition={{ duration: 0.5 }}
+    >
+      {icon}
+    </motion.div>
+    <div>
+      <h2 className="text-3xl font-bold mb-4">{title}</h2>
+      <p className="text-lg leading-relaxed">{content}</p>
+    </div>
+  </motion.div>
+);
 
 export default AboutUsPage;

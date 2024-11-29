@@ -41,7 +41,7 @@ const BlogList = () => {
   }
 
   return (
-    <div className="relative min-h-screen pt-20 bg-gradient-to-b from-[#0f2027] via-[#203a43] to-[#2c5364] text-white overflow-hidden">
+    <div className="relative min-h-screen pt-12 bg-gradient-to-b from-[#0f2027] via-[#203a43] to-[#2c5364] text-white overflow-hidden">
       {/* Floating Particles */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -55,6 +55,19 @@ const BlogList = () => {
           animate={{ y: [-15, 15, -15], x: [-10, 10, -10] }}
           transition={{ repeat: Infinity, duration: 12 }}
           style={{ bottom: '10%', right: '10%' }}
+        />
+
+<motion.div
+          className="absolute w-16 h-16 bg-pink-400 rounded-full blur-xl opacity-40"
+          animate={{ y: [-15, 15, -15], x: [-10, 10, -10] }}
+          transition={{ repeat: Infinity, duration: 12 }}
+          style={{ top: '10%', right: '20%' }}
+        />
+        <motion.div
+          className="absolute w-16 h-16 bg-pink-400 rounded-full blur-xl opacity-40"
+          animate={{ y: [-15, 15, -15], x: [-10, 10, -10] }}
+          transition={{ repeat: Infinity, duration: 12 }}
+          style={{ top: '40%', right: '60%' }}
         />
       </div>
 

@@ -76,9 +76,9 @@ const BlogDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-900 to-black">
         <motion.div
-          className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"
+          className="w-16 h-16 border-t-4 border-indigo-500 rounded-full animate-spin"
           initial={{ rotate: 0 }}
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity }}
@@ -87,138 +87,134 @@ const BlogDetail = () => {
     );
   }
 
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (error) return <div className="text-center text-red-400">{error}</div>;
   if (!blog)
-    return <div className="text-center text-gray-500">Blog not found</div>;
+    return <div className="text-center text-gray-400">Blog not found</div>;
 
   return (
-    <div className="relative pt-20 min-h-screen bg-gradient-to-br from-white via-gray-100 to-gray-200 overflow-hidden">
-      {/* Animated background */}
-      <motion.div className="absolute inset-0 pointer-events-none">
+    <div className="relative py-20 min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 overflow-hidden">
+      {/* Animated Particles */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+      >
         <motion.div
-          className="w-96 h-96 bg-blue-300 rounded-full absolute top-0 left-10 blur-xl opacity-20"
-          animate={{ x: [0, 50, -50, 0], y: [0, -50, 50, 0] }}
-          transition={{ repeat: Infinity, duration: 20 }}
+          className="w-72 h-72 bg-purple-700 rounded-full absolute top-10 left-20 blur-3xl opacity-30"
+          animate={{ x: [0, 100, -100, 0], y: [0, -50, 50, 0] }}
+          transition={{ repeat: Infinity, duration: 18 }}
         />
         <motion.div
-          className="w-80 h-80 bg-pink-300 rounded-full absolute bottom-0 right-10 blur-xl opacity-20"
-          animate={{ x: [0, -50, 50, 0], y: [0, 50, -50, 0] }}
-          transition={{ repeat: Infinity, duration: 15 }}
+          className="w-64 h-64 bg-blue-600 rounded-full absolute bottom-0 right-20 blur-2xl opacity-30"
+          animate={{ x: [0, -80, 80, 0], y: [0, 60, -60, 0] }}
+          transition={{ repeat: Infinity, duration: 22 }}
         />
       </motion.div>
-      <div className="container mx-auto px-4 py-8 relative z-10">
+
+      <div className="container mx-auto px-8 relative z-10">
         <Link
           to="/bloglist"
-          className="text-blue-600 hover:underline mb-4 inline-block font-semibold transition-transform duration-300 ease-in-out transform hover:scale-105"
+          className="text-indigo-400 hover:underline mb-4 inline-block font-bold text-lg transform hover:scale-110 transition duration-300"
         >
           &larr; Back to Blog List
         </Link>
+
         <motion.div
-          className="bg-white rounded-lg shadow-2xl overflow-hidden"
+          className="backdrop-blur-lg bg-white rounded-lg shadow-xl p-8 overflow-hidden"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 1 }}
         >
           <img
             src={blog.coverImageUrl || "https://via.placeholder.com/800x400"}
             alt={blog.title}
-            className="w-full h-72 object-cover"
+            className="w-full h-80 object-cover rounded-lg"
           />
-          <div className="p-8 text-gray-800">
-            <h1 className="text-4xl font-extrabold mb-4">{blog.title}</h1>
-            <p className="text-lg leading-relaxed mb-6">{blog.content}</p>
-            <div className="mt-6">
-              <p className="text-gray-600">
-                Published on: {new Date(blog.publishedAt).toDateString()}
-              </p>
-              <p className="text-gray-600">Views: {blog.viewCount}</p>
-            </div>
-            <div className="flex items-center mt-8 space-x-4">
-              {token ? (
-                <>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={handleLike}
-                    className="flex items-center px-4 py-2 bg-blue-500 rounded-full text-white shadow-lg hover:bg-blue-600 transition duration-300"
+          <div className="mt-6">
+            <h1 className="text-5xl font-extrabold text-black">{blog.title}</h1>
+            <p className="text-black text-lg mt-4 leading-relaxed">
+              {blog.content}
+            </p>
+          </div>
+
+          <div className="mt-8  flex items-center space-x-4">
+            {token ? (
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.1, boxShadow: "0px 0px 15px #00FF00" }}
+                  onClick={handleLike}
+                  className="bg-green-500 text-black px-6 py-2 rounded-full hover:bg-green-600 transition-all"
+                >
+                  👍 Like ({blog.likes})
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.1, boxShadow: "0px 0px 15px #FF0000" }}
+                  onClick={handleDislike}
+                  className="bg-red-500 text-black px-6 py-2 rounded-full hover:bg-red-600 transition-all"
+                >
+                  👎 Dislike ({blog.dislikes})
+                </motion.button>
+              </>
+            ) : (
+              <p className="text-black">Login to like or dislike</p>
+            )}
+
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="bg-gray-700 text-black px-6 py-2 rounded-full shadow-lg hover:bg-gray-600"
+            >
+              <FiShare2 className="mr-2" /> Share
+            </motion.button>
+          </div>
+
+          <div className="mt-12">
+            <h2 className="text-3xl font-semibold text-black">Comments</h2>
+
+            {blog.comments.length > 0 ? (
+              <ul className="mt-6 space-y-6">
+                {blog.comments.map((comment, index) => (
+                  <motion.li
+                    key={index}
+                    className="bg-gray-800/60 p-6 rounded-lg shadow-lg"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    👍 Like ({blog.likes})
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={handleDislike}
-                    className="flex items-center px-4 py-2 bg-red-500 rounded-full text-white shadow-lg hover:bg-red-600 transition duration-300"
-                  >
-                    👎 Dislike ({blog.dislikes})
-                  </motion.button>
-                </>
-              ) : (
-                <p className="text-gray-600">Login to like or dislike</p>
-              )}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="flex items-center px-4 py-2 bg-gray-500 rounded-full text-white shadow-lg hover:bg-gray-600 transition duration-300"
-              >
-                <FiShare2 className="mr-2" /> Share
-              </motion.button>
-            </div>
-            {/* Comment Section */}
-            <div className="mt-10">
-              <h2 className="text-2xl font-bold mb-6">Comments</h2>
-              {blog.comments.length > 0 ? (
-                <ul className="space-y-6">
-                  {blog.comments.map((comment, index) => (
-                    <motion.li
-                      key={index}
-                      initial={{ opacity: 0, x: -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="border-t border-gray-300 pt-4"
-                    >
-                      <p className="text-gray-800 text-lg">{comment.comment}</p>
-                      <p className="text-sm text-gray-600">
-                        {new Date(comment.date).toDateString()}
-                      </p>
-                    </motion.li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-600">
-                  No comments yet. Be the first to comment!
-                </p>
-              )}
-              {token ? (
-                <form onSubmit={handleCommentSubmit} className="mt-6">
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    className="w-full p-4 border border-gray-300 rounded-lg focus
-                    focus
-                    focus
-                    focus
-                    "
-                    rows="4"
-                    placeholder="Write your comment here..."
-                  />{" "}
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-lg shadow-lg hover
-                    transition duration-300"
-                  >
-                    {" "}
-                    Submit Comment{" "}
-                  </motion.button>{" "}
-                </form>
-              ) : (
-                <p className="text-gray-600">Login to comment</p>
-              )}{" "}
-            </div>{" "}
-          </div>{" "}
-        </motion.div>{" "}
-      </div>{" "}
+                    <p className="text-black">{comment.comment}</p>
+                    <p className="text-black text-sm">
+                      {new Date(comment.date).toDateString()}
+                    </p>
+                  </motion.li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-black mt-4">No comments yet. Be the first!</p>
+            )}
+
+            {token ? (
+              <form onSubmit={handleCommentSubmit} className="mt-8">
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  className="w-full p-4 bg-gray-700 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Write your comment..."
+                  rows="4"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="mt-4 bg-indigo-500 px-6 py-2 text-black rounded-lg hover:bg-indigo-600 transition-all"
+                >
+                  Submit Comment
+                </motion.button>
+              </form>
+            ) : (
+              <p className="text-gray-400 mt-4">Login to comment</p>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };
