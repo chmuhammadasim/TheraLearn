@@ -139,7 +139,7 @@ const App = () => {
       formData.append("file", file);
       formData.append("upload_preset", "ml_default");
 
-      setIsUploading(true); // Set uploading state
+      setIsUploading(true); 
       try {
         const res = await fetch(
           `https://api.cloudinary.com/v1_1/do7z15tdv/upload`,
