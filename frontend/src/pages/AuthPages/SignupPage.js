@@ -88,11 +88,15 @@ const App = () => {
       newErrors.email = 'Email is not valid';
     }
 
-    // Validate psychologist specific fields
     if (isPsychologist) {
-      if (formData.educations.some((edu) => !edu)) newErrors.educations = 'All education fields are required';
-      if (formData.experiences.some((exp) => !exp)) newErrors.experiences = 'All experience fields are required';
+      formData.educations.forEach((edu, idx) => {
+        if (!edu) newErrors[`educations_${idx}`] = `Education ${idx + 1} is required`;
+      });
+      formData.experiences.forEach((exp, idx) => {
+        if (!exp) newErrors[`experiences_${idx}`] = `Experience ${idx + 1} is required`;
+      });
     }
+    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -103,7 +107,13 @@ const App = () => {
     if (validate()) {
       if (isUploading) return; // Prevent submission if uploading
       try {
-        const response = await signUpUser({ ...formData, profilePictureUrl: uploadedImage, role: isPsychologist ? 'psychologist' : 'user' });
+        const response = await signUpUser({
+          ...formData,
+          profilePictureUrl: uploadedImage,
+          role: isPsychologist ? 'psychologist' : 'user',
+          education: formData.educations.filter((edu) => edu.trim() !== ''),
+          experience: formData.experiences.filter((exp) => exp.trim() !== ''),
+        });
         if (response.status) {
           setMessage('Signup successful');
           navigate('/login');
