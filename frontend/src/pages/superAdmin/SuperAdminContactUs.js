@@ -97,7 +97,7 @@ const SuperAdminContactUs = () => {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-lg p-8 shadow-lg w-full max-w-md"
+            className="bg-white rounded-lg p-8 shadow-lg w-full md:max-w-2xl m-3"
           >
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">Reply to {selectedQuery.name}</h2>
             <div className="mb-5">
@@ -114,7 +114,7 @@ const SuperAdminContactUs = () => {
                 placeholder="Write your reply here..."
                 value={reply.replyMessage}
                 onChange={handleReplyChange}
-                className="w-full border border-gray-300 p-3 rounded-lg h-36 focus:ring-2 focus:ring-gray-500"
+                className="w-full border border-gray-300 p-3 rounded-lg h-48 focus:ring-2 focus:ring-gray-500"
               />
             </div>
             <div className="flex justify-between">
