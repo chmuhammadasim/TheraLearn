@@ -113,7 +113,7 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      if (isUploading) return; // Prevent submission if uploading
+      if (isUploading) return;
       try {
         const response = await signUpUser({
           ...formData,
@@ -263,6 +263,13 @@ const App = () => {
             value={formData.lastName}
             onChange={handleChange}
             error={errors.lastName}
+          />
+          <InputGroup
+            title="Enter Biography"
+            name="bio"
+            value={formData.bio}
+            onChange={handleChange}
+            error={errors.bio}
           />
           <InputGroup
             title="Contact"

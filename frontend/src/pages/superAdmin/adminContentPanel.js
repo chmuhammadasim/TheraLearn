@@ -4,7 +4,11 @@ import axios from "axios";
 const SuperAdminContentPanel = () => {
   const [hero, setHero] = useState({ title: "", subtitle: "", buttonText: "" });
   const [features, setFeatures] = useState([]);
-  const [cta, setCta] = useState({ title: "", description: "", buttonText: "" });
+  const [cta, setCta] = useState({
+    title: "",
+    description: "",
+    buttonText: "",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -20,10 +24,16 @@ const SuperAdminContentPanel = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_KEY}/content`);
-        setHero(data.content.hero || { title: "", subtitle: "", buttonText: "" });
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_API_KEY}/content`
+        );
+        setHero(
+          data.content.hero || { title: "", subtitle: "", buttonText: "" }
+        );
         setFeatures(data.content.features || []);
-        setCta(data.content.cta || { title: "", description: "", buttonText: "" });
+        setCta(
+          data.content.cta || { title: "", description: "", buttonText: "" }
+        );
       } catch (err) {
         handleError(err, "Failed to fetch content.");
       } finally {
@@ -60,9 +70,13 @@ const SuperAdminContentPanel = () => {
       return;
     }
     makeApiRequest(async () => {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-hero`, hero, {
-        headers: { authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `${process.env.REACT_APP_API_KEY}/content/update-hero`,
+        hero,
+        {
+          headers: { authorization: `Bearer ${token}` },
+        }
+      );
       alert("Hero section updated successfully!");
     });
   };
@@ -87,9 +101,12 @@ const SuperAdminContentPanel = () => {
   // Delete Feature
   const deleteFeature = (index) => {
     makeApiRequest(async () => {
-      await axios.delete(`${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`,
+        {
+          headers: { authorization: `Bearer ${token}` },
+        }
+      );
       setFeatures((prev) => prev.filter((_, i) => i !== index));
       alert("Feature deleted successfully!");
     });
@@ -110,9 +127,13 @@ const SuperAdminContentPanel = () => {
       return;
     }
     makeApiRequest(async () => {
-      await axios.put(`${process.env.REACT_APP_API_KEY}/content/update-cta`, cta, {
-        headers: { authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `${process.env.REACT_APP_API_KEY}/content/update-cta`,
+        cta,
+        {
+          headers: { authorization: `Bearer ${token}` },
+        }
+      );
       alert("CTA section updated successfully!");
     });
   };
@@ -133,7 +154,9 @@ const SuperAdminContentPanel = () => {
 
       {/* Hero Section */}
       <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
-        <h3 className="text-2xl font-medium text-gray-900 mb-6">Hero Section</h3>
+        <h3 className="text-2xl font-medium text-gray-900 mb-6">
+          Hero Section
+        </h3>
         <input
           type="text"
           value={hero.title}
@@ -170,7 +193,9 @@ const SuperAdminContentPanel = () => {
 
       {/* Features Section */}
       <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
-        <h3 className="text-2xl font-medium text-gray-900 mb-6">Features Section</h3>
+        <h3 className="text-2xl font-medium text-gray-900 mb-6">
+          Features Section
+        </h3>
         {features.map((feature, index) => (
           <div key={index} className="mb-6 border-b pb-4">
             <input
@@ -178,7 +203,9 @@ const SuperAdminContentPanel = () => {
               value={feature.icon}
               onChange={(e) =>
                 setFeatures((prev) =>
-                  prev.map((f, i) => (i === index ? { ...f, icon: e.target.value } : f))
+                  prev.map((f, i) =>
+                    i === index ? { ...f, icon: e.target.value } : f
+                  )
                 )
               }
               placeholder="Icon"
@@ -189,7 +216,9 @@ const SuperAdminContentPanel = () => {
               value={feature.title}
               onChange={(e) =>
                 setFeatures((prev) =>
-                  prev.map((f, i) => (i === index ? { ...f, title: e.target.value } : f))
+                  prev.map((f, i) =>
+                    i === index ? { ...f, title: e.target.value } : f
+                  )
                 )
               }
               placeholder="Title"
@@ -200,7 +229,9 @@ const SuperAdminContentPanel = () => {
               value={feature.description}
               onChange={(e) =>
                 setFeatures((prev) =>
-                  prev.map((f, i) => (i === index ? { ...f, description: e.target.value } : f))
+                  prev.map((f, i) =>
+                    i === index ? { ...f, description: e.target.value } : f
+                  )
                 )
               }
               placeholder="Description"
@@ -211,7 +242,9 @@ const SuperAdminContentPanel = () => {
               value={feature.image}
               onChange={(e) =>
                 setFeatures((prev) =>
-                  prev.map((f, i) => (i === index ? { ...f, image: e.target.value } : f))
+                  prev.map((f, i) =>
+                    i === index ? { ...f, image: e.target.value } : f
+                  )
                 )
               }
               placeholder="Image URL"
