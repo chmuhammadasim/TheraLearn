@@ -12,15 +12,15 @@ const SuperAdminContentPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
   const token = localStorage.getItem("authToken");
 
-  // Utility function to handle errors
   const handleError = (error, defaultMessage) => {
     console.error(error);
     setError(error?.response?.data?.message || defaultMessage);
   };
 
-  // Fetch content from API
   useEffect(() => {
     const fetchContent = async () => {
       try {
@@ -44,13 +44,12 @@ const SuperAdminContentPanel = () => {
     fetchContent();
   }, []);
 
-  // Validation functions
-  const validateHero = () => hero.title && hero.subtitle && hero.buttonText;
   const validateFeature = (feature) =>
     feature.icon && feature.title && feature.description && feature.image;
+
+  const validateHero = () => hero.title && hero.subtitle && hero.buttonText;
   const validateCta = () => cta.title && cta.description && cta.buttonText;
 
-  // API request wrapper with loading state
   const makeApiRequest = async (callback) => {
     setActionLoading(true);
     try {
@@ -62,8 +61,6 @@ const SuperAdminContentPanel = () => {
       setActionLoading(false);
     }
   };
-
-  // Update Hero
   const updateHero = () => {
     if (!validateHero()) {
       setError("All hero fields are required.");
@@ -80,8 +77,6 @@ const SuperAdminContentPanel = () => {
       alert("Hero section updated successfully!");
     });
   };
-
-  // Update Feature
   const updateFeature = (index) => {
     const feature = features[index];
     if (!validateFeature(feature)) {
@@ -98,7 +93,6 @@ const SuperAdminContentPanel = () => {
     });
   };
 
-  // Delete Feature
   const deleteFeature = (index) => {
     makeApiRequest(async () => {
       await axios.delete(
@@ -112,7 +106,6 @@ const SuperAdminContentPanel = () => {
     });
   };
 
-  // Add Feature
   const addFeature = () => {
     setFeatures((prev) => [
       ...prev,
@@ -120,7 +113,6 @@ const SuperAdminContentPanel = () => {
     ]);
   };
 
-  // Update CTA
   const updateCta = () => {
     if (!validateCta()) {
       setError("All CTA fields are required.");
@@ -138,10 +130,43 @@ const SuperAdminContentPanel = () => {
     });
   };
 
+  const handleImageUpload = async (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default");
+
+      setIsUploading(true);
+      setUploadError(null);
+      try {
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/do7z15tdv/upload`,
+          { method: "POST", body: formData }
+        );
+        const data = await res.json();
+        if (data.secure_url) {
+          setFeatures((prev) =>
+            prev.map((f, i) =>
+              i === index ? { ...f, image: data.secure_url } : f
+            )
+          );
+          alert("Image uploaded successfully!");
+        } else {
+          setUploadError("Image upload failed, please try again.");
+        }
+      } catch (error) {
+        setUploadError("Image upload failed, please try again.");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="p-8 mt-16 bg-gray-300 min-h-screen">
+    <div className="p-8 pt-20 bg-gray-300 min-h-screen">
       <h2 className="text-4xl text-center font-bold text-gray-900 mb-10">
         Super Admin Content Panel
       </h2>
@@ -152,7 +177,6 @@ const SuperAdminContentPanel = () => {
         </div>
       )}
 
-      {/* Hero Section */}
       <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
         <h3 className="text-2xl font-medium text-gray-900 mb-6">
           Hero Section
@@ -209,7 +233,7 @@ const SuperAdminContentPanel = () => {
                 )
               }
               placeholder="Icon"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-2"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md"
             />
             <input
               type="text"
@@ -222,7 +246,7 @@ const SuperAdminContentPanel = () => {
                 )
               }
               placeholder="Title"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-2"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md"
             />
             <input
               type="text"
@@ -235,21 +259,28 @@ const SuperAdminContentPanel = () => {
                 )
               }
               placeholder="Description"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-2"
+              className="block w-full mb-2 p-3 border border-gray-300 rounded-md"
             />
-            <input
-              type="text"
-              value={feature.image}
-              onChange={(e) =>
-                setFeatures((prev) =>
-                  prev.map((f, i) =>
-                    i === index ? { ...f, image: e.target.value } : f
-                  )
-                )
-              }
-              placeholder="Image URL"
-              className="block w-full mb-2 p-3 border border-gray-300 rounded-md focus:outline-2"
-            />
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">
+                Feature Image:
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e, index)}
+                className="block w-full mb-2 p-3 border border-gray-300 rounded-md"
+              />
+              {isUploading && <p className="text-gray-500">Uploading...</p>}
+              {uploadError && <p className="text-red-500">{uploadError}</p>}
+              {feature.image && (
+                <img
+                  src={feature.image}
+                  alt="Uploaded Feature"
+                  className="w-32 h-32 mt-2 rounded-md"
+                />
+              )}
+            </div>
             <div className="flex justify-between mt-4">
               <button
                 onClick={() => updateFeature(index)}
@@ -273,8 +304,6 @@ const SuperAdminContentPanel = () => {
           Add New Feature
         </button>
       </section>
-
-      {/* CTA Section */}
       <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
         <h3 className="text-2xl font-medium text-gray-900 mb-6">CTA Section</h3>
         <input
