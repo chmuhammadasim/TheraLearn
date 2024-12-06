@@ -65,7 +65,7 @@ const SuperAdminContactUs = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-100 shadow-md rounded-lg p-6 hover:shadow-lg transition-shadow duration-300"
+            className="bg-gray-100 shadow-md rounded-lg p-6 hover:shadow-2xl transition-shadow duration-300"
           >
             <div className="mb-4">
               <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-2">

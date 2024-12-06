@@ -2,7 +2,7 @@ import React from 'react';
 
 function BlogCard({ blog, onDelete, onPreview, onSelect, onToggleActive }) {
   return (
-    <div className="border p-4 rounded-lg shadow-lg">
+    <div className="border bg-white shadow-md rounded-lg p-6 hover:shadow-2xl transition-shadow duration-300">
       <h2 className="text-xl font-bold mb-2">{blog.title}</h2>
       <p className="text-sm mb-4">{blog.summary}</p>
       <div className="flex justify-between items-center">

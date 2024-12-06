@@ -112,7 +112,7 @@ function AdminBlogDashboard() {
   );
 
   return (
-    <div className="bg-gray-100 text-gray-800 min-h-screen p-8">
+    <div className="bg-gray-300 text-gray-800 min-h-screen p-8">
       <div className="max-w-7xl mx-auto mt-16 mb-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -143,7 +143,7 @@ function AdminBlogDashboard() {
         ) : (
           <>
             {/* Blog Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 ">
               {filteredBlogs.map((blog) => (
                 <BlogCard
                   key={blog._id}
