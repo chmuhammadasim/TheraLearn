@@ -61,8 +61,8 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
 
         {/* Call to Action Button */}
         <motion.a
-          href="#contact"
-          className="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-16 py-6 rounded-full text-lg font-bold shadow-xl hover:shadow-3xl transform transition-all duration-500 hover:scale-125 hover:rotate-6"
+          href="/signup"
+          className="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-16 py-6 rounded-full text-2xl font-bold shadow-2xl hover:shadow-3xl transform transition-all duration-500 hover:scale-125"
           whileHover={{ scale: 1.1, rotate: 5 }}
         >
           {buttonText}
@@ -79,15 +79,15 @@ const CTASection = ({ title, description, buttonText, benefits }) => {
         {benefits.map((benefit, index) => (
           <motion.div
             key={index}
-            className="p-8 bg-gradient-to-b from-[#ffffff1a] to-[#ffffff08] rounded-2xl shadow-xl backdrop-blur-xl transform hover:scale-105 hover:rotate-2 transition duration-500 relative"
+            className="p-8 bg-gradient-to-b from-[#ffffff17] to-[#ffffff00] rounded-2xl shadow-2xl backdrop-blur-xl transform hover:scale-105 hover:rotate-2 transition duration-500 relative"
             style={{ perspective: "1000px" }}
           >
             <motion.div
-              className="absolute inset-0 w-full h-full bg-gradient-to-tr from-yellow-400 to-pink-500 opacity-10 rounded-xl shadow-2xl"
+              className="absolute inset-0 w-full h-full bg-gradient-to-tr from-white to-pink-500 opacity-10 rounded-xl shadow-2xl"
               animate={{ rotateX: [0, 15, -15, 0], rotateY: [0, -5, 5, 0] }}
               transition={{ duration: 10, repeat: Infinity }}
             ></motion.div>
-            <h3 className="text-2xl font-semibold mb-4 text-yellow-300">
+            <h3 className="text-2xl font-semibold mb-4 text-white">
               🌟 {benefit.title}
             </h3>
             <p className="text-base text-gray-200">{benefit.description}</p>

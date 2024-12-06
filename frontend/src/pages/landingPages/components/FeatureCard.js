@@ -36,7 +36,7 @@ const FeatureCard = ({ icon, title, description, image, color }) => {
 
       {/* Floating effect for entire card */}
       <motion.div
-        className="absolute inset-0 rounded-xl border-4 border-dotted border-yellow-400 opacity-50"
+        className="absolute inset-0 rounded-3xl border-4 border-dotted border-purple-400 opacity-60"
         initial={{ opacity: 0 }}
         whileHover={{ opacity: 1 }}
         transition={{ duration: 0.3 }}

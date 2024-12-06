@@ -12,7 +12,7 @@ const FeaturesSection = ({ features }) => {
         <h2 className="bg-slate-400 bg-opacity-30 rounded-2xl shadow-xl backdrop-blur-xl p-5 text-5xl md:text-6xl font-bold mb-8 text-purple-700 drop-shadow-lg animate-wiggle">
           🎮 Our Amazing Games 🎉
         </h2>
-        <p className="bg-slate-400 bg-opacity-30 rounded-2xl shadow-xl backdrop-blur-xl p-5 text-xl md:text-xl mb-12 text-blue-700 animate-fadeIn">
+        <p className="bg-slate-400 bg-opacity-30 rounded-2xl shadow-xl backdrop-blur-xl p-5 text-xl md:text-xl mb-12 text-purple-700 animate-fadeIn">
           Fun, educational, and entertaining games that spark creativity!
         </p>
 

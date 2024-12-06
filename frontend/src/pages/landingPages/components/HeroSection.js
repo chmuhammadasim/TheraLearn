@@ -86,7 +86,7 @@ const HeroSection = ({ title, subtitle, buttonText }) => {
 
         {/* Call-to-Action Button */}
         <motion.a
-          href="#cta"
+          href="/games"
           className="bg-gradient-to-r from-[#89f7fe] to-[#66a6ff] text-white px-8 py-4 rounded-full text-xl font-semibold shadow-xl hover:shadow-[0_0_40px_#ff6ec7] transition-transform hover:scale-110"
           initial={{ scale: 1 }}
           whileHover={{ scale: 1.5, rotate: [0, 15, -15, 0] }}
@@ -127,38 +127,38 @@ const FloatingEmoji = ({ emoji, xRange, yRange, rotateRange, duration }) => (
 );
 
 /* Confetti Component */
-const colors = [
-  "#FF5733",
-  "#33FF57",
-  "#3357FF",
-  "#FF33A1",
-  "#FFD633",
-  "#33FFF9",
-  "#FF3333",
-  "#A133FF",
-];
+// const colors = [
+//   "#FF5733",
+//   "#33FF57",
+//   "#3357FF",
+//   "#FF33A1",
+//   "#FFD633",
+//   "#33FFF9",
+//   "#FF3333",
+//   "#A133FF",
+// ];
 
-const Confetti = () => {
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+// const Confetti = () => {
+//   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-  return (
-    <motion.div
-      className="absolute w-2 h-2 rounded-full"
-      style={{
-        backgroundColor: randomColor,
-        top: `${Math.random() * 10}%`,
-        left: `${Math.random() * 100}%`,
-      }}
-      initial={{ y: -10 }}
-      animate={{ y: [0, 800], x: [0, Math.random() * 800 - 400] }}
-      transition={{
-        repeat: Infinity,
-        duration: Math.random() * 6 + 4,
-        ease: "linear",
-      }}
-    />
-  );
-};
+//   return (
+//     <motion.div
+//       className="absolute w-2 h-2 rounded-full"
+//       style={{
+//         backgroundColor: randomColor,
+//         top: `${Math.random() * 10}%`,
+//         left: `${Math.random() * 100}%`,
+//       }}
+//       initial={{ y: -10 }}
+//       animate={{ y: [0, 800], x: [0, Math.random() * 800 - 400] }}
+//       transition={{
+//         repeat: Infinity,
+//         duration: Math.random() * 6 + 4,
+//         ease: "linear",
+//       }}
+//     />
+//   );
+// };
 
 /* Floating Shape Component */
 const FloatingShape = ({ size, color, rotate = false }) => (
