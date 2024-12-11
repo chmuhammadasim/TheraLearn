@@ -30,7 +30,7 @@ function PsychologistPatientDashboard() {
       try {
         await sendMessageToPatient(selectedPatient._id, message);
         alert('Message sent successfully!');
-        setMessage(""); // Clear the message input
+        setMessage("");
       } catch (error) {
         console.error('Error sending message:', error);
         alert('Failed to send message.');

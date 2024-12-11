@@ -115,7 +115,7 @@ function Dashboard() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-[#51c26f] to-[#f2e901] p-6 flex flex-col items-center"
+      className="min-h-screen bg-gradient-to-b from-[#8BC6EC] to-[#9599E2] p-10 pt-16 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -168,7 +168,7 @@ function Dashboard() {
           {userGames.length > 0 ? (
             <ul className="space-y-4">
               {userGames.map((game) => (
-                <li key={game._id} className="p-4 bg-yellow-100 rounded-lg shadow-sm flex items-center gap-4 transition-transform transform hover:scale-105">
+                <li key={game._id} className="p-4 bg-slate-300 rounded-lg shadow-sm flex items-center gap-4 transition-transform transform hover:scale-105">
                   <FaStar className="text-yellow-500" />
                   <div>
                     <p><strong>Game Name:</strong> {game.gameName || 'N/A'}</p>
@@ -176,7 +176,7 @@ function Dashboard() {
                     <p><strong>Total Score:</strong> {game.overallResults.totalScore || 'N/A'}</p>
                     <p><strong>total Attempts:</strong> {game.overallResults.totalAttempts || 'N/A'}</p>
                       {game.sessions.map((sessions) => (
-                        <li key={sessions._id} className="p-4 bg-yellow-100 rounded-lg shadow-sm flex items-center gap-4 transition-transform transform hover:scale-105">
+                        <li key={sessions._id} className="m-2 p-2 bg-yellow-100 rounded-lg shadow-sm flex items-center gap-4 transition-transform transform hover:scale-105">
                           <div className="text-gray-800">
                             <p><strong>Date Played:</strong> {new Date(sessions.datePlayed).toLocaleDateString() || 'N/A'}</p>
                             <p><strong>Score:</strong> {sessions.score || 'N/A'}</p>
