@@ -6,6 +6,7 @@ import Loading from '../../components/Loading';
 const games = [
   {
     id: 1,
+    link:"https://vercel.com/chmuhammadasims-projects/pyramid-sort-react/4tYaQ7vDyih1vUE5AyEUvjw426Km",
     name: 'Puzzle Master',
     description: 'Challenge your mind with intricate puzzles!',
     image: 'https://th.bing.com/th/id/R.b685cebf59d7d19516025b287efd5ec3?rik=tlqaJIb1SnaAsQ&pid=ImgRaw&r=0',
@@ -43,7 +44,7 @@ function GamePage() {
   }, []);
 
   const handleGameClick = (gameId) => {
-    navigate(`/games/${gameId}`);
+    navigate(`${gameId}`);
   };
 
   if (isLoading) {
@@ -53,7 +54,6 @@ function GamePage() {
   return (
     
     <div className="min-h-screen bg-gradient-to-r from-[#FF057C] via-[#8D0B93] to-[#321575] px-6 py-20 relative overflow-hidden">
-      {/* Dynamic Floating Stars and Bubbles */}
       <motion.div 
         className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
@@ -99,7 +99,7 @@ function GamePage() {
           <motion.div
             key={game.id}
             className="group relative bg-gradient-to-bl from-[#f9d423] to-[#ff8863] p-6 rounded-xl shadow-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg hover:ring-4 ring-pink-300 ring-offset-4"
-            onClick={() => handleGameClick(game.id)}
+            onClick={() => handleGameClick(game.link)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileHover={{ scale: 1.05 }}
