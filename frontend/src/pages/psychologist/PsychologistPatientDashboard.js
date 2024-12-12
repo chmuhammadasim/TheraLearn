@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FiPhone, FiMail, FiUser } from 'react-icons/fi';
-import { getPsychologistDetails, getPatients, sendMessageToPatient, getPatientResponse } from '../../services/psychologistService';
+import {
+  getPsychologistDetails,
+  getPatients,
+  sendMessageToPatient,
+  getPatientResponse,
+} from '../../services/psychologistService';
 
 function PsychologistPatientDashboard() {
   const [psychologist, setPsychologist] = useState(null);
@@ -30,6 +35,11 @@ function PsychologistPatientDashboard() {
   }, []);
 
   const handleSendMessage = async () => {
+    if (!message.trim()) {
+      alert('Message cannot be empty!');
+      return;
+    }
+
     try {
       const response = await sendMessageToPatient(selectedPatient._id, message);
       alert(response.message);
@@ -63,15 +73,33 @@ function PsychologistPatientDashboard() {
               Psychologist Dashboard
             </h1>
             <div className="flex flex-col sm:flex-row gap-6">
+              {/* Psychologist Details */}
               <div className="w-full sm:w-1/3 p-4 bg-blue-50 rounded-lg shadow-md">
                 <h2 className="text-xl font-semibold text-blue-600 mb-4">Your Details</h2>
-                <p><FiUser className="inline-block mr-2" /> {psychologist.firstName} {psychologist.lastName}</p>
-                <p><FiMail className="inline-block mr-2" /> {psychologist.email}</p>
-                <p><FiPhone className="inline-block mr-2" /> {psychologist.contact}</p>
-                <p className="mt-2">Specialization: <span className="font-medium">{psychologist.specialization}</span></p>
-                <p>Education: <span className="font-medium">{psychologist.education.join(', ')}</span></p>
-                <p>Experience: <span className="font-medium">{psychologist.experience.join(', ')}</span></p>
+                <p>
+                  <FiUser className="inline-block mr-2" />
+                  {psychologist.firstName} {psychologist.lastName}
+                </p>
+                <p>
+                  <FiMail className="inline-block mr-2" />
+                  {psychologist.email}
+                </p>
+                <p>
+                  <FiPhone className="inline-block mr-2" />
+                  {psychologist.contact}
+                </p>
+                <p className="mt-2">
+                  Specialization: <span className="font-medium">{psychologist.specialization}</span>
+                </p>
+                <p>
+                  Education: <span className="font-medium">{psychologist.education.join(', ')}</span>
+                </p>
+                <p>
+                  Experience: <span className="font-medium">{psychologist.experience.join(', ')}</span>
+                </p>
               </div>
+
+              {/* Patient List */}
               <div className="w-full sm:w-2/3">
                 <h2 className="text-xl font-semibold text-blue-600 mb-4">Your Patients</h2>
                 {patients.length > 0 ? (
@@ -79,7 +107,11 @@ function PsychologistPatientDashboard() {
                     {patients.map((patient) => (
                       <li
                         key={patient._id}
-                        className="p-4 bg-blue-50 rounded-lg shadow-md cursor-pointer"
+                        className={`p-4 bg-blue-50 rounded-lg shadow-md cursor-pointer ${
+                          selectedPatient?._id === patient._id
+                            ? 'ring-2 ring-blue-400'
+                            : ''
+                        }`}
                         onClick={() => setSelectedPatient(patient)}
                       >
                         <p className="font-semibold">
@@ -100,6 +132,7 @@ function PsychologistPatientDashboard() {
           </div>
         )}
 
+        {/* Message Dialog Box */}
         {selectedPatient && (
           <div className="mt-6 p-6 bg-gray-50 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-blue-600 mb-4">
@@ -114,19 +147,25 @@ function PsychologistPatientDashboard() {
                 onChange={(e) => setMessage(e.target.value)}
               />
             </div>
-            <button
-              onClick={handleSendMessage}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
-            >
-              Send Message
-            </button>
-            <button
-              onClick={handleGetResponse}
-              className="ml-4 px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
-            >
-              Get Response
-            </button>
-            {response && <p className="mt-4 p-3 bg-green-50 rounded-lg text-green-600">{response}</p>}
+            <div className="flex gap-4">
+              <button
+                onClick={handleSendMessage}
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+              >
+                Send Message
+              </button>
+              <button
+                onClick={handleGetResponse}
+                className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+              >
+                Get Response
+              </button>
+            </div>
+            {response && (
+              <p className="mt-4 p-3 bg-green-50 rounded-lg text-green-600">
+                {response}
+              </p>
+            )}
           </div>
         )}
       </div>

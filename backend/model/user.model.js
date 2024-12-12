@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
-
+const messageSchema = new mongoose.Schema({
+  from: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  sentAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 const userSchema = new mongoose.Schema({
   id: {
     type: Number,
@@ -110,21 +125,6 @@ const userSchema = new mongoose.Schema({
   },
   messages: [messageSchema]
 });
-const messageSchema = new mongoose.Schema({
-  from: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  message: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  sentAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+
 
 module.exports = mongoose.model('User', userSchema);
