@@ -157,3 +157,31 @@ export const askQuestion = async (psychologistId, question) => {
     throw error;
   }
 };
+export const getPsychologistDetails  = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/me`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching psychologist details:', error);
+    throw error;
+  }
+};
+export const getPatients   = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/my-patients`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching psychologist details:', error);
+    throw error;
+  }
+};
