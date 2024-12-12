@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FiPhone, FiMail, FiUser } from 'react-icons/fi';
-import { getPsychologistDetails, getPatients } from '../../services/psychologistService';
+import { getPsychologistDetails, getPatients, sendMessageToPatient, getPatientResponse } from '../../services/psychologistService';
 
 function PsychologistPatientDashboard() {
   const [psychologist, setPsychologist] = useState(null);
   const [patients, setPatients] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [message, setMessage] = useState('');
+  const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,6 +28,27 @@ function PsychologistPatientDashboard() {
 
     fetchDashboardData();
   }, []);
+
+  const handleSendMessage = async () => {
+    try {
+      const response = await sendMessageToPatient(selectedPatient._id, message);
+      alert(response.message);
+      setMessage('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message.');
+    }
+  };
+
+  const handleGetResponse = async () => {
+    try {
+      const patientResponse = await getPatientResponse(selectedPatient._id);
+      setResponse(patientResponse.response || 'No response yet.');
+    } catch (error) {
+      console.error('Error fetching response:', error);
+      alert('Failed to fetch response.');
+    }
+  };
 
   if (loading) {
     return <div className="text-center mt-20">Loading...</div>;
@@ -53,7 +77,11 @@ function PsychologistPatientDashboard() {
                 {patients.length > 0 ? (
                   <ul className="space-y-4">
                     {patients.map((patient) => (
-                      <li key={patient._id} className="p-4 bg-blue-50 rounded-lg shadow-md">
+                      <li
+                        key={patient._id}
+                        className="p-4 bg-blue-50 rounded-lg shadow-md cursor-pointer"
+                        onClick={() => setSelectedPatient(patient)}
+                      >
                         <p className="font-semibold">
                           {patient.firstName} {patient.lastName}
                         </p>
@@ -69,6 +97,36 @@ function PsychologistPatientDashboard() {
                 )}
               </div>
             </div>
+          </div>
+        )}
+
+        {selectedPatient && (
+          <div className="mt-6 p-6 bg-gray-50 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-blue-600 mb-4">
+              Communicate with {selectedPatient.firstName} {selectedPatient.lastName}
+            </h3>
+            <div className="mb-4">
+              <textarea
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                rows="4"
+                placeholder="Type your message here..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={handleSendMessage}
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+            >
+              Send Message
+            </button>
+            <button
+              onClick={handleGetResponse}
+              className="ml-4 px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+            >
+              Get Response
+            </button>
+            {response && <p className="mt-4 p-3 bg-green-50 rounded-lg text-green-600">{response}</p>}
           </div>
         )}
       </div>

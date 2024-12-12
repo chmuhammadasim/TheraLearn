@@ -1,8 +1,6 @@
 const User = require('../model/user.model');
 const psychologistpatient = {};
-psychologistpatient.getPsychologistDetails = async (req, res) => {
-  console.log(req.userData);
-  
+psychologistpatient.getPsychologistDetails = async (req, res) => {  
   try {
     const psychologist = await User.findById(req.userData.userId);
     if (!psychologist || psychologist.role !== 'psychologist') {
@@ -25,6 +23,39 @@ psychologistpatient.getMyPatients = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+psychologistpatient.sendMessageToPatient = async (req, res) => {
+  try {
+    const { patientId, message } = req.body;
+    const patient = await User.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    // Save message logic here
+    patient.messages.push({ from: req.user.id, message });
+    await patient.save();
+
+    res.status(200).json({ message: 'Message sent successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+psychologistpatient.getPatientResponse = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const patient = await User.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    const response = patient.responses.find((resp) => resp.to === req.user.id);
+    res.status(200).json({ response: response?.message || '' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 module.exports = psychologistpatient;

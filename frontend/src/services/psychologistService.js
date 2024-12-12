@@ -56,7 +56,26 @@ export const getPatientsByPsychologistId = async (id) => {
 // Send a message to a specific patient
 export const sendMessageToPatient = async (patientId, message) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/messages`, 
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/send-message`, 
+      { message }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patient-id': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};
+
+export const getPatientResponse = async (patientId, message) => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/get-response`, 
       { message }, 
       {
         headers: {
@@ -185,3 +204,5 @@ export const getPatients   = async () => {
     throw error;
   }
 };
+
+
