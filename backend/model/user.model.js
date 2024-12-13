@@ -5,6 +5,11 @@ const messageSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  to: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
   message: {
     type: String,
     required: true,
@@ -118,7 +123,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
-  // Field specific to Users
   psychologist: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

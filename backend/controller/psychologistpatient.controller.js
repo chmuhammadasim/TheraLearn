@@ -27,16 +27,15 @@ psychologistpatient.getMyPatients = async (req, res) => {
 };
 psychologistpatient.sendMessageToPatient = async (req, res) => {
   try {
-    const { patientId, message } = req.body;
-    const patient = await User.findById(patientId);
+    const { message } = req.body;
+    const id = req.headers.patientid;
+    const user = await User.findById(id);
 
-    if (!patient) {
+    if (!user) {
       return res.status(404).json({ message: 'Patient not found' });
     }
-
-    // Save message logic here
-    patient.messages.push({ from: req.user.id, message });
-    await patient.save();
+    user.messages.push({ from:from, to:id, message:_id });
+    await user.save();
 
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
@@ -45,14 +44,14 @@ psychologistpatient.sendMessageToPatient = async (req, res) => {
 };
 psychologistpatient.getPatientResponse = async (req, res) => {
   try {
-    const patientId = req.params.patientId;
+    const id = req.headers.patientid;
     const patient = await User.findById(patientId);
 
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
-    const response = patient.responses.find((resp) => resp.to === req.user.id);
+    const response = patient.responses.find((resp) => resp.to === req.userData.userId);
     res.status(200).json({ response: response?.message || '' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });

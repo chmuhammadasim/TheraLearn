@@ -62,7 +62,7 @@ export const sendMessageToPatient = async (patientId, message) => {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patient-id': patientId
+          'patientid': patientId
         }
       }
     );
@@ -81,7 +81,7 @@ export const getPatientResponse = async (patientId, message) => {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patient-id': patientId
+          'patientid': patientId
         }
       }
     );

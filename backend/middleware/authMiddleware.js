@@ -7,9 +7,7 @@ const admin = (req, res, next) => {
     }
   };
 
-  const psychologist = (req, res, next) => {
-    console.log(req.userData);
-    
+  const psychologist = (req, res, next) => {    
     if (req.userData.role === 'psychologist') {
       next();
     } else {
