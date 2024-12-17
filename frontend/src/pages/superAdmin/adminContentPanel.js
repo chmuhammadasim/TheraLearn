@@ -27,15 +27,16 @@ const SuperAdminContentPanel = () => {
         const { data } = await axios.get(
           `${process.env.REACT_APP_API_KEY}/content`
         );
-        setHero(
-          data.content.hero || { title: "", subtitle: "", buttonText: "" }
-        );
-        setFeatures(data.content.features || []);
-        setCta(
-          data.content.cta || { title: "", description: "", buttonText: "" }
-        );
+        const content = data.content;
+        if (!content.hero || !content.features.length || !content.cta) {
+          setError("Content is missing. Please update the content.");
+        } else {
+          setHero(content.hero);
+          setFeatures(content.features);
+          setCta(content.cta);
+        }
       } catch (err) {
-        handleError(err, "Failed to fetch content.");
+        setError("Content is missing. Please update the content.");
       } finally {
         setLoading(false);
       }
@@ -61,6 +62,7 @@ const SuperAdminContentPanel = () => {
       setActionLoading(false);
     }
   };
+
   const updateHero = () => {
     if (!validateHero()) {
       setError("All hero fields are required.");
@@ -74,9 +76,10 @@ const SuperAdminContentPanel = () => {
           headers: { authorization: `Bearer ${token}` },
         }
       );
-      alert("Hero section updated successfully!");
+      setError("Hero section updated successfully!");
     });
   };
+
   const updateFeature = (index) => {
     const feature = features[index];
     if (!validateFeature(feature)) {
@@ -89,7 +92,7 @@ const SuperAdminContentPanel = () => {
         feature,
         { headers: { authorization: `Bearer ${token}` } }
       );
-      alert("Feature updated successfully!");
+      setError("Feature updated successfully!");
     });
   };
 
@@ -102,7 +105,7 @@ const SuperAdminContentPanel = () => {
         }
       );
       setFeatures((prev) => prev.filter((_, i) => i !== index));
-      alert("Feature deleted successfully!");
+      setError("Feature deleted successfully!");
     });
   };
 
@@ -126,7 +129,7 @@ const SuperAdminContentPanel = () => {
           headers: { authorization: `Bearer ${token}` },
         }
       );
-      alert("CTA section updated successfully!");
+      setError("CTA section updated successfully!");
     });
   };
 
@@ -151,7 +154,7 @@ const SuperAdminContentPanel = () => {
               i === index ? { ...f, image: data.secure_url } : f
             )
           );
-          alert("Image uploaded successfully!");
+          setUploadError("Image uploaded successfully!");
         } else {
           setUploadError("Image upload failed, please try again.");
         }
@@ -193,7 +196,7 @@ const SuperAdminContentPanel = () => {
           value={hero.subtitle}
           onChange={(e) => setHero({ ...hero, subtitle: e.target.value })}
           placeholder="Hero Subtitle"
-          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:"
+          className="block w-full mb-4 p-3 border border-gray-300 rounded-md focus:outline-2"
         />
         <input
           type="text"
@@ -215,7 +218,6 @@ const SuperAdminContentPanel = () => {
         </button>
       </section>
 
-      {/* Features Section */}
       <section className="mb-8 p-6 bg-gray-50 rounded-lg shadow-lg">
         <h3 className="text-2xl font-medium text-gray-900 mb-6">
           Features Section

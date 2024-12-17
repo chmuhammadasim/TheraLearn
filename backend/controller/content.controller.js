@@ -1,17 +1,36 @@
 const Content = require("../model/content.model");
 const ContentController = {};
+
 ContentController.updateHero = async (req, res) => {
   try {
     const { title, subtitle, buttonText } = req.body;
+    if (!title || !subtitle || !buttonText) {
+      return res.status(400).json({ message: "All fields are required: title, subtitle, and buttonText" });
+    }
+    console.log("Updating hero section with data:", req.body);
     const content = await Content.findOne();
-    if (!content) return res.status(404).json({ message: "Content not found" });
+    if (!content) {
+      return res.status(404).json({ message: "Content not found" });
+    }
     content.hero = { title, subtitle, buttonText };
     await content.save();
-    res.status(200).json({ message: "Hero section updated", content });
+    res.status(200).json({
+      message: "Hero section updated successfully",
+      content: {
+        hero: content.hero,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error updating hero section:", error);
+    res.status(500).json({
+      message: "Server error while updating hero section",
+      error: error.message || "Internal Server Error",
+    });
   }
 };
+
+module.exports = ContentController;
+
 ContentController.updateFeatureByIndex = async (req, res) => {
   try {
     const { index } = req.params;
@@ -60,7 +79,7 @@ ContentController.updateCta = async (req, res) => {
 ContentController.getAllContent = async (req, res) => {
   try {
     const content = await Content.findOne();
-    if (!content) return res.status(404).json({ message: "Content not found" });
+    if (!content) return res.status(404).json({ message: "all Content not found" });
     res.status(200).json({ content });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -69,7 +88,7 @@ ContentController.getAllContent = async (req, res) => {
 ContentController.getHero = async (req, res) => {
   try {
     const content = await Content.findOne();
-    if (!content) return res.status(404).json({ message: "Content not found" });
+    if (!content) return res.status(404).json({ message: "Hero Content not found" });
     res.status(200).json({ hero: content.hero });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -78,7 +97,7 @@ ContentController.getHero = async (req, res) => {
 ContentController.getFeatures = async (req, res) => {
   try {
     const content = await Content.findOne();
-    if (!content) return res.status(404).json({ message: "Content not found" });
+    if (!content) return res.status(404).json({ message: "Feature Content not found" });
     res.status(200).json({ features: content.features });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -87,7 +106,7 @@ ContentController.getFeatures = async (req, res) => {
 ContentController.getCta = async (req, res) => {
   try {
     const content = await Content.findOne();
-    if (!content) return res.status(404).json({ message: "Content not found" });
+    if (!content) return res.status(404).json({ message: "CTA Content not found" });
     res.status(200).json({ cta: content.cta });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });

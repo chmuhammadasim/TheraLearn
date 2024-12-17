@@ -1,1 +1,0 @@
-mongodb+srv://dbTheraLearn:dbtheralearn@cluster0.owiw9bu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
