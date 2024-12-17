@@ -14,9 +14,6 @@ const contentSchema = new mongoose.Schema({
   },
   features: [
     {
-      icon: {
-        type: String,
-      },
       title: {
         type: String,
       },
