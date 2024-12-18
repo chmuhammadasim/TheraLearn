@@ -1,33 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  getPsychologistById,
-  assignPsychologistToPatient,
-  getQuestionnaire,
-  submitAnswer,
-  getQnA,
-  askQuestion,
-} from '../../services/psychologistService';
-import { FiPhone, FiMail } from 'react-icons/fi';
+import { getPsychologistById, assignPsychologistToPatient } from '../../services/psychologistService';
+import { FiPhone, FiMail, FiMapPin, FiStar } from 'react-icons/fi';
 
 function PsychologistDetailsPage() {
   const { id } = useParams();
   const [psychologist, setPsychologist] = useState(null);
   const [isDoctorSelected, setIsDoctorSelected] = useState(false);
-  const [questionnaire, setQuestionnaire] = useState([]);
-  const [answers, setAnswers] = useState({});
-  const [qna, setQnA] = useState([]);
-  const [newQuestion, setNewQuestion] = useState('');
 
   useEffect(() => {
     const fetchPsychologist = async () => {
       try {
         const data = await getPsychologistById(id);
         setPsychologist(data);
-        const questionnaireData = await getQuestionnaire(id);
-        setQuestionnaire(questionnaireData);
-        const qnaData = await getQnA(id);
-        setQnA(qnaData);
       } catch (error) {
         console.error('Error fetching psychologist details:', error);
       }
@@ -47,36 +32,6 @@ function PsychologistDetailsPage() {
     }
   };
 
-  const handleAnswerChange = (questionId, value) => {
-    setAnswers({
-      ...answers,
-      [questionId]: value,
-    });
-  };
-
-  const handleSubmitAnswers = async () => {
-    try {
-      await submitAnswer(id, answers);
-      alert('Answers submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting answers:', error);
-      alert('Failed to submit answers.');
-    }
-  };
-
-  const handleQuestionSubmit = async () => {
-    try {
-      await askQuestion(id, newQuestion);
-      setNewQuestion('');
-      const updatedQnA = await getQnA(id);
-      setQnA(updatedQnA);
-      alert('Question submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting question:', error);
-      alert('Failed to submit question.');
-    }
-  };
-
   if (!psychologist) {
     return <div className="text-center mt-20 text-lg text-gray-700">Loading...</div>;
   }
@@ -87,11 +42,13 @@ function PsychologistDetailsPage() {
         <div className="flex flex-col md:flex-row items-center">
           <img
             src={psychologist.profilePictureUrl}
-            alt={psychologist.name}
+            alt={psychologist.firstName}
             className="w-32 h-32 md:w-48 md:h-48 object-cover rounded-full shadow-lg border-4 border-indigo-500"
           />
           <div className="md:ml-6 mt-4 md:mt-0 text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-600">{psychologist.firstName} {psychologist.lastName}</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-600">
+              {psychologist.firstName} {psychologist.lastName}
+            </h1>
             <p className="text-pink-600 text-lg md:text-xl font-medium mt-2">{psychologist.specialization}</p>
             <p className="text-gray-500 mt-4 flex items-center justify-center md:justify-start">
               <FiPhone className="mr-2 text-blue-500" /> {psychologist.phone}
@@ -102,6 +59,10 @@ function PsychologistDetailsPage() {
             <p className="text-gray-600 mt-2">
               {psychologist.city}, {psychologist.country}
             </p>
+            <p className="text-gray-600 mt-2 flex items-center justify-center md:justify-start">
+              <FiMapPin className="mr-2 text-green-500" />
+              Clinic Address: {psychologist.clinicAddress}
+            </p>
           </div>
         </div>
 
@@ -111,10 +72,35 @@ function PsychologistDetailsPage() {
         </div>
 
         <div className="mt-8">
-          <h2 className="text-3xl font-bold text-indigo-700">Experience & Education</h2>
-          <p className="text-gray-600 mt-4">Years of Experience: {psychologist.yearsOfExperience} years</p>
-          <p className="text-gray-600 mt-2">Education: {psychologist.education}</p>
+          <h2 className="text-3xl font-bold text-indigo-700">Professional Details</h2>
+          <ul className="text-gray-600 mt-4 space-y-2">
+            <li><strong>Years of Experience:</strong> {psychologist.experience} years</li>
+            <li><strong>Education:</strong> {psychologist.education}</li>
+            <li>
+              <strong>Ratings:</strong>
+              <span className="ml-2 flex items-center text-yellow-500">
+                <FiStar className="mr-1" />
+                {psychologist.rating} / 5
+              </span>
+            </li>
+          </ul>
         </div>
+
+        {/* <div className="mt-8">
+          <h2 className="text-3xl font-bold text-indigo-700">Reviews</h2>
+          <div className="mt-4 space-y-4">
+            {psychologist.reviews.length > 0 ? (
+              psychologist.reviews.map((review, index) => (
+                <div key={index} className="bg-gray-100 p-4 rounded-lg shadow">
+                  <p className="text-gray-800 font-semibold">"{review.comment}"</p>
+                  <p className="text-gray-500 mt-2">- {review.reviewer}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">No reviews available.</p>
+            )}
+          </div>
+        </div> */}
 
         <div className="mt-8">
           {!isDoctorSelected ? (
@@ -129,71 +115,6 @@ function PsychologistDetailsPage() {
               You have selected this psychologist as your doctor.
             </div>
           )}
-        </div>
-
-        {/* Questionnaire Section */}
-        <div className="mt-8">
-          <h2 className="text-3xl font-bold text-indigo-700">Questionnaire</h2>
-          <div className="mt-4 space-y-4">
-            {questionnaire.map((question) => (
-              <div key={question._id} className="bg-pink-100 p-4 rounded-lg shadow">
-                <p className="text-gray-800 font-semibold">{question.text}</p>
-                <input
-                  type="text"
-                  value={answers[question._id] || ""}
-                  onChange={(e) => handleAnswerChange(question._id, e.target.value)}
-                  className="w-full mt-2 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Your answer..."
-                />
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={handleSubmitAnswers}
-            className="mt-4 bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600"
-          >
-            Submit Answers
-          </button>
-        </div>
-
-        {/* Q&A Section */}
-        <div className="mt-8">
-          <h2 className="text-3xl font-bold text-indigo-700">Q&A</h2>
-          <div className="mt-4 space-y-4">
-            {qna.map((item) => (
-              <div key={item._id} className="bg-yellow-100 p-4 rounded-lg shadow">
-                <p className="text-gray-800 font-semibold">{item.question}</p>
-                {item.answers.map((answer) => (
-                  <div key={answer._id} className="bg-white mt-2 p-2 rounded-lg shadow">
-                    <p className="text-gray-600">{answer.text}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="mt-6">
-            <textarea
-              value={newQuestion}
-              onChange={(e) => setNewQuestion(e.target.value)}
-              placeholder="Ask a question..."
-              className="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <button
-              onClick={handleQuestionSubmit}
-              className="mt-2 bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600"
-            >
-              Submit Question
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-8 text-center">
-          <a
-            href={`mailto:${psychologist.contact}`}
-            className="inline-block bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-600"
-          >
-            Contact Now
-          </a>
         </div>
       </div>
     </div>

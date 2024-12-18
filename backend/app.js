@@ -60,6 +60,13 @@ app.get("/api", function (req, res) {
     message: "Express backend server",
   });
 });
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 1000,
+    message: "Too many requests from this IP, please try again after 15 minutes",
+  })
+);
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/superadmin", superadmin);
@@ -69,20 +76,13 @@ app.use("/api/psychologist", psychologistRoute);
 app.use("/api/game", gameRoute);
 app.use("/api/content", contentRoute);
 app.use("/api/psychologistpatient", psychologistpatientRoute);
-
 app.use((_req, res, next) => {
   res.status(404).send({
     error: "Not Found",
     message: "The requested resource could not be found.",
   });
 });
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 1000,
-    message: "Too many requests from this IP, please try again after 15 minutes",
-  })
-);
+
 app.use(errorHandler);
 app.use(errorMessage);
 server.listen(process.env.PORT_URL || 5000, (error) => {
@@ -91,7 +91,6 @@ server.listen(process.env.PORT_URL || 5000, (error) => {
       `Cannot Connect with the port ${process.env.PORT_URL}:`,
       error.message
     );
-    process.exit(1);
   } else {
     console.log(`Connected with the port ${process.env.PORT_URL}`);
   }

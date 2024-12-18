@@ -151,15 +151,11 @@ const PsychologistDetails = React.memo(({ psychologist }) => (
     </p>
     <p>
       Education:{" "}
-      <span className="font-medium">
-        {psychologist.education.join(", ")}
-      </span>
+      <span className="font-medium">{psychologist.education.join(", ")}</span>
     </p>
     <p>
       Experience:{" "}
-      <span className="font-medium">
-        {psychologist.experience.join(", ")}
-      </span>
+      <span className="font-medium">{psychologist.experience.join(", ")}</span>
     </p>
     <p>
       Address: <span className="font-medium">{psychologist.address}</span>
@@ -167,7 +163,6 @@ const PsychologistDetails = React.memo(({ psychologist }) => (
   </div>
 ));
 
-// Patient List Component
 const PatientList = React.memo(({ patients, selectedPatient, onSelect }) => (
   <div className="w-full sm:w-2/3">
     <h2 className="text-xl font-semibold mb-4">Your Patients</h2>

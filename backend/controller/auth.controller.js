@@ -46,31 +46,36 @@ AuthController.SignUpUser = async (req, res) => {
   }
 };
 AuthController.LogInUser = async (req, res) => {
+  const { password, email } = req.body;
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const isMatch = await bcrypt.compare(password, Users.password);
+    const user = await Users.findOne({ email });
+    if (!user) {
+      return res.status(400).send({ message: "Incorrect email or password" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).send({ message: "Incorrect email or password" });
     }
-    Users.password = undefined;
+    user.password = undefined;
     const token = jsonwebtoken.sign(
-      { userId: Users._id, role: Users.role },
+      { userId: user._id, role: user.role },
       process.env.JWT_KEY,
       { expiresIn: "2d" }
     );
-    res.status(201).send({
+    return res.status(200).send({
       message: "Successfully logged in",
       token,
-      expiresIn: 172800000,
-      status: "201",
-      role: Users.role,
+      expiresIn: 172800000, 
+      status: "200",
+      role: user.role,
     });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).send({
+    return res.status(500).send({
       message: "An error occurred during login",
       detail: error.message,
     });
