@@ -9,6 +9,7 @@ import {
 } from "../../services/psychologistService";
 
 function PsychologistPatientDashboard() {
+  // State management
   const [psychologist, setPsychologist] = useState(null);
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -16,6 +17,7 @@ function PsychologistPatientDashboard() {
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch dashboard data
   const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     try {
@@ -33,10 +35,12 @@ function PsychologistPatientDashboard() {
     }
   }, []);
 
+  // Initial data load
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
+  // Handle sending messages
   const handleSendMessage = async () => {
     if (!selectedPatient) {
       alert("Please select a patient first!");
@@ -57,6 +61,7 @@ function PsychologistPatientDashboard() {
     }
   };
 
+  // Fetch patient responses
   const handleGetResponse = async () => {
     if (!selectedPatient) {
       alert("Please select a patient first!");
@@ -77,6 +82,7 @@ function PsychologistPatientDashboard() {
     }
   };
 
+  // Handle patient selection
   const handlePatientSelection = async (patient) => {
     setSelectedPatient(patient);
     try {
@@ -88,27 +94,24 @@ function PsychologistPatientDashboard() {
     }
   };
 
+  // Loading state
   if (loading) {
-    return (
-      <div className="text-center mt-20 text-blue-600">
-        Loading...
-      </div>
-    );
+    return <div className="text-center mt-20 text-blue-600">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-6">
+    <div className="min-h-screen pt-20 bg-gradient-to-r from-blue-100 to-blue-200 p-6">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        {/* Header */}
         <header className="mb-6">
           <h1 className="text-3xl font-bold text-blue-600">
             Psychologist Dashboard
           </h1>
         </header>
 
+        {/* Psychologist Details & Patient List */}
         <div className="flex flex-wrap gap-6">
-          {psychologist && (
-            <PsychologistDetails psychologist={psychologist} />
-          )}
+          {psychologist && <PsychologistDetails psychologist={psychologist} />}
           <PatientList
             patients={patients}
             selectedPatient={selectedPatient}
@@ -116,6 +119,7 @@ function PsychologistPatientDashboard() {
           />
         </div>
 
+        {/* Chat Box */}
         {selectedPatient && (
           <ChatBox
             patient={selectedPatient}
@@ -131,34 +135,57 @@ function PsychologistPatientDashboard() {
   );
 }
 
+// Psychologist Details Component
 const PsychologistDetails = React.memo(({ psychologist }) => (
   <div className="w-full sm:w-1/3 bg-blue-50 p-6 rounded-lg shadow-md">
-    <h2 className="text-xl font-semibold text-blue-600 mb-4">
-      Your Details
-    </h2>
-    <p><FiUser className="inline-block mr-2" /> {psychologist.firstName} {psychologist.lastName}</p>
-    <p><FiMail className="inline-block mr-2" /> {psychologist.email}</p>
-    <p><FiPhone className="inline-block mr-2" /> {psychologist.contact}</p>
-    <p className="mt-2">Specialization: <span className="font-medium">{psychologist.specialization}</span></p>
-    <p>Education: <span className="font-medium">{psychologist.education.join(", ")}</span></p>
-    <p>Experience: <span className="font-medium">{psychologist.experience.join(", ")}</span></p>
+    <h2 className="text-xl font-semibold text-blue-600 mb-4">Your Details</h2>
+    <p>
+      <FiUser className="inline-block mr-2" /> {psychologist.firstName}{" "}
+      {psychologist.lastName}
+    </p>
+    <p>
+      <FiMail className="inline-block mr-2" /> {psychologist.email}
+    </p>
+    <p>
+      <FiPhone className="inline-block mr-2" /> {psychologist.contact}
+    </p>
+    <p>
+      Education:{" "}
+      <span className="font-medium">
+        {psychologist.education.join(", ")}
+      </span>
+    </p>
+    <p>
+      Experience:{" "}
+      <span className="font-medium">
+        {psychologist.experience.join(", ")}
+      </span>
+    </p>
+    <p>
+      Address: <span className="font-medium">{psychologist.address}</span>
+    </p>
   </div>
 ));
 
+// Patient List Component
 const PatientList = React.memo(({ patients, selectedPatient, onSelect }) => (
   <div className="w-full sm:w-2/3">
-    <h2 className="text-xl font-semibold text-blue-600 mb-4">Your Patients</h2>
+    <h2 className="text-xl font-semibold mb-4">Your Patients</h2>
     <div className="max-h-60 overflow-y-auto space-y-4">
       {patients.length > 0 ? (
         patients.map((patient) => (
           <div
             key={patient._id}
-            className={`p-4 bg-blue-50 rounded-lg shadow-md cursor-pointer ${
-              selectedPatient?._id === patient._id ? "ring-2 ring-blue-400" : ""
+            className={`p-4 bg-blue-50 rounded-lg border-2 shadow-md cursor-pointer transition-transform transform ${
+              selectedPatient?._id === patient._id
+                ? "border-blue-500 border-4"
+                : "border-violet-200"
             }`}
             onClick={() => onSelect(patient)}
           >
-            <p className="font-semibold">{patient.firstName} {patient.lastName}</p>
+            <p className="font-semibold">
+              {patient.firstName} {patient.lastName}
+            </p>
             <p>Email: {patient.email}</p>
             <p>Contact: {patient.contact}</p>
             <p>City: {patient.city}</p>
@@ -172,7 +199,15 @@ const PatientList = React.memo(({ patients, selectedPatient, onSelect }) => (
   </div>
 ));
 
-const ChatBox = ({ patient, chatHistory, message, setMessage, onSendMessage, onRefresh }) => (
+// Chat Box Component
+const ChatBox = ({
+  patient,
+  chatHistory,
+  message,
+  setMessage,
+  onSendMessage,
+  onRefresh,
+}) => (
   <div className="mt-6 p-6 bg-gray-50 rounded-lg shadow-md">
     <h3 className="text-lg font-semibold text-blue-600 mb-4">
       Chat with {patient.firstName} {patient.lastName}
@@ -182,11 +217,15 @@ const ChatBox = ({ patient, chatHistory, message, setMessage, onSendMessage, onR
         chatHistory.map((chat, index) => (
           <div
             key={index}
-            className={`mb-3 ${chat.sender === "Psychologist" ? "text-right" : "text-left"}`}
+            className={`mb-3 ${
+              chat.sender === "Psychologist" ? "text-right" : "text-left"
+            }`}
           >
             <p
               className={`inline-block px-4 py-2 rounded-lg ${
-                chat.sender === "Psychologist" ? "bg-blue-100 text-blue-600" : "bg-green-100 text-green-600"
+                chat.sender === "Psychologist"
+                  ? "bg-blue-100 text-blue-600"
+                  : "bg-green-100 text-green-600"
               }`}
             >
               {chat.message}
@@ -197,7 +236,7 @@ const ChatBox = ({ patient, chatHistory, message, setMessage, onSendMessage, onR
         <p className="text-gray-400">Start the conversation...</p>
       )}
     </div>
-    <div className="flex gap-4">
+    <div className="flex gap-4 flex-col sm:flex-row">
       <textarea
         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
         rows="2"
