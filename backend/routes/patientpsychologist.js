@@ -9,4 +9,5 @@ router.get('/me', checkAuth,psychologist, psychologistpatient.getPsychologistDet
 router.get('/my-patients', checkAuth,psychologist, psychologistpatient.getMyPatients);
 router.post('/send-message', checkAuth, psychologist, psychologistpatient.sendMessageToPatient );
 router.get('/get-response', checkAuth,psychologist, psychologistpatient.getPatientResponse );
+router.get('/patient-chat', checkAuth,psychologist, psychologistpatient.getPatientChat );
 module.exports = router;
