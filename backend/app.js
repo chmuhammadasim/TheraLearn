@@ -70,7 +70,7 @@ app.use("/api/game", gameRoute);
 app.use("/api/content", contentRoute);
 app.use("/api/psychologistpatient", psychologistpatientRoute);
 
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.status(404).send({
     error: "Not Found",
     message: "The requested resource could not be found.",
