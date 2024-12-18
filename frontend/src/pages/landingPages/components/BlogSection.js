@@ -44,7 +44,7 @@ const BlogSection = () => {
   }
 
   if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
+    return <div className="text-center text-red-500"></div>;
   }
 
   return (
