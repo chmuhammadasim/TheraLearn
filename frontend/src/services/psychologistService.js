@@ -108,7 +108,6 @@ export const assignPsychologistToPatient = async (psychologistId) => {
   }
 };
 
-// Fetch the questionnaire (optional, if needed)
 export const getQuestionnaire = async (psychologistId) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologist/questionnaire`, {
@@ -219,3 +218,17 @@ export const getChatHistory   = async (patient) => {
   }
 };
 
+export const getAssignedPsychologists = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/getassignedpsy`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error assigning psychologist:', error);
+    throw new Error('Error assigning psychologist');
+  }
+};

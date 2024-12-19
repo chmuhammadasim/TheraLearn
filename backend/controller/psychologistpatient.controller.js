@@ -135,4 +135,27 @@ psychologistpatient.assignPsychologistToPatient = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+psychologistpatient.getAssignedPsychologists = async (req, res) => {
+
+  try {
+    const patientId = req.userData.userId;
+    const patient = await User.findById(patientId);
+    console.log(patient);
+    
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    if (!patient.psychologist) {
+      return res.status(404).json({ message: 'No psychologist assigned to this patient' });
+    }
+
+    res.status(200).json(patient.psychologist);
+  } catch (error) {
+    console.error('Error fetching assigned psychologists:', error);
+    res.status(500).json({ message: 'Failed to fetch assigned psychologists' });
+  }
+};
+
 module.exports = psychologistpatient;
