@@ -11,6 +11,7 @@ router.get('/get-response', checkAuth,psychologist, psychologistpatient.getPatie
 router.get('/patient-chat', checkAuth,psychologist, psychologistpatient.getPatientChat );
 
 router.get('/getassignedpsy', checkAuth,user, psychologistpatient.getAssignedPsychologists );
+router.get('/psy-chat', checkAuth,user, psychologistpatient.getPsyChat );
 router.post('/assign', checkAuth,user, psychologistpatient.assignPsychologistToPatient );
 router.post('/sendmestopsy', checkAuth,user, psychologistpatient.sendMessageToPsychologist );
 

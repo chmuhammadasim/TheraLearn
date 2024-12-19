@@ -67,6 +67,37 @@ psychologistpatient.sendMessageToPatient = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// psychologistpatient.sendMessageToPsy = async (req, res) => {
+//   try {
+//     const { message } = req.body;
+//     const from = req.headers.psychologistid;
+//     const id = req.userData.userId;
+//     if (!message || !id) {
+//       return res
+//         .status(400)
+//         .json({ message: "Message and patient ID are required" });
+//     }
+//     const psychologist = await User.findById(req.userData.userId);
+//     if (!psychologist) {
+//       return res.status(404).json({ message: "Patient not found" });
+//     }
+//     psychologist.messages.push({ from:from, to: id, message:message });
+//     await psychologist.save();
+//     const patient = await User.findById(req.headers.patientid);
+//     if (!patient) {
+//       return res.status(404).json({ message: "Patient not found" });
+//     }
+//     patient.messages.push({ from:from, to: id, message:message });
+
+//     await patient.save();
+//     res.status(200).json({ message: "Message sent successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
 psychologistpatient.getPatientResponse = async (req, res) => {
   try {
     const id = req.headers.patientid;
@@ -86,6 +117,38 @@ psychologistpatient.getPatientChat = async (req, res) => {
   try {
     const id = req.headers.patientid;
     const from = req.userData.userId;
+    
+    if (!id) {
+      return res.status(400).json({ message: "Patient ID is required" });
+    }
+    const psychologist = await User.findById(req.userData.userId).populate('messages');
+    if (!psychologist) {
+      return res.status(404).json({ message: "Psychologist not found" });
+    }
+    const patient = await User.findById(id).populate('messages');
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+    
+    const filteredMessages = psychologist.messages.filter(
+      (msg) =>
+        (msg.from.toString() === from.toString() && msg.to.toString() === id.toString()) ||
+        (msg.from.toString() === id.toString() && msg.to.toString() === from.toString())
+    );
+    
+    
+    res.status(200).json({ filteredMessages });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+psychologistpatient.getPsyChat = async (req, res) => {
+  try {
+    const from = req.headers.psychologistid;
+    const id = req.userData.userId;
+    
     if (!id) {
       return res.status(400).json({ message: "Patient ID is required" });
     }

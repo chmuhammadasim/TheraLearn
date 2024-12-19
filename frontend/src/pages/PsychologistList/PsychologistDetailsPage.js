@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   getPsychologistById,
   getAssignedPsychologists,
   assignPsychologistToPatient,
   sendMessageToPsychologist,
-  getChatHistory,
+  getChatHistoryUser,
 } from "../../services/psychologistService";
 import { FiPhone, FiMail, FiMapPin, FiAward } from "react-icons/fi";
 
@@ -15,18 +15,20 @@ function PsychologistDetailsPage() {
   const [isDoctorSelected, setIsDoctorSelected] = useState(false);
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const chatEndRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const psychologistData = await getPsychologistById(id);
         setPsychologist(psychologistData);
-        const assignedPsychologists = await getAssignedPsychologists();
 
+        const assignedPsychologists = await getAssignedPsychologists();
         if (assignedPsychologists) {
-          setIsDoctorSelected(true);
-          const history = await getChatHistory(psychologistData._id);
-          setChatHistory(history);
+          setIsDoctorSelected(true);  
+          const history = await getChatHistoryUser(assignedPsychologists);
+          setChatHistory(history.filteredMessages);
         } else {
           setIsDoctorSelected(false);
         }
@@ -55,14 +57,24 @@ function PsychologistDetailsPage() {
       return;
     }
     try {
+      const newMessage = { sender: "Patient", message, timestamp: new Date() };
       await sendMessageToPsychologist(psychologist._id, message);
-      setChatHistory((prev) => [...prev, { sender: "Patient", message }]);
+      setChatHistory((prev) => [...prev, newMessage]);
       setMessage("");
+      scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
       alert("Failed to send message.");
     }
   };
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]);
 
   if (!psychologist) {
     return (
@@ -156,7 +168,29 @@ function PsychologistDetailsPage() {
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 Chat with {psychologist.firstName}
               </h2>
-              <div className="max-h-60 overflow-y-auto bg-white p-4 border border-gray-200 rounded-lg mb-4">
+              {chatHistory.length > 0 ? (
+        chatHistory.map((chat, index) => (
+          <div
+            key={index}
+            className={`mb-3 ${
+              chat.sender === "Psychologist" ? "text-right" : "text-left"
+            }`}
+          >
+            <p
+              className={`inline-block px-4 py-2 rounded-lg ${
+                chat.sender === "Psychologist"
+                  ? "bg-blue-100 text-blue-600"
+                  : "bg-green-100 text-green-600"
+              }`}
+            >
+              {chat.message}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-400">Start the conversation...</p>
+      )}
+              {/* <div className="max-h-60 overflow-y-auto bg-white p-4 border border-gray-200 rounded-lg mb-4">
                 {chatHistory.length > 0 ? (
                   chatHistory.map((chat, index) => (
                     <div
@@ -174,12 +208,19 @@ function PsychologistDetailsPage() {
                       >
                         {chat.message}
                       </p>
+                      <span className="text-xs text-gray-500 block mt-1">
+                        {new Date(chat.timestamp).toLocaleTimeString()}
+                      </span>
                     </div>
                   ))
                 ) : (
                   <p className="text-gray-400">Start the conversation...</p>
                 )}
-              </div>
+                {isTyping && (
+                  <p className="text-gray-500 italic">Psychologist is typing...</p>
+                )}
+                <div ref={chatEndRef} />
+              </div> */}
               <div className="flex gap-4 flex-col sm:flex-row">
                 <textarea
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"

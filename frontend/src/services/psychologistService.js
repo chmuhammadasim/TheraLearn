@@ -221,13 +221,29 @@ export const getPatients   = async () => {
     throw error;
   }
 };
-export const getChatHistory   = async (patient) => {
+export const getChatHistory = async (patient) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/patient-chat`, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'patientid': patient
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching psychologist details:', error);
+    throw error;
+  }
+};
+
+export const getChatHistoryUser = async (psychologistid) => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/psy-chat`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'psychologistid': psychologistid
       }
     });
     return response.data;
