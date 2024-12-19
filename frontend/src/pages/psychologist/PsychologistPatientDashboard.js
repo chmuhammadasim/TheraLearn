@@ -213,12 +213,12 @@ const ChatBox = ({
           <div
             key={index}
             className={`mb-3 ${
-              chat.sender === "Psychologist" ? "text-right" : "text-left"
+              chat.sender === "psychologist" ? "text-left" : "text-right"
             }`}
           >
             <p
               className={`inline-block px-4 py-2 rounded-lg ${
-                chat.sender === "Psychologist"
+                chat.sender === "psychologist"
                   ? "bg-blue-100 text-blue-600"
                   : "bg-green-100 text-green-600"
               }`}

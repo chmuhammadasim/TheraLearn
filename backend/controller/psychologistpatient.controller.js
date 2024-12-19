@@ -52,13 +52,13 @@ psychologistpatient.sendMessageToPatient = async (req, res) => {
     if (!psychologist) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    psychologist.messages.push({ from:from, to: id, message:message });
+    psychologist.messages.push({ from:from, to: id, message:message, sender:"user" });
     await psychologist.save();
     const patient = await User.findById(req.headers.patientid);
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    patient.messages.push({ from:from, to: id, message:message });
+    patient.messages.push({ from:from, to: id, message:message, sender:"user" });
 
     await patient.save();
     res.status(200).json({ message: "Message sent successfully" });
@@ -68,35 +68,7 @@ psychologistpatient.sendMessageToPatient = async (req, res) => {
   }
 };
 
-// psychologistpatient.sendMessageToPsy = async (req, res) => {
-//   try {
-//     const { message } = req.body;
-//     const from = req.headers.psychologistid;
-//     const id = req.userData.userId;
-//     if (!message || !id) {
-//       return res
-//         .status(400)
-//         .json({ message: "Message and patient ID are required" });
-//     }
-//     const psychologist = await User.findById(req.userData.userId);
-//     if (!psychologist) {
-//       return res.status(404).json({ message: "Patient not found" });
-//     }
-//     psychologist.messages.push({ from:from, to: id, message:message });
-//     await psychologist.save();
-//     const patient = await User.findById(req.headers.patientid);
-//     if (!patient) {
-//       return res.status(404).json({ message: "Patient not found" });
-//     }
-//     patient.messages.push({ from:from, to: id, message:message });
 
-//     await patient.save();
-//     res.status(200).json({ message: "Message sent successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
 
 psychologistpatient.getPatientResponse = async (req, res) => {
   try {
@@ -239,8 +211,8 @@ psychologistpatient.sendMessageToPsychologist = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    psychologist.messages.push({ from: patientId, to: psychologistId, message });
-    patient.messages.push({ from: patientId, to: psychologistId, message });
+    psychologist.messages.push({ from: patientId, to: psychologistId, message:message, sender:"psychologist" });
+    patient.messages.push({ from: patientId, to: psychologistId, message:message, sender: "psychologist" });
     await psychologist.save();
     await patient.save();
     res.status(200).json({ message: "Message sent successfully" });
