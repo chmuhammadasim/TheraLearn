@@ -1,5 +1,5 @@
 const express = require("express");
-const { psychologist } = require("../middleware/authMiddleware");
+const { psychologist,user } = require("../middleware/authMiddleware");
 const checkAuth = require("../middleware/check-auth");
 const psychologistpatient = require("../controller/psychologistpatient.controller");
 const router = express.Router();
@@ -10,4 +10,6 @@ router.get('/my-patients', checkAuth,psychologist, psychologistpatient.getMyPati
 router.post('/send-message', checkAuth, psychologist, psychologistpatient.sendMessageToPatient );
 router.get('/get-response', checkAuth,psychologist, psychologistpatient.getPatientResponse );
 router.get('/patient-chat', checkAuth,psychologist, psychologistpatient.getPatientChat );
+router.post('/assign', checkAuth,user, psychologistpatient.assignPsychologistToPatient );
+
 module.exports = router;

@@ -92,14 +92,13 @@ export const getPatientResponse = async (patientId, message) => {
   }
 };
 
-// Assign a psychologist to a patient (optional, if needed)
 export const assignPsychologistToPatient = async (psychologistId) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologist/patients/assign`, {}, {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/assign`, {}, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'psychologist-id': psychologistId 
+        'psychologistid': psychologistId 
       }
     });
     return response.data;

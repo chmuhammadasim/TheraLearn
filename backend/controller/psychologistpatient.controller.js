@@ -111,4 +111,28 @@ psychologistpatient.getPatientChat = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+psychologistpatient.assignPsychologistToPatient = async (req, res) => {
+  try {
+    const { psychologistid } = req.headers;
+    const userId = req.userData.userId; 
+    if (!psychologistid) {
+      return res.status(400).json({ message: 'Psychologist ID is required' });
+    }
+    const psychologist = await User.findById(psychologistid);
+    if (!psychologist) {
+      return res.status(404).json({ message: 'Psychologist not found' });
+    }
+    const patient = await User.findById(userId);
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+    patient.psychologist = psychologistid;
+    await patient.save();
+    return res.status(200).json({ message: 'Psychologist assigned successfully', patient });
+  } catch (error) {
+    console.error('Error assigning psychologist:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = psychologistpatient;

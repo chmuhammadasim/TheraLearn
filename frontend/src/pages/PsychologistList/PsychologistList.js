@@ -97,8 +97,8 @@ function PsychologistListPage() {
               </h3>
               <p className="text-pink-600 mt-1">{psychologist.firstName} {psychologist.lastName}</p>
               <p className="text-gray-500 mt-2">{psychologist.email}</p>
-              <p className="text-gray-500 mt-2">{psychologist.email}</p>
               <p className="text-gray-500">{psychologist.contact}</p>
+              <p className="text-gray-500">{psychologist.address}, {psychologist.city}, {psychologist.country}</p>
             </div>
             {/* Hover Effect */}
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

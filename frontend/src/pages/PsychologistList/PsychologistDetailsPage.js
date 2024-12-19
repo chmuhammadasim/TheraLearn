@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPsychologistById, assignPsychologistToPatient } from '../../services/psychologistService';
-import { FiPhone, FiMail, FiMapPin, FiStar } from 'react-icons/fi';
+import { FiPhone, FiMail, FiMapPin, FiAward } from 'react-icons/fi';
 
 function PsychologistDetailsPage() {
   const { id } = useParams();
@@ -13,6 +13,11 @@ function PsychologistDetailsPage() {
       try {
         const data = await getPsychologistById(id);
         setPsychologist(data);
+        console.log(data);
+        
+        if (data.isAssignedToPatient) {
+          setIsDoctorSelected(true);
+        }
       } catch (error) {
         console.error('Error fetching psychologist details:', error);
       }
@@ -33,88 +38,84 @@ function PsychologistDetailsPage() {
   };
 
   if (!psychologist) {
-    return <div className="text-center mt-20 text-lg text-gray-700">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen text-gray-600">
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#FFDEE9] to-[#B5EAD7] p-4 md:p-6">
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-12 mb-16">
-        <div className="flex flex-col md:flex-row items-center">
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 pt-20 py-10">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-3">
+        {/* Sidebar Section */}
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-white flex flex-col items-center">
           <img
             src={psychologist.profilePictureUrl}
-            alt={psychologist.firstName}
-            className="w-32 h-32 md:w-48 md:h-48 object-cover rounded-full shadow-lg border-4 border-indigo-500"
+            alt={`${psychologist.firstName} ${psychologist.lastName}`}
+            className="w-32 h-32 rounded-full border-4 border-white shadow-lg mb-6"
           />
-          <div className="md:ml-6 mt-4 md:mt-0 text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-600">
-              {psychologist.firstName} {psychologist.lastName}
-            </h1>
-            <p className="text-pink-600 text-lg md:text-xl font-medium mt-2">{psychologist.specialization}</p>
-            <p className="text-gray-500 mt-4 flex items-center justify-center md:justify-start">
-              <FiPhone className="mr-2 text-blue-500" /> {psychologist.phone}
+          <h1 className="text-2xl font-semibold">{psychologist.firstName} {psychologist.lastName}</h1>
+          <p className="text-lg mt-2 italic">{psychologist.specialization}</p>
+          <div className="mt-8 space-y-4 text-sm">
+            <p className="flex items-center gap-2">
+              <FiPhone className="text-yellow-300" /> {psychologist.contact}
             </p>
-            <p className="text-gray-500 flex items-center justify-center md:justify-start">
-              <FiMail className="mr-2 text-blue-500" /> {psychologist.contact}
+            <p className="flex items-center gap-2">
+              <FiMail className="text-yellow-300" /> {psychologist.email}
             </p>
-            <p className="text-gray-600 mt-2">
-              {psychologist.city}, {psychologist.country}
-            </p>
-            <p className="text-gray-600 mt-2 flex items-center justify-center md:justify-start">
-              <FiMapPin className="mr-2 text-green-500" />
-              Clinic Address: {psychologist.clinicAddress}
+            <p className="flex items-center gap-2">
+              <FiMapPin className="text-yellow-300" /> {psychologist.city}, {psychologist.country}
             </p>
           </div>
         </div>
 
-        <div className="mt-8">
-          <h2 className="text-3xl font-bold text-indigo-700">About</h2>
-          <p className="text-gray-600 mt-4">{psychologist.bio}</p>
-        </div>
+        {/* Main Content */}
+        <div className="col-span-2 p-8">
+          {/* About Section */}
+          <div className="bg-gray-50 rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 pb-2 border-gray-300">
+              About
+            </h2>
+            <p className="text-gray-700 mt-4 leading-relaxed">{psychologist.bio}</p>
+          </div>
 
-        <div className="mt-8">
-          <h2 className="text-3xl font-bold text-indigo-700">Professional Details</h2>
-          <ul className="text-gray-600 mt-4 space-y-2">
-            <li><strong>Years of Experience:</strong> {psychologist.experience} years</li>
-            <li><strong>Education:</strong> {psychologist.education}</li>
-            <li>
-              <strong>Ratings:</strong>
-              <span className="ml-2 flex items-center text-yellow-500">
-                <FiStar className="mr-1" />
-                {psychologist.rating} / 5
-              </span>
-            </li>
-          </ul>
-        </div>
+          {/* Professional Details Section */}
+          <div className="bg-gray-50 rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 pb-2 border-gray-300">
+              Professional Details
+            </h2>
+            <ul className="mt-4 text-gray-700 space-y-4">
+              <li className="flex items-center gap-2">
+                <FiAward className="text-indigo-600" />
+                <strong>Years of Experience:</strong> {psychologist.experience} years
+              </li>
+              <li className="flex items-center gap-2">
+                <FiAward className="text-indigo-600" />
+                <strong>Education:</strong> {psychologist.education}
+              </li>
+              <li className="flex items-center gap-2">
+                <FiAward className="text-indigo-600" />
+                <strong>Clinic Address:</strong> {psychologist.clinicAddress}
+              </li>
+            </ul>
+          </div>
 
-        {/* <div className="mt-8">
-          <h2 className="text-3xl font-bold text-indigo-700">Reviews</h2>
-          <div className="mt-4 space-y-4">
-            {psychologist.reviews.length > 0 ? (
-              psychologist.reviews.map((review, index) => (
-                <div key={index} className="bg-gray-100 p-4 rounded-lg shadow">
-                  <p className="text-gray-800 font-semibold">"{review.comment}"</p>
-                  <p className="text-gray-500 mt-2">- {review.reviewer}</p>
-                </div>
-              ))
+          {/* Action Section */}
+          <div className="bg-gray-50 rounded-lg shadow-md p-6">
+            {!isDoctorSelected ? (
+              <button
+                onClick={handleSelectDoctor}
+                className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg shadow-lg hover:from-green-600 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all"
+              >
+                Select as My Doctor
+              </button>
             ) : (
-              <p className="text-gray-500">No reviews available.</p>
+              <div className="text-green-600 text-lg font-semibold text-center">
+                You have selected this psychologist as your doctor.
+              </div>
             )}
           </div>
-        </div> */}
-
-        <div className="mt-8">
-          {!isDoctorSelected ? (
-            <button
-              onClick={handleSelectDoctor}
-              className="w-full bg-gradient-to-r from-[#6EE7B7] to-[#3B82F6] text-white px-6 py-3 rounded-lg shadow-lg hover:from-[#34D399] hover:to-[#2563EB] transition-all duration-300"
-            >
-              Select as My Doctor
-            </button>
-          ) : (
-            <div className="text-green-600 text-lg font-semibold">
-              You have selected this psychologist as your doctor.
-            </div>
-          )}
         </div>
       </div>
     </div>
