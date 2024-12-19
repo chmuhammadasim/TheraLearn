@@ -141,7 +141,6 @@ psychologistpatient.getAssignedPsychologists = async (req, res) => {
   try {
     const patientId = req.userData.userId;
     const patient = await User.findById(patientId);
-    console.log(patient);
     
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
@@ -155,6 +154,36 @@ psychologistpatient.getAssignedPsychologists = async (req, res) => {
   } catch (error) {
     console.error('Error fetching assigned psychologists:', error);
     res.status(500).json({ message: 'Failed to fetch assigned psychologists' });
+  }
+};
+
+psychologistpatient.sendMessageToPsychologist = async (req, res) => {
+  try {
+    const { message } = req.body;
+    const psychologistId = req.headers.psychologistid;
+    const patientId = req.userData.userId;
+    if (!message || !psychologistId || !patientId) {
+      return res
+        .status(400)
+        .json({ message: "Message, psychologist ID, and patient ID are required" });
+    }
+    const psychologist = await User.findById(psychologistId);
+    const patient = await User.findById(patientId);
+    
+    if (!psychologist) {
+      return res.status(404).json({ message: "Psychologist not found" });
+    }
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+    psychologist.messages.push({ from: patientId, to: psychologistId, message });
+    patient.messages.push({ from: patientId, to: psychologistId, message });
+    await psychologist.save();
+    await patient.save();
+    res.status(200).json({ message: "Message sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

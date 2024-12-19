@@ -4,6 +4,8 @@ import {
   getPsychologistById,
   getAssignedPsychologists,
   assignPsychologistToPatient,
+  sendMessageToPsychologist,
+  getChatHistory,
 } from "../../services/psychologistService";
 import { FiPhone, FiMail, FiMapPin, FiAward } from "react-icons/fi";
 
@@ -11,6 +13,8 @@ function PsychologistDetailsPage() {
   const { id } = useParams();
   const [psychologist, setPsychologist] = useState(null);
   const [isDoctorSelected, setIsDoctorSelected] = useState(false);
+  const [message, setMessage] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,14 +25,13 @@ function PsychologistDetailsPage() {
 
         if (assignedPsychologists) {
           setIsDoctorSelected(true);
+          const history = await getChatHistory(psychologistData._id);
+          setChatHistory(history);
         } else {
           setIsDoctorSelected(false);
         }
       } catch (error) {
-        console.error(
-          "Error fetching psychologist or assigned psychologists:",
-          error
-        );
+        console.error("Error fetching psychologist or assigned psychologists:", error);
       }
     };
 
@@ -43,6 +46,21 @@ function PsychologistDetailsPage() {
     } catch (error) {
       console.error("Error assigning psychologist:", error);
       alert("Failed to select psychologist as your doctor.");
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!message.trim()) {
+      alert("Message cannot be empty!");
+      return;
+    }
+    try {
+      await sendMessageToPsychologist(psychologist._id, message);
+      setChatHistory((prev) => [...prev, { sender: "Patient", message }]);
+      setMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message.");
     }
   };
 
@@ -131,6 +149,54 @@ function PsychologistDetailsPage() {
               </div>
             )}
           </div>
+
+          {/* Chat Box Section */}
+          {isDoctorSelected && (
+            <div className="bg-gray-50 rounded-lg shadow-md p-6 mt-6">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                Chat with {psychologist.firstName}
+              </h2>
+              <div className="max-h-60 overflow-y-auto bg-white p-4 border border-gray-200 rounded-lg mb-4">
+                {chatHistory.length > 0 ? (
+                  chatHistory.map((chat, index) => (
+                    <div
+                      key={index}
+                      className={`mb-3 ${
+                        chat.sender === "Patient" ? "text-right" : "text-left"
+                      }`}
+                    >
+                      <p
+                        className={`inline-block px-4 py-2 rounded-lg ${
+                          chat.sender === "Patient"
+                            ? "bg-blue-100 text-blue-600"
+                            : "bg-green-100 text-green-600"
+                        }`}
+                      >
+                        {chat.message}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400">Start the conversation...</p>
+                )}
+              </div>
+              <div className="flex gap-4 flex-col sm:flex-row">
+                <textarea
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  rows="2"
+                  placeholder="Type your message..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -9,7 +9,9 @@ router.get('/my-patients', checkAuth,psychologist, psychologistpatient.getMyPati
 router.post('/send-message', checkAuth, psychologist, psychologistpatient.sendMessageToPatient );
 router.get('/get-response', checkAuth,psychologist, psychologistpatient.getPatientResponse );
 router.get('/patient-chat', checkAuth,psychologist, psychologistpatient.getPatientChat );
+
 router.get('/getassignedpsy', checkAuth,user, psychologistpatient.getAssignedPsychologists );
 router.post('/assign', checkAuth,user, psychologistpatient.assignPsychologistToPatient );
+router.post('/sendmestopsy', checkAuth,user, psychologistpatient.sendMessageToPsychologist );
 
 module.exports = router;

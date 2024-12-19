@@ -73,6 +73,25 @@ export const sendMessageToPatient = async (patientId, message) => {
   }
 };
 
+export const sendMessageToPsychologist = async (psychologistid, message) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/sendmestopsy`, 
+      { message }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'psychologistid': psychologistid
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};
+
 export const getPatientResponse = async (patientId, message) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/get-response`, 
