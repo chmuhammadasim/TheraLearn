@@ -10,6 +10,13 @@ module.exports = {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        'custom-blue': '#24246e',
+        'custom-dark': '#06051f',
+      },
+      backgroundImage: {
+        'custom-gradient': 'radial-gradient(circle, #24246e, #06051f)',
+      },
     },
   },
   plugins: [

@@ -22,11 +22,14 @@ import SuperAdminContactUs from "./pages/superAdmin/SuperAdminContactUs";
 import SuperAdminContentPanel from "./pages/superAdmin/adminContentPanel";
 import PsychologistRoute from "./components/Routes/PsychologistRoute";
 import GamePage from "./pages/Game/Game";
+import NumberGuessingGame from "./pages/Game/Games/Countinggamespeechrecognition/NumberGuessingGame";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
 import PsychologistDetailsPage from "./pages/PsychologistList/PsychologistDetailsPage";
 import PsychologistBlogPage from "./pages/psychologist/PsychologistBlogPage";
 import PsychologistPatientDashboard from "./pages/psychologist/PsychologistPatientDashboard";
 import { AuthProvider } from "./components/AuthContext/AuthContext";
+import BetterAim from "./pages/Game/Games/BettterAim/BetterAim";
+import ObjectGuessingGame from "./pages/Game/Games/Naminggamespeechrecognition/ObjectGuessingGame";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -171,6 +174,9 @@ function App() {
             <Route path="/bloglist" element={<BlogList />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/numberguessinggame" element={<NumberGuessingGame />} />
+            <Route path="/objectguessinggame" element={<ObjectGuessingGame />} />
+            <Route path="/betteraim" element={<BetterAim />} />
             <Route path="/games" element={<GamePage />} />
             <Route
               path="/psychologistslist"
