@@ -6,5 +6,7 @@ const checkAuth = require("../middleware/check-auth");
 router.get("/", gameController.Checkapi);
 router.get("/all", gameController.getAllGames);
 router.get("/getbyid", checkAuth, user, gameController.getGameById);
+router.post("/saveGameData", checkAuth, gameController.saveGameData);
+router.get("/loadGameData/:gameName", checkAuth, gameController.getGameData);
 
 module.exports = router;

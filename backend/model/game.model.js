@@ -27,10 +27,6 @@ const gameSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
     },
-    attempts: {
-      type: Number,
-      default: 1, 
-    },
   }],
 });
 
