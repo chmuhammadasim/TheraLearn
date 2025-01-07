@@ -96,7 +96,7 @@ function LandingPage() {
     </div>
   );
 }
-// Default data to show when no data is found
+
 const defaultData = {
   hero: {
     title: 'Welcome to TheraLearn',
@@ -108,25 +108,25 @@ const defaultData = {
       icon: 'puzzle-piece',
       title: 'Therapeutic Games',
       description: 'Fun and engaging games that support cognitive development and motor skills.',
-      image: '/therapygame.png', // Replace with actual image
+      image: '/therapygame.png',
     },
     {
       icon: 'child',
       title: 'Specialized Therapy',
       description: 'Therapeutic activities tailored to the needs of children with Down syndrome.',
-      image: '/therapy.png', // Replace with actual image
+      image: '/therapy.png',
     },
     {
       icon: 'brain',
       title: 'Cognitive Development',
       description: 'Games designed to improve memory, problem-solving, and other cognitive skills.',
-      image: '/brain.png', // Replace with actual image
+      image: '/brain.png',
     },
     {
       icon: 'hand-holding-heart',
       title: 'Emotional Support',
       description: 'Tools and games focused on boosting emotional intelligence and social skills.',
-      image: '/emotionalsupport.png', // Replace with actual image
+      image: '/emotionalsupport.png', 
     },
   ],
   cta: {

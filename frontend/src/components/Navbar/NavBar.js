@@ -112,7 +112,7 @@ export default function Navbar() {
                 </motion.span>
               </div>
 
-              {/* Centered Links */}
+
               <div className="hidden sm:flex sm:space-x-6">
                 {!isSuperAdmin &&
                   navLinks.map(({ to, label, color }) => (
@@ -172,7 +172,6 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Right side: Auth Buttons */}
               <div className="hidden sm:flex sm:items-center space-x-4">
                 {isLoggedIn ? (
                   <>

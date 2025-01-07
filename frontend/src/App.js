@@ -58,8 +58,6 @@ function App() {
           <Navbar isLoggedIn={isLoggedIn} role={role} />
           <Routes>
             <Route path="/" element={<LandingPage />} />
-
-            {/* Show Login/Signup only if the user is not signed in */}
             {!isLoggedIn && (
               <>
                 <Route
@@ -80,8 +78,6 @@ function App() {
                 />
               </>
             )}
-
-            {/* Show Dashboard only if the user is signed in */}
             {isLoggedIn && (
               <>
                 <Route
@@ -169,13 +165,18 @@ function App() {
               </>
             )}
 
-            {/* Public Routes */}
             <Route path="/contact" element={<ContactUsPage />} />
             <Route path="/bloglist" element={<BlogList />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/about" element={<AboutUsPage />} />
-            <Route path="/numberguessinggame" element={<NumberGuessingGame />} />
-            <Route path="/objectguessinggame" element={<ObjectGuessingGame />} />
+            <Route
+              path="/numberguessinggame"
+              element={<NumberGuessingGame />}
+            />
+            <Route
+              path="/objectguessinggame"
+              element={<ObjectGuessingGame />}
+            />
             <Route path="/betteraim" element={<BetterAim />} />
             <Route path="/games" element={<GamePage />} />
             <Route

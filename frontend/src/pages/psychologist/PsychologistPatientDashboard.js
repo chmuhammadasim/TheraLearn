@@ -7,19 +7,18 @@ import {
   getPatientResponse,
   getChatHistory,
 } from "../../services/psychologistService";
+import Loading from '../../components/Loading';
 
 function PsychologistPatientDashboard() {
-  // State management
+  const [isLoading, setIsLoading] = useState(true);
   const [psychologist, setPsychologist] = useState(null);
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Fetch dashboard data
   const fetchDashboardData = useCallback(async () => {
-    setLoading(true);
     try {
       const [psychologistData, patientsData] = await Promise.all([
         getPsychologistDetails(),
@@ -30,8 +29,6 @@ function PsychologistPatientDashboard() {
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("Failed to load dashboard data.");
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -60,6 +57,13 @@ function PsychologistPatientDashboard() {
       alert("Failed to send message.");
     }
   };
+   useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+  
+      return () => clearTimeout(timer);
+    }, []);
 
   // Fetch patient responses
   const handleGetResponse = async () => {
@@ -95,8 +99,8 @@ function PsychologistPatientDashboard() {
   };
 
   // Loading state
-  if (loading) {
-    return <div className="text-center mt-20 text-blue-600">Loading...</div>;
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -135,37 +139,36 @@ function PsychologistPatientDashboard() {
   );
 }
 
-// Psychologist Details Component
 const PsychologistDetails = React.memo(({ psychologist }) => (
   <div className="w-full sm:w-1/3 bg-blue-50 p-6 rounded-lg shadow-md">
-    <h2 className="text-xl font-semibold text-blue-600 mb-4">Your Details</h2>
-    <p>
+    <h2 className="text-2xl font-semibold text-blue-600 mb-4">Your Details</h2>
+    <p className="font-semibold">
       <FiUser className="inline-block mr-2" /> {psychologist.firstName}{" "}
       {psychologist.lastName}
     </p>
-    <p>
+    <p className="font-semibold">
       <FiMail className="inline-block mr-2" /> {psychologist.email}
     </p>
-    <p>
+    <p className="font-semibold">
       <FiPhone className="inline-block mr-2" /> {psychologist.contact}
     </p>
     <p>
       Education:{" "}
-      <span className="font-medium">{psychologist.education.join(", ")}</span>
+      <span className="font-semibold">{psychologist.education.join(", ")}</span>
     </p>
     <p>
       Experience:{" "}
-      <span className="font-medium">{psychologist.experience.join(", ")}</span>
+      <span className="font-semibold">{psychologist.experience.join(", ")}</span>
     </p>
     <p>
-      Address: <span className="font-medium">{psychologist.address}</span>
+      Address: <span className="font-semibold">{psychologist.address}</span>
     </p>
   </div>
 ));
 
 const PatientList = React.memo(({ patients, selectedPatient, onSelect }) => (
   <div className="w-full sm:w-2/3">
-    <h2 className="text-xl font-semibold mb-4">Your Patients</h2>
+    <h2 className="text-2xl font-semibold mb-4">Your Patients</h2>
     <div className="max-h-60 overflow-y-auto space-y-4">
       {patients.length > 0 ? (
         patients.map((patient) => (
@@ -204,7 +207,7 @@ const ChatBox = ({
   onRefresh,
 }) => (
   <div className="mt-6 p-6 bg-gray-50 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold text-blue-600 mb-4">
+    <h3 className="text-xl font-semibold text-blue-600 mb-4">
       Chat with {patient.firstName} {patient.lastName}
     </h3>
     <div className="max-h-60 overflow-y-auto mb-4 bg-white p-4 border border-gray-200 rounded-lg">

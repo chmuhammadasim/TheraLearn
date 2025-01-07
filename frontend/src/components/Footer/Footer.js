@@ -10,7 +10,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative border-t-2 border-black bg-gradient-to-br from-[#f9d423] to-[#e14fad] text-white py-5 md:py-16 overflow-hidden">
+    <footer className="relative border-t-2 border-black bg-gradient-to-br from-[#f9d52385] to-[#e14fae7e] text-white py-5 md:py-16 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden z-0">
         <motion.div
           className="absolute w-96 h-96 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full opacity-70 blur-2xl"
@@ -42,7 +42,7 @@ const Footer = () => {
               animate={{ y: [0, -5, 0] }}
               transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             />
-            <h1 className="text-4xl font-extrabold tracking-wide text-white">
+            <h1 className="text-4xl font-extrabold tracking-wide text-slate-900">
               TheraLearn
             </h1>
           </motion.div>
@@ -66,14 +66,14 @@ const Footer = () => {
               {
                 icon: FaInstagram,
                 color: "#e4405f",
-                url: "https://instagram.com",
+                url: "https://instagram.com/chmuhammadasim",
               },
               {
                 icon: FaLinkedinIn,
                 color: "#0077b5",
-                url: "https://linkedin.com",
+                url: "https://linkedin.com/in/muhammad-asim-chattha",
               },
-              { icon: FaGithub, color: "#333", url: "https://github.com" },
+              { icon: FaGithub, color: "#333", url: "https://github.com/chmuhammadasim" },
             ].map(({ icon: Icon, color, url }, idx) => (
               <motion.a
                 key={idx}
@@ -88,14 +88,13 @@ const Footer = () => {
                 }}
               >
                 <Icon />
-                {/* Glowing Effect */}
-                <span className="absolute inset-0 rounded-full border border-white opacity-0 group-hover:opacity-100 group-hover:shadow-lg group-hover:shadow-black transition duration-300"></span>
+                <span className="absolute inset-0 rounded-full border border-white opacity-0 shadow-md shadow-black group-hover:opacity-100 group-hover:shadow-lg group-hover:shadow-black transition duration-300"></span>
               </motion.a>
             ))}
           </motion.div>
 
           <motion.p
-            className="mt-10 text-center text-sm md:text-base font-light"
+            className="mt-10 text-center text-sm md:text-xl font-medium text-slate-900"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}

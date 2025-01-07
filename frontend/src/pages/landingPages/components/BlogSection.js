@@ -49,7 +49,6 @@ const BlogSection = () => {
 
   return (
     <section className="border-b-8 border-cyan-500 relative py-20 bg-gradient-to-tr from-indigo-300 via-purple-400 to-pink-400 min-h-screen overflow-hidden">
-      {/* Background Floating Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(25)].map((_, i) => (
           <motion.div
@@ -108,7 +107,6 @@ const BlogSection = () => {
         </div>
       </div>
 
-      {/* Bottom Floating Decor Elements */}
       <div className="absolute top-1/3 left-1/4 w-24 h-24 bg-gradient-to-r from-teal-300 to-blue-500 rounded-full animate-pulse" />
       <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-r from-orange-400 to-red-600 rounded-full animate-bounce" />
     </section>

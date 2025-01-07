@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Balloon from './Balloon';
-import './App.css';
+import './BetterAim.css';
 import popSoundFile from './pop-sound.mp3';
 import Snackbar from './Snackbar';
 import { FaRegClock, FaStar, FaLevelUpAlt, FaHeart, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';

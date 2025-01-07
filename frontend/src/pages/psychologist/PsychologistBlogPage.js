@@ -44,8 +44,6 @@ const PsychologistBlogPage = () => {
         setBlogs(response.data);
       } catch (error) {
         setMessage("Error fetching blogs. Please try again later.");
-      } finally {
-        setLoading(false);
       }
     };
     fetchBlogs();
@@ -60,6 +58,13 @@ const PsychologistBlogPage = () => {
     const files = Array.from(e.target.files);
     setFormData((prevData) => ({ ...prevData, additionalImages: files }));
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];

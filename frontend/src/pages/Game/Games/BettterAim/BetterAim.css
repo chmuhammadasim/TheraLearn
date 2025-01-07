@@ -1,8 +1,4 @@
-.App {
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  padding-top:60px;
-}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -118,7 +114,6 @@
   to { opacity: 1; }
 }
 
-/* Game Over Button */
 button {
   background-color: #FF6347;
   border: none;

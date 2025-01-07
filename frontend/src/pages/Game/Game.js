@@ -30,7 +30,6 @@ const games = [
     description: 'Enhance your memory with exciting matching games!',
     image: 'https://th.bing.com/th/id/R.b685cebf59d7d19516025b287efd5ec3?rik=tlqaJIb1SnaAsQ&pid=ImgRaw&r=0',
   },
-  // Add more games here
 ];
 
 function GamePage() {
@@ -44,7 +43,7 @@ function GamePage() {
   }, []);
 
   const handleGameClick = (link) => {
-    // Navigate to the external link
+
     window.location.href = link;
   };
 
@@ -80,9 +79,9 @@ function GamePage() {
         transition={{ duration: 1, ease: 'easeOut' }}
       >
         <h1 className="p-8 bg-gradient-to-r from-pink-500 to-yellow-500 text-7xl font-extrabold text-white mb-8 rounded-xl shadow-lg transform hover:skew-y-6 transition-all duration-500">
-          Explore Fun Games 🎮
+        🎮 Explore Fun Games 🎮
         </h1>
-        <p className="text-xl text-white font-medium mb-6">Play, Learn, and Challenge Yourself with Fun and Educational Games!</p>
+        <p className="text-2xl text-white font-medium mb-6">Play, Learn, and Challenge Yourself with Fun and Educational Games!</p>
       </motion.header>
 
       {/* Game Cards Section */}

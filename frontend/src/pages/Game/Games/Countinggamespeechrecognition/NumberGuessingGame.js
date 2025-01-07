@@ -5,7 +5,7 @@ import "./NumberGuessingGame.css";
 const NumberGuessingGame = () => {
   const [objects] = useState([
     { name: "1", imageUrl: "https://img.freepik.com/free-vector/number-one-with-only-one-monkey-tree_1308-75769.jpg" },
-    // { name: "2", imageUrl: "https://img.freepik.com/free-vector/number-two-with-2-monkeys-tree_1308-37845.jpg" },
+    { name: "2", imageUrl: "https://img.freepik.com/free-vector/number-two-with-2-monkeys-tree_1308-37845.jpg" },
     { name: "3", imageUrl: "https://img.freepik.com/free-vector/number-three-with-3-monkeys-tree_1308-36158.jpg" },
     { name: "4", imageUrl: "https://img.freepik.com/free-vector/flashcard-number-4-with-number-word_1308-71269.jpg" },
     { name: "5", imageUrl: "https://img.freepik.com/free-vector/number-five-with-5-monkeys-tree_1308-35588.jpg" },

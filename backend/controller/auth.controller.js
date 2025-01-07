@@ -3,11 +3,13 @@ const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const AuthController = {};
+
 AuthController.Checkapi = (_req, res) => {
   res.status(200).send({
     message: "Auth API is working",
   });
 };
+
 AuthController.SignUpUser = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -45,6 +47,7 @@ AuthController.SignUpUser = async (req, res) => {
     }
   }
 };
+
 AuthController.LogInUser = async (req, res) => {
   const { password, email } = req.body;
   try {
