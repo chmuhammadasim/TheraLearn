@@ -129,13 +129,6 @@ const NumberGuessingGame = () => {
     if (userAnswer.includes(currentObject.name.toLowerCase())) {
       setScore((prev) => prev + 1);
       setFeedbackMessage("🎉 Correct!");
-      const gameData = {
-        gameName: "NumberGuessingGame",
-        score:score+1,
-        duration:time,
-        level: currentObjectIndex + 1,
-      };
-      saveToDatabase(gameData);
       resetTranscript();
       nextObject();
     } else {
@@ -143,6 +136,22 @@ const NumberGuessingGame = () => {
       setFeedbackMessage("❌ Incorrect. Try again!");
     }
   };
+  useEffect(() => {
+    const gameData = {
+      gameName: "NumberGuessingGame",
+      score:score,
+      duration:time,
+      level: currentObjectIndex + 1,
+    };
+    const handleUpload = (event) => {
+      saveToDatabase(gameData);
+    }
+    window.addEventListener('beforeunload', handleUpload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUpload);
+    }
+    
+  })
 
   const nextObject = () => {
     if (currentObjectIndex + 1 < objects.length) {

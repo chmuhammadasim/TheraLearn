@@ -1,11 +1,15 @@
-
+.App {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  padding-top: 60px;
+}
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px;
   background: #FFB6C1;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: white;
   font-size: 24px;
 }
@@ -273,7 +277,7 @@ button:hover {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background-color: #333;
+  background-color: #181818;
   color: white;
 }
 

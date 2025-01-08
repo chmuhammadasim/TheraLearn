@@ -22,17 +22,15 @@ function BetterAim() {
 
   const popSoundRef = useRef(new Audio(popSoundFile));
 
-  // Utility: Random value generator
   const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
-  // Generate balloons periodically
   const generateBalloon = useCallback(() => {
     const types = ['time', 'slow', 'freeze', 'doubleScore', 'extraLife'];
     const faces = ['🎈', '🎃', '🎅', '👻', '🐶', '🐱', '🦄', '🐸', '😎', '🤖']; // Different balloon faces
     const colors = [
       '#FF6347', '#FFD700', '#40E0D0', '#9370DB', '#FF69B4', 
       '#7CFC00', '#6495ED', '#FFA500', '#DC143C', '#00CED1'
-    ]; // Different color options
+    ];
 
     const newBalloon = {
       id: Math.random(),
