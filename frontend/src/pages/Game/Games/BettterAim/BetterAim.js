@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import axios from 'axios'; // Ensure axios is installed
 import Balloon from './Balloon';
 import './BetterAim.css';
 import popSoundFile from './pop-sound.mp3';
@@ -19,14 +20,59 @@ function BetterAim() {
   const [highScore, setHighScore] = useState(() => Number(localStorage.getItem('highScore')) || 0);
   const [freezeActive, setFreezeActive] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [reloadGame, setReloadGame] = useState(false);
 
   const popSoundRef = useRef(new Audio(popSoundFile));
 
   const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
+  // Save game state to the database
+  const saveToDatabase = async () => {
+    const token = localStorage.getItem('authToken');
+    const gameData = {
+      gameName: 'BetterAim',
+      score,
+      duration: 30 - timeLeft,
+      level,
+    };
+
+    try {
+      await axios.post('http://localhost:5000/api/game/saveGameData', gameData, {
+        headers: { 
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${token}` 
+        },
+      });
+      console.log('Game state saved successfully!');
+    } catch (error) {
+      console.error('Error saving game state to database:', error);
+    }
+  };
+
+  const loadFromDatabase = async () => {
+    const token = localStorage.getItem('authToken');
+
+    try {
+      const response = await axios.get('http://localhost:5000/api/game/loadGameData/BetterAim', {
+        headers: { 
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${token}` 
+        },
+      });
+      const { score, duration, level } = response.data;
+      setScore(score || 0);
+      setLevel(level || 1);
+      setTimeLeft(30 - (duration || 0));
+      console.log('Game state loaded successfully!');
+    } catch (error) {
+      console.error('Error loading game state from database:', error);
+    }
+  };
+
+  // Generate balloons
   const generateBalloon = useCallback(() => {
     const types = ['time', 'slow', 'freeze', 'doubleScore', 'extraLife'];
-    const faces = ['🎈', '🎃', '🎅', '👻', '🐶', '🐱', '🦄', '🐸', '😎', '🤖']; // Different balloon faces
+    const faces = ['🎈', '🎃', '🎅', '👻', '🐶', '🐱', '🦄', '🐸', '😎', '🤖'];
     const colors = [
       '#FF6347', '#FFD700', '#40E0D0', '#9370DB', '#FF69B4', 
       '#7CFC00', '#6495ED', '#FFA500', '#DC143C', '#00CED1'
@@ -47,7 +93,7 @@ function BetterAim() {
     setBalloons((prev) => [...prev, newBalloon]);
   }, [level]);
 
-
+  // Timer and balloon generation
   useEffect(() => {
     if (paused || gameOver) return;
     const interval = setInterval(generateBalloon, Math.max(800 - level * 50, 300));
@@ -63,7 +109,7 @@ function BetterAim() {
     }
   }, [paused, gameOver, timeLeft]);
 
-  // Balloon movement and escape handling
+  // Balloon movement
   useEffect(() => {
     if (paused || freezeActive) return;
     const movementInterval = setInterval(() => {
@@ -110,49 +156,35 @@ function BetterAim() {
       return newCombo;
     });
   };
-  const showSnackbar = (message) => {
-    setSnackbarMessage(message);
-  };
 
   const handlePowerUp = (type) => {
     switch (type) {
       case 'time':
         setTimeLeft((prev) => prev + 5);
-        showSnackbar('🕰 Extra Time! +5 seconds!');
+        setSnackbarMessage('🕰 Extra Time! +5 seconds!');
         break;
       case 'slow':
         setPaused(true);
         setTimeout(() => setPaused(false), 5000);
-        showSnackbar('🐌 Slow Motion for 5 seconds!');
+        setSnackbarMessage('🐌 Slow Motion for 5 seconds!');
         break;
       case 'freeze':
         setFreezeActive(true);
-        showSnackbar('❄️ Freeze! Balloons are stuck!');
+        setSnackbarMessage('❄️ Freeze! Balloons are stuck!');
         setTimeout(() => setFreezeActive(false), 5000);
         break;
       case 'doubleScore':
-        showSnackbar('⭐ Double Score for 10 seconds!');
-        activatePowerUp('Double Score', 10000);
+        setSnackbarMessage('⭐ Double Score for 10 seconds!');
+        setActivePowerUps((prev) => [...prev, { name: 'Double Score', duration: 10000 }]);
         break;
       case 'extraLife':
-        showSnackbar('❤️ Extra Life! Stay in the game!');
+        setSnackbarMessage('❤️ Extra Life! Stay in the game!');
         setLives((prev) => Math.min(prev + 1, 5)); // Max lives capped at 5
         break;
       default:
         break;
     }
   };
-
-  const activatePowerUp = (name, duration) => {
-    setActivePowerUps((prev) => [...prev, { name, expires: Date.now() + duration }]);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActivePowerUps((prev) => prev.filter((p) => p.expires > Date.now()));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const advanceLevel = () => {
     setLevel((prev) => prev + 1);
@@ -179,9 +211,48 @@ function BetterAim() {
     setActivePowerUps([]);
   };
 
+  // Load saved state on mount
+  useEffect(() => {
+    loadFromDatabase();
+  }, []);
+
+  const handleNewGame = () => {
+    restartGame();
+    setReloadGame(true);
+  };
+
+  const handleLoadLastSession = async () => {
+    await loadFromDatabase();
+    setReloadGame(true);
+  };
+
+  // Save state on unload
+  useEffect(() => {
+    const handleUnload = () => saveToDatabase();
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [score, level, timeLeft]);
+
   return (
     <div className="App">
-      <header className="header">
+      {!reloadGame ? (<div>
+        <div className="text-center h-screen flex flex-col justify-center items-center">
+          <h1 className="text-3xl font-bold mb-4">🎤 Welcome to the Game</h1>
+          <button
+            onClick={handleNewGame}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow"
+          >
+            🆕 Start New Game
+          </button>
+          <button
+            onClick={handleLoadLastSession}
+            className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded shadow ml-4"
+          >
+            🔄 Reload Last Session
+          </button>
+        </div>
+      </div>):(<div>
+        <header className="header">
         <h1>🎉 Balloon Pop!</h1>
         <div className="info">
           <span><FaRegClock /> {timeLeft}s</span>
@@ -223,6 +294,8 @@ function BetterAim() {
           <button onClick={restartGame}>Restart Game</button>
         </div>
       )}
+      </div>)}
+     
     </div>
   );
 }
