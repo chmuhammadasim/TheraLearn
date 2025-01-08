@@ -184,7 +184,7 @@ function Dashboard() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-[#1e3c72] to-[#2a5298] p-10 pt-16 flex flex-col items-center"
+      className="min-h-screen bg-gradient-to-b from-[#1e3c72] to-[#2a5298] p-10 pt-20 flex flex-col items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

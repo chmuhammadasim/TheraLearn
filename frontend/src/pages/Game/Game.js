@@ -9,6 +9,7 @@ const games = [
     name: 'Number Guessing Game',
     description: 'Guess the number and improve your counting skills!',
     image: 'https://jr.ibocchurch.org/wp-content/uploads/2018/06/math-games.png',
+    ageRecommendation: 'Ages 7+',
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const games = [
     link: "/betteraim",
     description: 'Pop the balloons and improve your aiming skills!',
     image: 'https://www.quiz4y.com/assets/images/balloon-pop.jpg',
+    ageRecommendation: 'Ages 9+',
   },
   {
     id: 3,
@@ -23,17 +25,22 @@ const games = [
     name: 'Object Guessing Game',
     description: 'Guess the object and improve your vocabulary!',
     image: 'https://images-na.ssl-images-amazon.com/images/I/81FbxXJwZVL.png',
+    ageRecommendation: 'Ages 8+',
   },
   {
     id: 4,
     name: 'Memory Match',
     description: 'Enhance your memory with exciting matching games!',
     image: 'https://th.bing.com/th/id/R.b685cebf59d7d19516025b287efd5ec3?rik=tlqaJIb1SnaAsQ&pid=ImgRaw&r=0',
+    ageRecommendation: 'Ages 8+',
   },
 ];
 
 function GamePage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAge, setSelectedAge] = useState('');
+  const [filteredGames, setFilteredGames] = useState(games);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,8 +49,17 @@ function GamePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleGameClick = (link) => {
+  useEffect(() => {
+    // Filter games based on search query and age selection
+    const filtered = games.filter((game) => {
+      const matchesQuery = game.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesAge = selectedAge ? game.ageRecommendation.includes(selectedAge) : true;
+      return matchesQuery && matchesAge;
+    });
+    setFilteredGames(filtered);
+  }, [searchQuery, selectedAge]);
 
+  const handleGameClick = (link) => {
     window.location.href = link;
   };
 
@@ -53,6 +69,7 @@ function GamePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#FF057C] via-[#8D0B93] to-[#321575] px-6 py-20 relative overflow-hidden">
+      {/* Background Effects */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
@@ -71,22 +88,46 @@ function GamePage() {
         />
       </motion.div>
 
-      {/* Header Section */}
+      {/* Header */}
       <motion.header
-        className="text-center mb-12 relative z-10"
+        className="text-center mb-2 relative z-10"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: 'easeOut' }}
       >
-        <h1 className="p-8 bg-gradient-to-r from-pink-500 to-yellow-500 text-7xl font-extrabold text-white mb-8 rounded-xl shadow-lg transform hover:skew-y-6 transition-all duration-500">
-        🎮 Explore Fun Games 🎮
+        <h1 className="p-6 bg-gradient-to-r from-pink-500 to-yellow-500 text-6xl font-extrabold text-white mb-4 rounded-xl shadow-lg transform hover:skew-y-6 transition-all duration-500">
+          🎮 Explore Fun Games 🎮
         </h1>
-        <p className="text-2xl text-white font-medium mb-6">Play, Learn, and Challenge Yourself with Fun and Educational Games!</p>
+        <p className="text-xl mb-4 text-white font-medium">
+          Play, Learn, and Challenge Yourself with Fun and Educational Games!
+        </p>
       </motion.header>
+
+      {/* Search and Filter Section */}
+      <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6 relative z-10">
+        <input
+          type="text"
+          placeholder="Search games..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full md:w-1/3 p-4 rounded-lg shadow-md focus:outline-none text-gray-700"
+        />
+        <select
+          value={selectedAge}
+          onChange={(e) => setSelectedAge(e.target.value)}
+          className="w-full md:w-1/3 p-4 rounded-lg shadow-md text-gray-700"
+        >
+          <option value="">Filter by Age</option>
+          <option value="7+">Ages 7+</option>
+          <option value="8+">Ages 8+</option>
+          <option value="9+">Ages 9+</option>
+          <option value="10+">Ages 10+</option>
+        </select>
+      </div>
 
       {/* Game Cards Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 relative z-10">
-        {games.map((game) => (
+        {filteredGames.map((game) => (
           <motion.div
             key={game.id}
             className="group relative bg-gradient-to-bl from-[#f9d423] to-[#ff8863] p-6 rounded-xl shadow-xl transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:ring-4 ring-pink-300 ring-offset-4"
@@ -104,12 +145,15 @@ function GamePage() {
             <motion.div
               className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-300"
             />
-            <motion.div className="relative z-10 mt-4 text-center">
+            <motion.div className="relative z-10 mt-2 text-center">
               <h3 className="text-2xl font-bold text-white transition-colors duration-300 group-hover:text-yellow-200">
                 {game.name}
               </h3>
               <p className="text-white mt-2 text-lg group-hover:text-yellow-100 transition-colors duration-300">
                 {game.description}
+              </p>
+              <p className="text-black mt-1 text-lg group-hover:text-yellow-200">
+                {game.ageRecommendation}
               </p>
             </motion.div>
             <motion.div
@@ -124,6 +168,11 @@ function GamePage() {
             </motion.div>
           </motion.div>
         ))}
+        {filteredGames.length === 0 && (
+          <p className="text-center text-white col-span-full">
+            No games match your search or filter criteria.
+          </p>
+        )}
       </div>
     </div>
   );
