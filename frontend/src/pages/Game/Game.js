@@ -27,13 +27,6 @@ const games = [
     image: 'https://images-na.ssl-images-amazon.com/images/I/81FbxXJwZVL.png',
     ageRecommendation: 'Ages 8+',
   },
-  {
-    id: 4,
-    name: 'Memory Match',
-    description: 'Enhance your memory with exciting matching games!',
-    image: 'https://th.bing.com/th/id/R.b685cebf59d7d19516025b287efd5ec3?rik=tlqaJIb1SnaAsQ&pid=ImgRaw&r=0',
-    ageRecommendation: 'Ages 8+',
-  },
 ];
 
 function GamePage() {
