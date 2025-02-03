@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { motion } from "framer-motion";
 import { FaPlusCircle, FaMinusCircle } from "react-icons/fa";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const App = () => {
-  const [isPsychologist, setIsPsychologist] = useState(false);
   const [formData, setFormData] = useState(initialFormData());
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
@@ -35,9 +36,24 @@ const App = () => {
       bio: "",
       profilePictureUrl: "",
       dateOfBirth: "",
-      role: "user",
-      educations: [""],
-      experiences: [""],
+      role: "parent",
+      children: [
+        {
+          firstName: "",
+          lastName: "",
+          dateOfBirth: "",
+          gender: "male",
+          medicalConditions: [""],
+          allergies: [""],
+          bloodType: "A+",
+          medications: [""],
+          geneticDisorders: [""],
+          familyMedicalHistory: [""],
+        },
+      ],
+      primaryCarePhysician: { name: "", contact: "", hospital: "" },
+      emergencyContact: { name: "", contact: "" },
+      insurancePolicy: { policyNumber: "", coverageDetails: "", validUntil: "" },
     };
   }
 
@@ -46,23 +62,47 @@ const App = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleArrayChange = (type, index, value) => {
-    setFormData((prev) => {
-      const newArray = [...prev[type]];
-      newArray[index] = value;
-      return { ...prev, [type]: newArray };
-    });
+  const handleChildChange = (index, e) => {
+    const { name, value } = e.target;
+    const newChildren = [...formData.children];
+    
+    if (name === "medicalConditions" || name === "allergies" || name === "medications" || name === "geneticDisorders" || name === "familyMedicalHistory") {
+      newChildren[index] = { 
+        ...newChildren[index], 
+        [name]: value.split(",").map(item => item.trim()) 
+      };
+    } else {
+      newChildren[index] = { ...newChildren[index], [name]: value };
+    }
+  
+    setFormData((prev) => ({ ...prev, children: newChildren }));
   };
+  
 
-  const addArrayItem = (type) => {
-    setFormData((prev) => ({ ...prev, [type]: [...prev[type], ""] }));
-  };
-
-  const removeArrayItem = (type, index) => {
+  const addChild = () => {
     setFormData((prev) => ({
       ...prev,
-      [type]: prev[type].filter((_, i) => i !== index),
+      children: [
+        ...prev.children,
+        {
+          firstName: "",
+          lastName: "",
+          dateOfBirth: "",
+          gender: "male",
+          bloodType: "A+",
+          medicalConditions: [""],
+          allergies: [""],
+          medications: [""],
+          geneticDisorders: [""],
+          familyMedicalHistory: [""],
+        },
+      ],
     }));
+  };
+
+  const removeChild = (index) => {
+    const newChildren = formData.children.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, children: newChildren }));
   };
 
   const validate = () => {
@@ -75,35 +115,26 @@ const App = () => {
       "firstName",
       "lastName",
       "dateOfBirth",
+      "emergencyContact",
     ];
 
     requiredFields.forEach((field) => {
-      if (!formData[field])
-        newErrors[field] = `${capitalizeFirstLetter(field)} is required`;
+      if (!formData[field]) newErrors[field] = `${capitalizeFirstLetter(field)} is required`;
     });
 
-    // Validate password
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords must match";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long";
     }
 
-    // Validate email format
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailPattern.test(formData.email)) {
       newErrors.email = "Email is not valid";
     }
 
-    if (isPsychologist) {
-      formData.educations.forEach((edu, idx) => {
-        if (!edu)
-          newErrors[`educations_${idx}`] = `Education ${idx + 1} is required`;
-      });
-      formData.experiences.forEach((exp, idx) => {
-        if (!exp)
-          newErrors[`experiences_${idx}`] = `Experience ${idx + 1} is required`;
-      });
+    if (formData.children.some((child) => !child.firstName || !child.lastName || !child.dateOfBirth)) {
+      newErrors.children = "Each child must have a first name, last name, and date of birth";
     }
 
     setErrors(newErrors);
@@ -118,13 +149,14 @@ const App = () => {
         const response = await signUpUser({
           ...formData,
           profilePictureUrl: uploadedImage,
-          role: isPsychologist ? "psychologist" : "user",
-          education: formData.educations.filter((edu) => edu.trim() !== ""),
-          experience: formData.experiences.filter((exp) => exp.trim() !== ""),
+          role: "parent",
         });
-        if (response.status) {
+        console.log('====================================');
+        console.log(response);
+        console.log('====================================');
+        if (response.status === '201') {
           setMessage("Signup successful");
-          navigate("/login");
+          navigate('/login');
         }
       } catch (error) {
         setMessage(error.message || "An error occurred");
@@ -139,22 +171,13 @@ const App = () => {
       formData.append("file", file);
       formData.append("upload_preset", "ml_default");
 
-      setIsUploading(true); 
+      setIsUploading(true);
       try {
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/do7z15tdv/upload`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const res = await fetch(`https://api.cloudinary.com/v1_1/do7z15tdv/upload`, { method: "POST", body: formData });
         const data = await res.json();
         if (data.secure_url) {
           setUploadedImage(data.secure_url);
-          setFormData((prev) => ({
-            ...prev,
-            profilePictureUrl: data.secure_url,
-          }));
+          setFormData((prev) => ({ ...prev, profilePictureUrl: data.secure_url }));
         } else {
           setMessage("Image upload failed, please try again.");
         }
@@ -166,36 +189,28 @@ const App = () => {
     }
   };
 
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
+  const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
   if (loading) return <Loading />;
 
   return (
-    <div className="min-h-screen pb-10 flex items-center justify-center bg-gradient-to-r from-[#8e9eab] via-[#eef2f3] to-[#8e9eab] relative overflow-hidden pt-20">
-      <div className="relative bg-white m-4 py-8 px-10 rounded-lg shadow-xl w-full max-w-4xl text-center">
+    <div className="min-h-screen bg-gradient-to-r from-[#8e9eab] via-[#eef2f3] to-[#8e9eab] flex items-center justify-center pt-20">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-8">
         <motion.img
           src="LOGO.png"
           alt="Logo"
-          className="mx-auto mb-4 w-24 h-24"
+          className="mx-auto mb-6 w-24 h-24"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         />
-        <motion.h1
-          className="text-5xl font-bold text-[#34495e] mb-6"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="text-[#3498db]">Create Your Account</span>
+        <motion.h1 className="text-4xl font-semibold text-[#34495e] text-center mb-6">
+          <span className="text-[#3498db]">Create Your Parent Account</span>
         </motion.h1>
+
         {message && (
           <motion.p
-            className={`mb-4 text-lg ${
-              message.includes("successful") ? "text-green-500" : "text-red-500"
-            }`}
+            className={`mb-4 text-lg ${message.includes("successful") ? "text-green-500" : "text-red-500"}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
@@ -204,171 +219,176 @@ const App = () => {
           </motion.p>
         )}
 
-        <div className="flex justify-center gap-5 mb-6">
-          <ToggleButton
-            active={!isPsychologist}
-            label="User Signup"
-            onClick={() => setIsPsychologist(false)}
-          />
-          <ToggleButton
-            active={isPsychologist}
-            label="Psychologist Signup"
-            onClick={() => setIsPsychologist(true)}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <InputGroup title="Username" name="username" value={formData.username} onChange={handleChange} error={errors.username} />
+          <InputGroup title="Email" type="email" name="email" value={formData.email} onChange={handleChange} error={errors.email} />
+          <InputGroup title="Password" type="password" name="password" value={formData.password} onChange={handleChange} error={errors.password} />
+          <InputGroup title="Confirm Password" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
+          <InputGroup title="First Name" name="firstName" value={formData.firstName} onChange={handleChange} error={errors.firstName} />
+          <InputGroup title="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} error={errors.lastName} />
+          <InputGroup title="Date of Birth" type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} error={errors.dateOfBirth} />
+          <InputGroup title="Address" type="text" name="address" value={formData.address} onChange={handleChange} error={errors.address} />
+          <InputGroup title="City" type="text" name="city" value={formData.city} onChange={handleChange} error={errors.city} />
+          <InputGroup title="Country" type="text" name="country" value={formData.country} onChange={handleChange} error={errors.country} />
+          <InputGroup title="Contact Number" type="text" name="contact" value={formData.contact} onChange={handleChange} error={errors.contact} />
+          <InputGroup title="Bio" type="text" name="bio" value={formData.bio} onChange={handleChange} error={errors.bio} />
+          <InputGroup title="Primary Care Physician Name" type="text" name="primaryCarePhysician.name" value={formData.primaryCarePhysician.name} onChange={handleChange} />
+          <InputGroup title="Primary Care Physician Contact" type="text" name="primaryCarePhysician.contact" value={formData.primaryCarePhysician.contact} onChange={handleChange}/>
+          <InputGroup title="Primary Care Physician Hospital" type="text" name="primaryCarePhysician.hospital" value={formData.primaryCarePhysician.hospital} onChange={handleChange} />
+          <InputGroup title="Insurance Policy Number" type="text" name="insurancePolicy.policyNumber" value={formData.insurancePolicy.policyNumber} onChange={handleChange} />
+          <InputGroup title="Insurance Coverage Details" type="text" name="insurancePolicy.coverageDetails" value={formData.insurancePolicy.coverageDetails} onChange={handleChange} />
+          <InputGroup title="Insurance Valid Until" type="date" name="insurancePolicy.validUntil" value={formData.insurancePolicy.validUntil} onChange={handleChange} />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <InputGroup
-            title="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            error={errors.username}
-          />
-          <InputGroup
-            title="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={errors.email}
-          />
-          <InputGroup
-            title="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={errors.password}
-          />
-          <InputGroup
-            title="Confirm Password"
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            error={errors.confirmPassword}
-          />
 
-          <InputGroup
-            title="First Name"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            error={errors.firstName}
-          />
-          <InputGroup
-            title="Last Name"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            error={errors.lastName}
-          />
-          <InputGroup
-            title="Enter Biography"
-            name="bio"
-            value={formData.bio}
-            onChange={handleChange}
-            error={errors.bio}
-          />
-          <InputGroup
-            title="Contact"
-            name="contact"
-            value={formData.contact}
-            onChange={handleChange}
-            error={errors.contact}
-          />
 
-          <InputGroup
-            title="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-          <InputGroup
-            title="City"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-          <InputGroup
-            title="Country"
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-          />
+         
+          <div className="space-y-4">
+            <InputGroup title="Emergency Contact Name" name="emergencyContact.name" value={formData.emergencyContact.name} onChange={handleChange} error={errors.emergencyContact?.name} />
+            <div className="relative mb-6">
+              <label className="block text-lg font-medium text-[#34495e] mb-2">Emergency Contact Number</label>
+              <PhoneInput
+                country={"pk"}
+                value={formData.emergencyContact.contact}
+                onChange={(value) => handleChange({ target: { name: "emergencyContact.contact", value } })}
+                inputStyle={{ width: "100%", border: errors.emergencyContact?.contact ? "1px solid #e74c3c" : "1px solid #ccc" }}
+                buttonStyle={{ border: errors.emergencyContact?.contact ? "1px solid #e74c3c" : "1px solid #ccc" }}
+              />
+              {errors.emergencyContact?.contact && <p className="text-red-500 text-sm mt-1">{errors.emergencyContact.contact}</p>}
+            </div>
+          </div>
 
-          {/* Image Upload Field */}
-          <div className="form-group">
-            <label className="block text-left text-lg font-medium text-[#34495e]">
-              Profile Picture:
-            </label>
+          {/* Children Management */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-semibold text-[#34495e] mb-4">Children Information</h2>
+            {formData.children.map((child, index) => (
+              <div key={index} className="space-y-4 mt-4 p-6 border rounded-lg shadow-md bg-white">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-medium text-[#34495e]">Child {index + 1}</h3>
+                  {formData.children.length > 1 && (
+                    <button 
+                    type="button" 
+                    onClick={() => removeChild(index)} 
+                    className="relative flex items-center justify-center p-2 rounded-full 
+                               bg-white/30 backdrop-blur-lg shadow-lg hover:shadow-red-400/40 
+                               hover:scale-105 active:scale-90 transition-all duration-300 ease-in-out 
+                               focus:ring-2 focus:ring-red-400 focus:outline-none"
+                  >
+                    <FaMinusCircle className="size-6 text-red-500 drop-shadow-md transition-all duration-300" />
+                  </button>
+                  
+                  )}
+                </div>
+                <InputGroup title="First Name" name="firstName" value={child.firstName} onChange={(e) => handleChildChange(index, e)} error={errors.children?.[index]?.firstName} />
+                <InputGroup title="Last Name" name="lastName" value={child.lastName} onChange={(e) => handleChildChange(index, e)} error={errors.children?.[index]?.lastName} />
+                <InputGroup title="Date of Birth" type="date" name="dateOfBirth" value={child.dateOfBirth} onChange={(e) => handleChildChange(index, e)} error={errors.children?.[index]?.dateOfBirth} />
+                <div className="flex space-x-4">
+                  <div className="w-1/2">
+                    <label className="block text-lg font-medium text-[#34495e] mb-2">Gender</label>
+                    <select
+                      name="gender"
+                      value={child.gender}
+                      onChange={(e) => handleChildChange(index, e)}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#3498db] transition-all"
+                    >
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                    {errors.children?.[index]?.gender && <p className="text-red-500 text-sm mt-1">{errors.children[index].gender}</p>}
+                  </div>
+
+                  <div className="w-1/2">
+                    <label className="block text-lg font-medium text-[#34495e] mb-2">Blood Type</label>
+                    <select
+                      name="bloodType"
+                      value={child.bloodType}
+                      onChange={(e) => handleChildChange(index, e)}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#3498db] transition-all"
+                    >
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                    </select>
+                    {errors.children?.[index]?.bloodType && <p className="text-red-500 text-sm mt-1">{errors.children[index].bloodType}</p>}
+                  </div>
+                </div>
+                <InputGroup
+                    title="Medical Conditions"
+                    name="medicalConditions"
+                    value={Array.isArray(child.medicalConditions) ? child.medicalConditions.join(",") : ""}
+                    onChange={(e) => handleChildChange(index, e)}
+                    error={errors.children?.[index]?.medicalConditions}
+                  />
+                  <InputGroup
+                    title="Allergies"
+                    name="allergies"
+                    value={Array.isArray(child.allergies) ? child.allergies.join(",") : ""}
+                    onChange={(e) => handleChildChange(index, e)}
+                    error={errors.children?.[index]?.allergies}
+                  />
+                  <InputGroup
+                    title="Medications"
+                    name="medications"
+                    value={Array.isArray(child.medications) ? child.medications.join(",") : ""}
+                    onChange={(e) => handleChildChange(index, e)}
+                    error={errors.children?.[index]?.medications}
+                  />
+                  <InputGroup
+                    title="Genetic Disorders"
+                    name="geneticDisorders"
+                    value={Array.isArray(child.geneticDisorders) ? child.geneticDisorders.join(",") : ""}
+                    onChange={(e) => handleChildChange(index, e)}
+                    error={errors.children?.[index]?.geneticDisorders}/>
+                  <InputGroup
+                    title="Family Medical History"
+                    name="familyMedicalHistory"
+                    value={Array.isArray(child.familyMedicalHistory) ? child.familyMedicalHistory.join(",") : ""}
+                    onChange={(e) => handleChildChange(index, e)}
+                    error={errors.children?.[index]?.familyMedicalHistory}/>
+
+              </div>
+            ))}
+           <button
+  type="button"
+  onClick={addChild}
+  className="mt-6 flex items-center gap-3 px-7 py-3 bg-gradient-to-r from-[#3498db] to-[#2980b9] 
+             text-white text-lg font-semibold rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.2)] 
+             hover:shadow-[0_6px_15px_rgba(0,0,0,0.25)] hover:scale-105 active:scale-95 
+             transition-all duration-300 focus:ring-4 focus:ring-[#2980b9]/60 focus:outline-none"
+>
+  <FaPlusCircle className="size-6 drop-shadow-sm" /> Add Another Child
+</button>
+
+          </div>
+
+          {/* Profile Picture */}
+          <div className="mt-6">
+            <label className="block text-lg font-medium text-[#34495e] mb-2">Upload Profile Picture</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]"
+              className="block w-full border border-gray-300 px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3498db] transition-all"
             />
-            {isUploading && (
-              <p className="text font-semibold text-gray-500">
-                Checking Profile Image...
-              </p>
-            )}
             {uploadedImage && (
-              <p className="text font-semibold text-green-500">
-                Image Successfully Uploaded
-              </p>
+              <img src={uploadedImage} alt="Profile Preview" className="mt-4 w-32 h-32 rounded-full mx-auto shadow-lg" />
             )}
           </div>
 
-          <InputGroup
-            title="Date of Birth"
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-            error={errors.dateOfBirth}
-          />
-
-          {isPsychologist && (
-            <div>
-              <h2 className="text-2xl font-bold text-[#3498db] mb-4">
-                Education & Experience
-              </h2>
-              {formData.educations.map((education, index) => (
-                <EducationExperienceGroup
-                  key={index}
-                  title={`Education ${index + 1}`}
-                  value={education}
-                  index={index}
-                  type="educations"
-                  handleChange={handleArrayChange}
-                  addItem={addArrayItem}
-                  removeItem={removeArrayItem}
-                  error={errors.educations}
-                />
-              ))}
-              {formData.experiences.map((experience, index) => (
-                <EducationExperienceGroup
-                  key={index}
-                  title={`Experience ${index + 1}`}
-                  value={experience}
-                  index={index}
-                  type="experiences"
-                  handleChange={handleArrayChange}
-                  addItem={addArrayItem}
-                  removeItem={removeArrayItem}
-                  error={errors.experiences}
-                />
-              ))}
-            </div>
-          )}
-
-          <div>
+          {/* Submit Button */}
+          <div className="mt-6">
             <button
               type="submit"
               disabled={isUploading}
-              className="w-full py-3 bg-[#3498db] text-white font-bold rounded-lg hover:bg-[#2980b9] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3498db]"
+              className="w-full mt-6 flex text-center justify-evenly gap-3 px-7 py-3 bg-gradient-to-r from-[#3498db] to-[#2980b9] 
+             text-white text-lg font-semibold rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.2)] 
+             hover:shadow-[0_6px_15px_rgba(0,0,0,0.25)] hover:scale-105 active:scale-95 
+             transition-all duration-300 focus:ring-4 focus:ring-[#2980b9]/60 focus:outline-none"
             >
               {isUploading ? "Processing..." : "Register"}
             </button>
@@ -379,71 +399,17 @@ const App = () => {
   );
 };
 
-const ToggleButton = ({ active, label, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`px-4 py-2 rounded-full font-semibold ${
-      active ? "bg-[#3498db] text-white" : "bg-gray-200 text-[#34495e]"
-    }`}
-  >
-    {label}
-  </button>
-);
-
 const InputGroup = ({ title, type = "text", name, value, onChange, error }) => (
-  <div className="form-group">
-    <label className="block text-left text-lg font-medium text-[#34495e]">
-      {title}:
-    </label>
+  <div className="relative mb-6">
+    <label className="block text-lg font-medium text-[#34495e] mb-2">{title}</label>
     <input
       type={type}
       name={name}
       value={value}
       onChange={onChange}
-      className={`w-full p-3 border ${
-        error ? "border-red-500" : "border-gray-300"
-      } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]`}
+      className={`w-full px-4 py-3 rounded-lg border ${error ? "border-red-500" : "border-gray-300"} focus:outline-none focus:ring-2 focus:ring-[#3498db] transition-all`}
     />
     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-  </div>
-);
-
-const EducationExperienceGroup = ({
-  title,
-  value,
-  index,
-  type,
-  handleChange,
-  addItem,
-  removeItem,
-  error,
-}) => (
-  <div className="form-group mb-4">
-    <label className="block text-left text-lg font-medium text-[#34495e]">
-      {title}:
-    </label>
-    <div className="flex items-center  max-md:flex-col">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => handleChange(type, index, e.target.value)}
-        className={`flex-grow p-2 border md:w-9 ${
-          error ? "border-red-500" : "border-gray-300"
-        } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3498db]`}
-      />
-      <div className="flex m-2">
-        <button type="button" onClick={() => addItem(type)}>
-          <FaPlusCircle className="text-green-500 text-xl" />
-        </button>
-        <button
-          type="button"
-          onClick={() => removeItem(type, index)}
-          disabled={index === 0}
-        >
-          <FaMinusCircle className="text-red-500 text-xl" />
-        </button>
-      </div>
-    </div>
   </div>
 );
 

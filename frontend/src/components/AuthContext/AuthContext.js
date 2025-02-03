@@ -48,6 +48,9 @@ export const AuthProvider = ({ children }) => {
     try {
       localStorage.removeItem("authToken");
       localStorage.removeItem("authRole");
+      localStorage.removeItem("authUser");
+      localStorage.removeItem("authChildren");
+      localStorage.removeItem("selectedChild");
       setIsLoggedIn(false);
       setRole(null);
       window.location.href = "/";
@@ -64,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("authRole", userRole);
         setIsLoggedIn(true);
         setRole(userRole);
-        window.location.href = "/";
+        //window.location.href = "/";
       } else {
         throw new Error("Invalid or expired token.");
       }

@@ -1,4 +1,5 @@
 const Users = require("../model/user.model");
+const {Parent,Child} = require("../model/parentchild.model");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
@@ -12,76 +13,81 @@ AuthController.Checkapi = (_req, res) => {
 
 AuthController.SignUpUser = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const { password, email } = req.body;
-    const existingUser = await Users.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(400)
-        .send({ message: "This email is already registered." });
-    }
-    const salt = await bcrypt.genSalt(10);
-    bcrypt.hash(password, salt, async (err, hash) => {
-      if (err) {
-        return res.status(500).send({
-          message: "An error occurred during signup",
-          detail: err.message,
-        });
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
       }
-      const user = new Users({ ...req.body, password: hash });
-      await user.save();
-      res.status(201).send({ message: "Signup successful", status: "201" });
-    });
-  } catch (error) {
-    console.error("Error during signup:", error);
-    if (error.code === 11000) {
-      res.status(400).send({ message: "This email is already registered" });
-    } else {
-      res.status(500).send({
-        message: "An error occurred during signup",
-        detail: error.message,
+
+      const { password, email, children, ...parentData } = req.body;
+
+      const existingUser = await Parent.findOne({ email });
+      if (existingUser) {
+          return res.status(400).json({ message: 'This email is already registered.' });
+      }
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Create parent user
+      const parent = new Parent({
+          ...parentData,
+          email,
+          password: hashedPassword,
       });
-    }
+
+      // Create children and associate them with the parent
+      if (children && Array.isArray(children)) {
+          const childRecords = await Child.insertMany(
+              children.map(child => ({ ...child, parent: parent._id }))
+          );
+          parent.children = childRecords.map(child => child._id);
+      }
+
+      await parent.save();
+
+      res.status(201).json({ message: 'Signup successful',status: "201" });
+  } catch (error) {
+      console.error('Error during signup:', error);
+      res.status(500).json({ message: 'An error occurred during signup', detail: error.message });
   }
 };
 
+
 AuthController.LogInUser = async (req, res) => {
-  const { password, email } = req.body;
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    try {
+        const { email, password } = req.body;
+
+        // Check if user exists
+        const user = await Parent.findOne({ email }).populate('children');
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid email or password.' });
+        }
+
+        // Validate password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid email or password.' });
+        }
+
+        // Generate JWT token
+        const token = jsonwebtoken.sign(
+            { id: user._id, email: user.email, children: user.children.map(child => child._id), role: user.role },
+            process.env.JWT_KEY,
+            { expiresIn: '2d' }
+        );
+
+        res.status(200).json({ 
+            message: 'Login successful', 
+            token, 
+            children: user.children,  // Sending full child data
+            parent: user._id, 
+            role: user.role
+        });
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ message: 'An error occurred during login', detail: error.message });
     }
-    const user = await Users.findOne({ email });
-    if (!user) {
-      return res.status(400).send({ message: "Incorrect email or password" });
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).send({ message: "Incorrect email or password" });
-    }
-    user.password = undefined;
-    const token = jsonwebtoken.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_KEY,
-      { expiresIn: "2d" }
-    );
-    return res.status(200).send({
-      message: "Successfully logged in",
-      token,
-      expiresIn: 172800000, 
-      status: "200",
-      role: user.role,
-    });
-  } catch (error) {
-    console.error("Error during login:", error);
-    return res.status(500).send({
-      message: "An error occurred during login",
-      detail: error.message,
-    });
-  }
 };
+
 module.exports = AuthController;

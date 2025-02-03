@@ -110,7 +110,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Result',
   }],
-  // Field specific to Psychologists
   education: {
     type: [String], // Array of degrees/certifications
     trim: true,

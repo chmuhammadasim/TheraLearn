@@ -12,13 +12,15 @@ function LoginPage() {
   const [loading, setLoading] = useState(true);
   const [loggingIn, setLoggingIn] = useState(false);
   const [errors, setErrors] = useState({});
+  const [children, setChildren] = useState([]);
+  const [showChildPopup, setShowChildPopup] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1500);
   }, []);
 
   const validateForm = () => {
@@ -46,8 +48,14 @@ function LoginPage() {
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('authRole', data.role);
+      localStorage.setItem('authUser', JSON.stringify(data.parent));
+      localStorage.setItem('authChildren', JSON.stringify(data.children));
+      setChildren(data.children);
+      console.log('====================================');
+      console.log(data.children);
+      console.log('====================================');
       login(data.token, data.role);
-      navigate('/');
+      setShowChildPopup(true);
     } catch (error) {
       setMessage(error.message || 'Something went wrong, please try again.');
     } finally {
@@ -55,115 +63,54 @@ function LoginPage() {
     }
   };
 
+  const handleChildSelection = (child) => {
+    localStorage.setItem('selectedChild', JSON.stringify(child));
+    setShowChildPopup(false);
+    window.location.href = "/";
+  };
+
   if (loading) {
     return <Loading />;
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#92a8d1] to-[#3c6382] text-[#1a374d] relative overflow-hidden">
-      {/* Animated Background Shapes */}
-      <motion.div
-        className="absolute w-96 h-96 bg-[#5dade2] rounded-full top-10 right-20 opacity-70"
-        animate={{ y: [0, 50, 0], rotate: [0, 360] }}
-        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-80 h-80 bg-[#3c6382] rounded-full bottom-20 left-10 opacity-70"
-        animate={{ y: [0, -50, 0], rotate: [0, -360] }}
-        transition={{ duration: 12, ease: 'easeInOut', repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute w-40 h-40 bg-[#82ccdd] rounded-full top-[50%] right-[40%] opacity-70"
-        animate={{ scale: [1, 1.2, 1], rotate: [0, 360] }}
-        transition={{ duration: 15, ease: 'easeInOut', repeat: Infinity }}
-      />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-400 to-blue-700 text-white relative overflow-hidden p-6">
+      <div className="relative bg-white p-10 rounded-lg shadow-xl w-full max-w-lg text-center z-10 text-gray-800">
+        <motion.h1 className="text-4xl font-bold text-blue-700 mb-6">Welcome Back!</motion.h1>
 
-      <div className="relative bg-white p-10 rounded-lg shadow-xl w-full max-w-lg text-center z-10">
-
-        <motion.h1
-          className="text-5xl font-bold text-[#1f618d] mb-6"
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          Welcome Back!
-        </motion.h1>
-
-        {message && (
-          <motion.p
-            className={`mb-4 text-lg ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            {message}
-          </motion.p>
-        )}
+        {message && <p className={`mb-4 text-lg ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}>{message}</p>}
 
         <form onSubmit={handleLogin} className="space-y-6">
-          <motion.div
-            className="form-group"
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <label className="block text-left text-lg font-medium text-[#1a374d]">Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#1f618d]'}`}
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-          </motion.div>
-
-          <motion.div
-            className="form-group"
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <label className="block text-left text-lg font-medium text-[#1a374d]">Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 transition-transform transform hover:scale-105 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#1f618d]'}`}
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </motion.div>
-
-          <motion.button
-            type="submit"
-            disabled={loggingIn}
-            className="w-full py-3 bg-[#1f618d] text-white rounded-lg hover:bg-[#2874a6] transition-transform transform hover:scale-105 shadow-lg"
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            {loggingIn ? (
-              <div className="flex justify-center items-center">
-                <svg className="animate-spin h-5 w-5 mr-3 border-t-2 border-white rounded-full" viewBox="0 0 24 24"></svg>
-                Logging in...
-              </div>
-            ) : 'Login'}
-          </motion.button>
+          <div>
+            <label className="block text-left text-lg font-medium">Email:</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label className="block text-left text-lg font-medium">Password:</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <button type="submit" disabled={loggingIn} className="w-full py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-all duration-300">
+            {loggingIn ? 'Logging in...' : 'Login'}
+          </button>
         </form>
-
-        <motion.p
-          className="mt-4 text-[#1a374d] text-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          Not a member?{' '}
-          <a href="/signup" className="text-[#1f618d] hover:underline transition-colors duration-300">
-            Register here
-          </a>
-        </motion.p>
       </div>
+
+      {showChildPopup && (
+        <div className="absolute z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl text-center text-gray-800">
+            <h2 className="text-2xl font-bold mb-4">Select a Child</h2>
+            {children.length > 0 ? (
+              children.map((child) => (
+                <button key={child._id} onClick={() => handleChildSelection(child)} className="block w-full p-3 bg-blue-500 text-white rounded-lg mb-2 hover:bg-blue-600">
+                  {child.firstName} {child.lastName}
+                </button>
+              ))
+            ) : (
+              <p>No children found</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
