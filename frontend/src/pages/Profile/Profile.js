@@ -30,7 +30,7 @@ const InputField = ({
 }) => (
   <div className="mt-4">
     <label className="block text-gray-700 font-semibold">{label}</label>
-    <div className="flex items-center mt-1 border rounded-md px-3 py-2">
+    <div className="flex items-center mt-1 border rounded-md px-3 py-2 transition hover:shadow-sm">
       {icon}
       <input
         type={type}
@@ -38,7 +38,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full ml-2 focus:outline-none ${className}`}
+        className={`w-full ml-2 focus:outline-none focus:ring-2 focus:ring-blue-300 ${className}`}
       />
     </div>
   </div>
@@ -83,7 +83,6 @@ const ProfilePage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Handle nested objects
     if (name.startsWith("primaryCarePhysician")) {
       const field = name.replace("primaryCarePhysician", "").toLowerCase();
       setFormData((prev) => ({
@@ -103,7 +102,7 @@ const ProfilePage = () => {
         },
       }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -149,11 +148,10 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-5">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-blue-700 text-white flex items-center justify-between p-6 rounded-b-xl">
-          <div className="flex items-center">
+    <div className="min-h-screen bg-gradient-to-tr pt-20 from-blue-200 via-green-200 to-blue-300 py-10 px-5">
+      <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white flex flex-wrap items-center justify-between p-6">
+          <div className="flex items-center mb-4 sm:mb-0">
             <label htmlFor="profilePic" className="relative cursor-pointer">
               <img
                 className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg"
@@ -176,22 +174,20 @@ const ProfilePage = () => {
             />
             <div className="ml-4">
               <h2 className="text-2xl font-bold">{`${formData.firstName} ${formData.lastName}`}</h2>
-              <p className="text-gray-200 text-sm">{formData.bio || "No bio available"}</p>
+              <p className="text-gray-100 text-sm">{formData.bio || "No bio available"}</p>
             </div>
           </div>
           <button
             onClick={handleEditToggle}
-            className="bg-yellow-500 px-4 py-2 rounded-md text-white shadow-md hover:bg-yellow-600 flex items-center"
+            className="w-full sm:w-auto bg-yellow-500 px-4 py-2 text-sm sm:text-base rounded-md text-white shadow-md hover:bg-yellow-600 flex items-center justify-center transition"
           >
             <FaUserEdit className="mr-2" />
             {isEditing ? "Cancel" : "Edit Profile"}
           </button>
         </div>
 
-        {/* Body */}
         <div className="p-6 space-y-4">
           {error && <div className="text-red-600 mb-2">{error}</div>}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField
               label="Username"
@@ -214,7 +210,7 @@ const ProfilePage = () => {
               <label className="block text-gray-700 font-semibold mt-4">
                 Password
               </label>
-              <div className="flex items-center mt-1 border rounded-md px-3 py-2">
+              <div className="flex items-center mt-1 border rounded-md px-3 py-2 transition hover:shadow-sm">
                 <MdLock className="text-xl text-blue-700" />
                 <input
                   type={showPassword ? "text" : "password"}
@@ -222,7 +218,7 @@ const ProfilePage = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full ml-2 focus:outline-none"
+                  className="w-full ml-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
                 <button
                   type="button"
@@ -290,7 +286,7 @@ const ProfilePage = () => {
                 value={formData.bio}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full border rounded-md px-3 py-2 mt-1 focus:outline-none"
+                className="w-full border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-300 transition hover:shadow-sm"
               />
             </div>
             <InputField
@@ -312,14 +308,13 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Children */}
           <div className="mt-6">
             <h3 className="text-xl font-semibold">Children</h3>
             {formData.children.length > 0 ? (
               formData.children.map((child, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 p-4 rounded-md mt-4 flex justify-between"
+                  className="border border-gray-200 p-4 rounded-md mt-4 flex justify-between transition hover:shadow-sm"
                 >
                   <div>
                     <p>
@@ -345,14 +340,13 @@ const ProfilePage = () => {
             {isEditing && (
               <button
                 onClick={addChild}
-                className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md flex items-center"
+                className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md flex items-center transition"
               >
                 <FaPlus className="mr-2" /> Add Child
               </button>
             )}
           </div>
 
-          {/* Primary Care Physician */}
           <div className="mt-6">
             <h3 className="text-xl font-semibold">Primary Care Physician</h3>
             <InputField
@@ -373,7 +367,6 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Insurance Policy */}
           <div className="mt-6">
             <h3 className="text-xl font-semibold">Insurance Policy</h3>
             <InputField
@@ -403,11 +396,10 @@ const ProfilePage = () => {
             />
           </div>
 
-          {/* Save Button */}
           {isEditing && (
             <button
               onClick={handleSaveChanges}
-              className="w-full mt-6 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center justify-center"
+              className="w-full sm:w-auto mt-6 bg-green-600 text-white px-4 py-2 text-sm sm:text-base rounded-md hover:bg-green-700 flex items-center justify-center transition"
             >
               <FaSave className="mr-2" /> Save Changes
             </button>
