@@ -18,44 +18,46 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const SuperAdminPanel = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [userData, setUserData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
 
-  const totalActiveUsers = users.filter(u => u.isActive).length;
-  const totalInactiveUsers = users.length - totalActiveUsers;
-  const totalPsychologists = users.filter(u => u.role === 'psychologist').length;
-  const totalNonPsychologists = users.length - totalPsychologists;
+  const activeCount = userData.filter(u => u.isActive).length;
+  const inactiveCount = userData.length - activeCount;
+  const psychCount = userData.filter(u => u.role === 'psychologist').length;
+  const nonPsychCount = userData.length - psychCount;
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadUsers = async () => {
       try {
-        const usersData = await fetchAllUsers();
-        setUsers(usersData);
-        setError(null);
+        const data = await fetchAllUsers();
+        setUserData(data);
+        setFetchError(null);
       } catch {
-        setError('Failed to fetch user data. Please try again later.');
+        setFetchError('Failed to fetch user data. Please try again later.');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
-    fetchData();
+    loadUsers();
   }, []);
 
-  const handleStatusChange = async (userId, isActive) => {
+  const handleUserStatusToggle = async (id, currentStatus) => {
     try {
-      await updateUserStatus(userId, !isActive);
-      setUsers(users.map(u => (u._id === userId ? { ...u, isActive: !isActive } : u)));
-      toast.success('User status updated successfully!', { position: 'top-center', autoClose: 2000 });
+      await updateUserStatus(id, !currentStatus);
+      setUserData(prev =>
+        prev.map(u => (u._id === id ? { ...u, isActive: !currentStatus } : u))
+      );
+      toast.success('User status updated successfully.', { position: 'top-center', autoClose: 2000 });
     } catch {
       toast.error('Failed to update user status.', { position: 'top-center', autoClose: 2000 });
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-200 via-pink-200 to-red-200">
-        <RiLoader4Line className="text-6xl text-gray-700 animate-spin" />
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-100 to-blue-100">
+        <RiLoader4Line className="text-6xl text-gray-500 animate-spin" />
       </div>
     );
   }
@@ -65,7 +67,7 @@ const SuperAdminPanel = () => {
     datasets: [
       {
         label: 'User Status',
-        data: [totalActiveUsers, totalInactiveUsers],
+        data: [activeCount, inactiveCount],
         backgroundColor: ['#4ADE80', '#F87171'],
       },
     ],
@@ -76,7 +78,7 @@ const SuperAdminPanel = () => {
     datasets: [
       {
         label: 'User Roles',
-        data: [totalPsychologists, totalNonPsychologists],
+        data: [psychCount, nonPsychCount],
         backgroundColor: ['#60A5FA', '#A78BFA'],
       },
     ],
@@ -91,31 +93,31 @@ const SuperAdminPanel = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-5">
+    <div className="min-h-screen bg-gray-50 py-10 px-5 md:px-10">
       <ToastContainer />
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
-        <div className="p-6 bg-gradient-to-br from-blue-700 to-blue-900 text-white text-center">
-          <h2 className="text-3xl font-semibold mb-2">Super Admin Panel</h2>
-          <p className="text-blue-100">Manage accounts and view user statistics</p>
+      <div className="max-w-7xl mx-auto bg-white border border-gray-200 rounded-lg shadow-lg mt-16">
+        <div className="p-6 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center">
+          <h2 className="text-3xl font-bold mb-2">Super Admin Panel</h2>
+          <p className="text-blue-100">Manage Accounts and View Statistics</p>
         </div>
 
-        {error && (
+        {fetchError && (
           <div className="text-red-600 p-4 text-center bg-red-50 border-t border-red-200">
-            {error}
+            {fetchError}
           </div>
         )}
 
         <div className="p-6 flex flex-col lg:flex-row gap-6">
-          <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-md">
+          <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-sm">
             <Bar data={activeData} options={chartOptions} />
           </div>
-          <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-md">
+          <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-sm">
             <Bar data={roleData} options={chartOptions} />
           </div>
         </div>
 
-        <div className="px-4 pb-6">
-          <table className="w-full bg-white text-left table-auto border-t">
+        <div className="px-4 pb-6 overflow-x-auto">
+          <table className="w-full text-left table-auto border-t">
             <thead className="bg-gray-800 text-white">
               <tr>
                 <th className="px-4 py-3">Username</th>
@@ -131,10 +133,10 @@ const SuperAdminPanel = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map(user => (
+              {userData.map(user => (
                 <tr
                   key={user._id}
-                  className="hover:bg-gray-100 transition duration-300 ease-in-out border-b text-sm"
+                  className="hover:bg-gray-100 border-b text-sm"
                 >
                   <td className="px-4 py-3 flex items-center space-x-2">
                     <FaUserAlt className="text-gray-600" />
@@ -162,8 +164,8 @@ const SuperAdminPanel = () => {
                   </td>
                   <td className="px-4 py-3">
                     <button
-                      onClick={() => handleStatusChange(user._id, user.isActive)}
-                      className={`px-4 py-2 rounded-full shadow-md transition transform hover:scale-105 text-white ${
+                      onClick={() => handleUserStatusToggle(user._id, user.isActive)}
+                      className={`px-4 py-2 rounded-full text-white transition hover:scale-105 shadow-md ${
                         user.isActive ? 'bg-red-500' : 'bg-green-500'
                       }`}
                     >
