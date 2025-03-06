@@ -4,11 +4,7 @@ import axios from "axios";
 const SuperAdminContentPanel = () => {
   const [hero, setHero] = useState({ title: "", subtitle: "", buttonText: "" });
   const [features, setFeatures] = useState([]);
-  const [cta, setCta] = useState({
-    title: "",
-    description: "",
-    buttonText: "",
-  });
+  const [cta, setCta] = useState({ title: "", description: "", buttonText: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -16,37 +12,35 @@ const SuperAdminContentPanel = () => {
   const [uploadError, setUploadError] = useState(null);
   const token = localStorage.getItem("authToken");
 
-  const handleError = (error, defaultMessage) => {
-    console.error(error);
-    setError(error?.response?.data?.message || defaultMessage);
+  const handleError = (err, defaultMessage) => {
+    console.error(err);
+    setError(err.response?.data?.message || defaultMessage);
+  };
+
+  const fetchContent = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.REACT_APP_API_KEY}/content`);
+      const content = data.content || {};
+      if (!content.hero || !content.features?.length || !content.cta) {
+        setError("Content is missing. Please update the content.");
+      } else {
+        setHero(content.hero);
+        setFeatures(content.features);
+        setCta(content.cta);
+      }
+    } catch {
+      setError("Content is missing. Please update the content.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const { data } = await axios.get(
-          `${process.env.REACT_APP_API_KEY}/content`
-        );
-        const content = data.content;
-        if (!content.hero || !content.features.length || !content.cta) {
-          setError("Content is missing. Please update the content.");
-        } else {
-          setHero(content.hero);
-          setFeatures(content.features);
-          setCta(content.cta);
-        }
-      } catch {
-        setError("Content is missing. Please update the content.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchContent();
   }, []);
 
   const validateFeature = (feature) =>
     feature.title && feature.description && feature.image;
-
   const validateHero = () => hero.title && hero.subtitle && hero.buttonText;
   const validateCta = () => cta.title && cta.description && cta.buttonText;
 
@@ -67,16 +61,11 @@ const SuperAdminContentPanel = () => {
       setError("All hero fields are required.");
       return;
     }
-    makeApiRequest(async () => {
-      await axios.put(
-        `${process.env.REACT_APP_API_KEY}/content/update-hero`,
-        hero,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
-      );
-      setError("Hero section updated successfully!");
-    });
+    makeApiRequest(async () =>
+      axios.put(`${process.env.REACT_APP_API_KEY}/content/update-hero`, hero, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+    );
   };
 
   const updateFeature = (index) => {
@@ -85,34 +74,27 @@ const SuperAdminContentPanel = () => {
       setError("All feature fields are required.");
       return;
     }
-    makeApiRequest(async () => {
-      await axios.put(
+    makeApiRequest(async () =>
+      axios.put(
         `${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`,
         feature,
         { headers: { authorization: `Bearer ${token}` } }
-      );
-      setError("Feature updated successfully!");
-    });
+      )
+    );
   };
 
   const deleteFeature = (index) => {
     makeApiRequest(async () => {
       await axios.delete(
         `${process.env.REACT_APP_API_KEY}/content/delete-feature/${index}`,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
+        { headers: { authorization: `Bearer ${token}` } }
       );
       setFeatures((prev) => prev.filter((_, i) => i !== index));
-      setError("Feature deleted successfully!");
     });
   };
 
   const addFeature = () => {
-    setFeatures((prev) => [
-      ...prev,
-      { icon: "", title: "", description: "", image: "" },
-    ]);
+    setFeatures((prev) => [...prev, { icon: "", title: "", description: "", image: "" }]);
   };
 
   const updateCta = () => {
@@ -120,51 +102,42 @@ const SuperAdminContentPanel = () => {
       setError("All CTA fields are required.");
       return;
     }
-    makeApiRequest(async () => {
-      await axios.put(
-        `${process.env.REACT_APP_API_KEY}/content/update-cta`,
-        cta,
-        {
-          headers: { authorization: `Bearer ${token}` },
-        }
-      );
-      setError("CTA section updated successfully!");
-    });
+    makeApiRequest(async () =>
+      axios.put(`${process.env.REACT_APP_API_KEY}/content/update-cta`, cta, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+    );
   };
 
   const handleImageUpload = async (e, index) => {
     const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "ml_default");
-      setIsUploading(true);
-      setUploadError(null);
-      try {
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/do7z15tdv/upload`,
-          { method: "POST", body: formData }
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "ml_default");
+    setIsUploading(true);
+    setUploadError(null);
+    try {
+      const res = await fetch("https://api.cloudinary.com/v1_1/do7z15tdv/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.secure_url) {
+        const updated = features.map((f, i) => (i === index ? { ...f, image: data.secure_url } : f));
+        setFeatures(updated);
+        await axios.put(
+          `${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`,
+          updated[index],
+          { headers: { authorization: `Bearer ${token}` } }
         );
-        const data = await res.json();
-        if (data.secure_url) {
-          const updatedFeature = features.map((f, i) =>
-            i === index ? { ...f, image: data.secure_url } : f
-          );
-          setFeatures(updatedFeature);
-          await axios.put(
-            `${process.env.REACT_APP_API_KEY}/content/update-feature/${index}`,
-            updatedFeature[index],
-            { headers: { authorization: `Bearer ${token}` } }
-          );
-          setUploadError("Image uploaded successfully!");
-        } else {
-          setUploadError("Image upload failed, please try again.");
-        }
-      } catch {
+      } else {
         setUploadError("Image upload failed, please try again.");
-      } finally {
-        setIsUploading(false);
       }
+    } catch {
+      setUploadError("Image upload failed, please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -172,115 +145,94 @@ const SuperAdminContentPanel = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto p-4 md:p-8 pt-20 bg-gray-100 min-h-screen">
-      <h2 className="text-4xl text-center font-semibold text-gray-900 mb-12">
+      <h2 className="text-4xl text-center font-semibold text-gray-800 mb-12">
         Super Admin Content Panel
       </h2>
 
       {error && (
-        <div className="mb-6 p-4 text-white bg-red-600 border border-red-500 rounded-lg shadow-lg">
+        <div className="mb-6 p-4 text-white bg-red-600 border border-red-500 rounded-lg shadow">
           {error}
         </div>
       )}
 
-      {/* Hero Section */}
-      <section className="mb-10 p-6 bg-white rounded-lg shadow-lg">
-        <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
-          Hero Section
-        </h3>
+      {/* Hero */}
+      <section className="mb-10 p-6 bg-white rounded-lg shadow">
+        <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">Hero Section</h3>
         <div className="grid gap-4 lg:grid-cols-3">
           <input
             type="text"
             value={hero.title}
             onChange={(e) => setHero({ ...hero, title: e.target.value })}
-            placeholder="Hero Title"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            placeholder="Title"
+            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
           <input
             type="text"
             value={hero.subtitle}
             onChange={(e) => setHero({ ...hero, subtitle: e.target.value })}
-            placeholder="Hero Subtitle"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            placeholder="Subtitle"
+            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
           <input
             type="text"
             value={hero.buttonText}
-            onChange={(e) =>
-              setHero({ ...hero, buttonText: e.target.value })
-            }
-            placeholder="Hero Button Text"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            onChange={(e) => setHero({ ...hero, buttonText: e.target.value })}
+            placeholder="Button Text"
+            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
         </div>
         <button
           onClick={updateHero}
           disabled={actionLoading}
-          className={`w-full mt-4 px-4 py-3 rounded-md transition text-white ${
-            actionLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700"
+          className={`w-full mt-4 px-4 py-3 rounded-md text-white ${
+            actionLoading ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
           }`}
         >
           {actionLoading ? "Updating..." : "Update Hero"}
         </button>
       </section>
 
-      {/* Features Section */}
-      <section className="mb-10 p-6 bg-white rounded-lg shadow-lg">
-        <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
-          Features Section
-        </h3>
+      {/* Features */}
+      <section className="mb-10 p-6 bg-white rounded-lg shadow">
+        <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">Features</h3>
         {features.map((feature, index) => (
-          <div
-            key={index}
-            className="mb-6 p-4 rounded-lg border border-gray-200"
-          >
+          <div key={index} className="mb-6 p-4 rounded-lg border border-gray-200">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <input
                 type="text"
                 value={feature.icon}
                 onChange={(e) =>
                   setFeatures((prev) =>
-                    prev.map((f, i) =>
-                      i === index ? { ...f, icon: e.target.value } : f
-                    )
+                    prev.map((f, i) => (i === index ? { ...f, icon: e.target.value } : f))
                   )
                 }
-                placeholder="Feature Icon"
-                className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                placeholder="Icon"
+                className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
               />
               <input
                 type="text"
                 value={feature.title}
                 onChange={(e) =>
                   setFeatures((prev) =>
-                    prev.map((f, i) =>
-                      i === index ? { ...f, title: e.target.value } : f
-                    )
+                    prev.map((f, i) => (i === index ? { ...f, title: e.target.value } : f))
                   )
                 }
-                placeholder="Feature Title"
-                className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                placeholder="Title"
+                className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
               />
               <input
                 type="text"
                 value={feature.description}
                 onChange={(e) =>
                   setFeatures((prev) =>
-                    prev.map((f, i) =>
-                      i === index
-                        ? { ...f, description: e.target.value }
-                        : f
-                    )
+                    prev.map((f, i) => (i === index ? { ...f, description: e.target.value } : f))
                   )
                 }
-                placeholder="Feature Description"
-                className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+                placeholder="Description"
+                className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
               />
               <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  Feature Image
-                </label>
+                <label className="block text-gray-700 mb-1">Feature Image</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -288,13 +240,11 @@ const SuperAdminContentPanel = () => {
                   className="block w-full p-2 border border-gray-300 rounded-md"
                 />
                 {isUploading && <p className="text-gray-500">Uploading...</p>}
-                {uploadError && (
-                  <p className="text-red-500">{uploadError}</p>
-                )}
+                {uploadError && <p className="text-red-500">{uploadError}</p>}
                 {feature.image && (
                   <img
                     src={feature.image}
-                    alt="Uploaded Feature"
+                    alt="Uploaded"
                     className="w-24 h-24 mt-2 rounded-md object-cover"
                   />
                 )}
@@ -324,40 +274,36 @@ const SuperAdminContentPanel = () => {
         </button>
       </section>
 
-      {/* CTA Section */}
-      <section className="mb-10 p-6 bg-white rounded-lg shadow-lg">
-        <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
-          CTA Section
-        </h3>
+      {/* CTA */}
+      <section className="mb-10 p-6 bg-white rounded-lg shadow">
+        <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">CTA Section</h3>
         <div className="grid gap-4 md:grid-cols-2">
           <input
             type="text"
             value={cta.title}
             onChange={(e) => setCta({ ...cta, title: e.target.value })}
-            placeholder="CTA Title"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            placeholder="Title"
+            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
           <input
             type="text"
             value={cta.buttonText}
             onChange={(e) => setCta({ ...cta, buttonText: e.target.value })}
-            placeholder="CTA Button Text"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+            placeholder="Button Text"
+            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
           />
         </div>
         <textarea
           value={cta.description}
           onChange={(e) => setCta({ ...cta, description: e.target.value })}
-          placeholder="CTA Description"
-          className="w-full mt-4 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+          placeholder="Description"
+          className="w-full mt-4 p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
         />
         <button
           onClick={updateCta}
           disabled={actionLoading}
-          className={`w-full mt-4 px-4 py-3 rounded-md transition text-white ${
-            actionLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700"
+          className={`w-full mt-4 px-4 py-3 rounded-md text-white ${
+            actionLoading ? "bg-gray-400 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
           }`}
         >
           {actionLoading ? "Updating..." : "Update CTA"}
