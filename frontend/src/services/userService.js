@@ -21,7 +21,7 @@ export const updateUserData = async (data) => {
   const token = localStorage.getItem('authToken');
   
   try {
-    const response = await axios.put(`${process.env.REACT_APP_API_KEY}/user`, data, {
+    const response = await axios.put(`${process.env.REACT_APP_API_KEY}/user/update`, data, {
       headers: {
         'authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

@@ -70,7 +70,6 @@ const NumberGuessingGame = () => {
 
   const loadFromDatabase = async (gameName) => {
     const token = localStorage.getItem("authToken");
-
     try {
       const response = await axios.get( `http://localhost:5000/api/game/loadGameData/${gameName}`,{
           headers: {

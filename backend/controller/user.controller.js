@@ -58,4 +58,47 @@ userController.GetUserById = async (req, res) => {
     });
   }
 };
+userController.UpdateUserById = async (req, res) => {
+  console.log("Update Request:", req.userData);
+
+  const id = req.userData.id;
+  const updateData = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID format",
+      });
+    }
+
+    // Find and update the user
+    const updatedUser = await Parent.findByIdAndUpdate(
+      id,
+      { $set: updateData }, // Update only provided fields
+      { new: true, runValidators: true }
+    ).populate("children");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error: Unable to update user",
+      error: error.message,
+    });
+  }
+};
 module.exports = userController;

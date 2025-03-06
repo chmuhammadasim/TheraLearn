@@ -11,5 +11,11 @@ router.get(
   userpsychologistadmin,
   userController.GetUserById
 );
+router.get(
+  "/update",
+  checkAuth,
+  userpsychologistadmin,
+  userController.UpdateUserById
+);
 
 module.exports = router;
