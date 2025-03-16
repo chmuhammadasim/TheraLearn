@@ -54,6 +54,7 @@ const SuperAdminPanel = () => {
     }
   };
 
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-100 to-blue-100">
@@ -106,6 +107,7 @@ const SuperAdminPanel = () => {
             {fetchError}
           </div>
         )}
+
 
         <div className="p-6 flex flex-col lg:flex-row gap-6">
           <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-sm">

@@ -5,33 +5,69 @@ adminController.Checkapi = (req, res) => {
     message: "Auth API is working",
   });
 };
+
+const {Parent, Child} = require("../model/parentchild.model");
+const Psychologist = require("../model/user.model");
+
 adminController.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({});
-    if (!users || users.length === 0) {
-      return res.status(404).send({
-        message: "No users found",
-      });
+
+    // Fetch all parents separately with children data
+    const parents = await Parent.find({})
+      .populate("children", "firstName lastName dateOfBirth gender school grade")
+      .select("-password");
+
+    // Fetch all children separately with parent data
+    const children = await Child.find({})
+      .populate("parent", "firstName lastName contact email")
+      .populate("assignedDoctor", "firstName lastName contact email")
+      .select("-password");
+
+    // Fetch all psychologists with their patients
+    const psychologists = await Psychologist.find({})
+      .populate("patients", "firstName lastName dateOfBirth")
+      .populate("messages", "from to message sentAt")
+      .select("-password");
+
+    if (!parents.length && !children.length && !psychologists.length) {
+      return res.status(404).json({ message: "No users found" });
     }
-    res.status(200).json(users);
+
+    console.log("Parents:", parents);
+    console.log("Children:", children);
+    console.log("Psychologists:", psychologists);
+    
+    res.status(200).json({
+      totalParents: parents.length,
+      totalChildren: children.length,
+      totalPsychologists: psychologists.length,
+      parents,
+      children,
+      psychologists,
+    });
+
+
   } catch (error) {
+    console.error("Error fetching users:", error);
+
     if (error.name === "MongoNetworkError") {
-      return res.status(503).send({
-        message: "Database connection error. Please try again later.",
-      });
+      return res.status(503).json({ message: "Database connection error. Please try again later." });
     }
+
     if (error.name === "CastError" || error.name === "ValidationError") {
-      return res.status(400).send({
+      return res.status(400).json({
         message: "Invalid request data. Please check your input and try again.",
         error: error.message,
       });
     }
-    return res.status(500).send({
+
+    res.status(500).json({
       message: "An unexpected error occurred while fetching users",
       error: error.message,
     });
   }
 };
+
 adminController.updateUserStatus = async (req, res) => {
   try {
     const { userId } = req.params;

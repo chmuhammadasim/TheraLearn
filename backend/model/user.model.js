@@ -24,7 +24,8 @@ const messageSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-const userSchema = new mongoose.Schema({
+
+const psychologistSchema = new mongoose.Schema({
   id: {
     type: Number,
     unique: true,
@@ -49,14 +50,22 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'psychologist', 'admin'],
-    default: 'user',
+    enum: ['psychologist'],
+    default: 'psychologist',
   },
   firstName: {
     type: String,
     trim: true,
   },
   lastName: {
+    type: String,
+    trim: true,
+  },
+  profilePictureUrl: {
+    type: String,
+    trim: true,
+  },
+  contact: {
     type: String,
     trim: true,
   },
@@ -72,21 +81,55 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  contact: {
-    type: String,
-    trim: true,
+  dateOfBirth: {
+    type: Date,
   },
   bio: {
     type: String,
     trim: true,
   },
-  profilePictureUrl: {
-    type: String,
+  education: {
+    type: [String], // Array of degrees/certifications
     trim: true,
   },
-  dateOfBirth: {
-    type: Date,
+  experience: {
+    type: [String], // Description of experience
+    trim: true,
   },
+  specialization: {
+    type: String,
+    default: "Down Syndrome Specialist",
+    trim: true,
+  },
+  therapyMethods: {
+    type: [String], // Example: ["Behavioral Therapy", "Speech Therapy"]
+    trim: true,
+  },
+  certifications: {
+    type: [String], // Example: ["Certified Child Psychologist", "Autism Spectrum Training"]
+    trim: true,
+  },
+  availability: {
+    type: String, // Example: "Monday-Friday, 9 AM - 5 PM"
+    trim: true,
+  },
+  consultationFee: {
+    type: Number, // Example: Fee per session
+  },
+  patients: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  reviews: [{
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    rating: { type: Number, min: 1, max: 5 },
+    comment: { type: String, trim: true },
+  }],
+  messages: [{
+    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    message: { type: String, trim: true },
+    timestamp: { type: Date, default: Date.now },
+  }],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -97,41 +140,7 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true,
-  },
-  games: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Game',
-  }],
-  questions: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Question',
-  }],
-  result: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Result',
-  }],
-  education: {
-    type: [String], // Array of degrees/certifications
-    trim: true,
-  },
-  experience: {
-    type: [String], // Description of experience
-    trim: true,
-  },
-  specialization: {
-    type: String, // Psychologist's area of expertise
-    trim: true,
-  },
-  patients: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
-  psychologist: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  messages: [messageSchema]
+  }
 });
 
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Psychologist', psychologistSchema);
