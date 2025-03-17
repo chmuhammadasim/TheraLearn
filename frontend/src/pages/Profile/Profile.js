@@ -15,6 +15,8 @@ import {
   MdLocationOn,
   MdLock,
   MdCalendarToday,
+  MdCheckCircle,
+  MdMedicalServices,
 } from "react-icons/md";
 import { getUserData, updateUserData } from "../../services/userService";
 
@@ -44,6 +46,25 @@ const InputField = ({
   </div>
 );
 
+const TextAreaField = ({
+  label,
+  name,
+  value,
+  onChange,
+  disabled = false,
+}) => (
+  <div className="mt-4">
+    <label className="block text-gray-700 font-semibold">{label}</label>
+    <textarea
+      name={name}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      className="w-full border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-300 transition hover:shadow-sm"
+    />
+  </div>
+);
+
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -57,14 +78,15 @@ const ProfilePage = () => {
     city: "",
     country: "",
     contact: "",
-    bio: "",
-    profilePictureUrl: "",
-    dateOfBirth: "",
     role: "parent",
+    profilePictureUrl: "",
     children: [],
-    emergencyContact: { contact: "" },
+    primaryCarePhysician: { name: "", contact: "", hospital: "" },
+    emergencyAuthorization: false,
     insurancePolicy: { policyNumber: "", coverageDetails: "", validUntil: "" },
-    primaryCarePhysician: { contact: "", hospital: "" },
+    insuranceProvider: "",
+    preferredHospital: "",
+    medicalHistory: "",
   });
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -73,7 +95,13 @@ const ProfilePage = () => {
     const fetchData = async () => {
       try {
         const res = await getUserData();
-        setFormData(res.data);
+        // Convert any array fields (like medicalHistory) to comma-separated text if needed
+        setFormData({
+          ...res.data,
+          medicalHistory: Array.isArray(res.data.medicalHistory)
+            ? res.data.medicalHistory.join(", ")
+            : "",
+        });
       } catch {
         setError("Failed to fetch user data. Please try again.");
       }
@@ -82,7 +110,7 @@ const ProfilePage = () => {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type: inputType, checked } = e.target;
     if (name.startsWith("primaryCarePhysician")) {
       const field = name.replace("primaryCarePhysician", "").toLowerCase();
       setFormData((prev) => ({
@@ -101,6 +129,8 @@ const ProfilePage = () => {
           [field]: value,
         },
       }));
+    } else if (inputType === "checkbox") {
+      setFormData((prev) => ({ ...prev, [name]: checked }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -110,7 +140,15 @@ const ProfilePage = () => {
 
   const handleSaveChanges = async () => {
     try {
-      await updateUserData(formData);
+      // Convert medicalHistory back to array
+      const updatedData = {
+        ...formData,
+        medicalHistory: formData.medicalHistory
+          .split(",")
+          .map((item) => item.trim())
+          .filter((item) => item),
+      };
+      await updateUserData(updatedData);
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch {
@@ -135,8 +173,12 @@ const ProfilePage = () => {
           firstName: "",
           lastName: "",
           dateOfBirth: "",
-          medicalConditions: [],
-          allergies: [],
+          gender: "",
+          bloodType: "",
+          medicalConditions: "",
+          allergies: "",
+          medications: "",
+          role: "child",
         },
       ],
     }));
@@ -144,6 +186,12 @@ const ProfilePage = () => {
 
   const removeChild = (index) => {
     const updatedChildren = formData.children.filter((_, i) => i !== index);
+    setFormData({ ...formData, children: updatedChildren });
+  };
+
+  const handleChildChange = (index, field, value) => {
+    const updatedChildren = [...formData.children];
+    updatedChildren[index][field] = value;
     setFormData({ ...formData, children: updatedChildren });
   };
 
@@ -174,7 +222,9 @@ const ProfilePage = () => {
             />
             <div className="ml-4">
               <h2 className="text-2xl font-bold">{`${formData.firstName} ${formData.lastName}`}</h2>
-              <p className="text-gray-100 text-sm">{formData.bio || "No bio available"}</p>
+              <p className="text-gray-100 text-sm">
+                {formData.username || "No username"}
+              </p>
             </div>
           </div>
           <button
@@ -277,35 +327,42 @@ const ProfilePage = () => {
               disabled={!isEditing}
               icon={<MdPhone className="text-xl text-blue-700" />}
             />
-            <div className="md:col-span-2">
-              <label className="block text-gray-700 font-semibold mt-4">
-                Bio
-              </label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                disabled={!isEditing}
-                className="w-full border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-300 transition hover:shadow-sm"
-              />
-            </div>
-            <InputField
-              label="Date of Birth"
-              name="dateOfBirth"
-              value={formData.dateOfBirth}
-              type="date"
+            <TextAreaField
+              label="Medical History (comma-separated)"
+              name="medicalHistory"
+              value={formData.medicalHistory}
               onChange={handleInputChange}
               disabled={!isEditing}
-              icon={<MdCalendarToday className="text-xl text-blue-700" />}
             />
             <InputField
-              label="Role"
-              name="role"
-              value={formData.role}
+              label="Insurance Provider"
+              name="insuranceProvider"
+              value={formData.insuranceProvider}
               onChange={handleInputChange}
               disabled={!isEditing}
-              icon={<MdPerson className="text-xl text-blue-700" />}
+              icon={<MdMedicalServices className="text-xl text-blue-700" />}
             />
+            <InputField
+              label="Preferred Hospital"
+              name="preferredHospital"
+              value={formData.preferredHospital}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              icon={<MdLocationOn className="text-xl text-blue-700" />}
+            />
+          </div>
+
+          <div className="mt-2 flex items-center space-x-2">
+            <input
+              type="checkbox"
+              name="emergencyAuthorization"
+              checked={formData.emergencyAuthorization}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+            />
+            <label className="text-gray-700 font-semibold">
+              Emergency Authorization
+            </label>
           </div>
 
           <div className="mt-6">
@@ -314,23 +371,114 @@ const ProfilePage = () => {
               formData.children.map((child, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 p-4 rounded-md mt-4 flex justify-between transition hover:shadow-sm"
+                  className="border border-gray-200 p-4 rounded-md mt-4 flex flex-col transition hover:shadow-sm"
                 >
-                  <div>
-                    <p>
-                      <strong>Name:</strong> {child.firstName} {child.lastName}
-                    </p>
-                    <p>
-                      <strong>Birthdate:</strong> {child.dateOfBirth}
-                    </p>
+                  <div className="flex justify-between">
+                    <div>
+                      <p>
+                        <strong>Role:</strong> {child.role}
+                      </p>
+                      <p>
+                        <strong>Name:</strong> {child.firstName} {child.lastName}
+                      </p>
+                      <p>
+                        <strong>Birthdate:</strong> {child.dateOfBirth}
+                      </p>
+                    </div>
+                    {isEditing && (
+                      <button
+                        onClick={() => removeChild(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
                   </div>
                   {isEditing && (
-                    <button
-                      onClick={() => removeChild(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <FaTrash />
-                    </button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <InputField
+                        label="First Name"
+                        name="firstName"
+                        value={child.firstName}
+                        onChange={(e) =>
+                          handleChildChange(index, "firstName", e.target.value)
+                        }
+                        disabled={!isEditing}
+                        icon={<MdPerson className="text-xl text-blue-700" />}
+                      />
+                      <InputField
+                        label="Last Name"
+                        name="lastName"
+                        value={child.lastName}
+                        onChange={(e) =>
+                          handleChildChange(index, "lastName", e.target.value)
+                        }
+                        disabled={!isEditing}
+                        icon={<MdPerson className="text-xl text-blue-700" />}
+                      />
+                      <InputField
+                        label="Date of Birth"
+                        name="dateOfBirth"
+                        value={child.dateOfBirth}
+                        type="date"
+                        onChange={(e) =>
+                          handleChildChange(index, "dateOfBirth", e.target.value)
+                        }
+                        disabled={!isEditing}
+                        icon={<MdCalendarToday className="text-xl text-blue-700" />}
+                      />
+                      <InputField
+                        label="Gender"
+                        name="gender"
+                        value={child.gender}
+                        onChange={(e) =>
+                          handleChildChange(index, "gender", e.target.value)
+                        }
+                        disabled={!isEditing}
+                        icon={<MdPerson className="text-xl text-blue-700" />}
+                      />
+                      <InputField
+                        label="Blood Type"
+                        name="bloodType"
+                        value={child.bloodType}
+                        onChange={(e) =>
+                          handleChildChange(index, "bloodType", e.target.value)
+                        }
+                        disabled={!isEditing}
+                        icon={<MdMedicalServices className="text-xl text-blue-700" />}
+                      />
+                      <TextAreaField
+                        label="Medical Conditions (comma-separated)"
+                        name="medicalConditions"
+                        value={child.medicalConditions}
+                        onChange={(e) =>
+                          handleChildChange(
+                            index,
+                            "medicalConditions",
+                            e.target.value
+                          )
+                        }
+                        disabled={!isEditing}
+                      />
+                      <TextAreaField
+                        label="Allergies (comma-separated)"
+                        name="allergies"
+                        value={child.allergies}
+                        onChange={(e) =>
+                          handleChildChange(index, "allergies", e.target.value)
+                        }
+                        disabled={!isEditing}
+                      />
+                      <TextAreaField
+                        label="Medications (comma-separated)"
+                        name="medications"
+                        value={child.medications}
+                        onChange={(e) =>
+                          handleChildChange(index, "medications", e.target.value)
+                        }
+                        disabled={!isEditing}
+                      />
+                    </div>
                   )}
                 </div>
               ))
@@ -349,6 +497,14 @@ const ProfilePage = () => {
 
           <div className="mt-6">
             <h3 className="text-xl font-semibold">Primary Care Physician</h3>
+            <InputField
+              label="Name"
+              name="primaryCarePhysicianName"
+              value={formData.primaryCarePhysician.name}
+              onChange={handleInputChange}
+              disabled={!isEditing}
+              icon={<MdPerson className="text-xl text-blue-700" />}
+            />
             <InputField
               label="Contact"
               name="primaryCarePhysicianContact"
