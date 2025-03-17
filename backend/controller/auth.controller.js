@@ -1,5 +1,6 @@
 const Users = require("../model/user.model");
 const {Parent,Child} = require("../model/parentchild.model");
+const Psychologist = require("../model/user.model");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
@@ -58,32 +59,55 @@ AuthController.LogInUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if user exists
-        const user = await Parent.findOne({ email }).populate('children');
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid email or password.' });
+        var user = await Parent.findOne({ email });
+        
+        if(user && user.role == "parent"){
+            if (!user) {
+                return res.status(400).json({ message: 'Invalid email or password.' });
+            }else{
+                 user = await Parent.findOne({ email }).populate('children');  
+            }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid email or password.' });
+            }
+            const token = jsonwebtoken.sign(
+                { id: user._id, email: user.email, children: user.children.map(child => child._id), role: user.role },
+                process.env.JWT_KEY,
+                { expiresIn: '2d' }
+            );
+            res.status(200).json({ 
+                message: 'Login successful', 
+                token, 
+                children: user.children,
+                parent: user._id, 
+                role: user.role
+            });
         }
 
-        // Validate password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password.' });
+        var user = await Psychologist.findOne({ email });
+        console.log(user);
+        if(user && user.role == "psychologist"){    
+            if (!user) {
+                return res.status(400).json({ message: 'Invalid email or password.' });
+            }else{
+                 user = await Psychologist.findOne({ email });  
+            }
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid email or password.' });
+            }
+            const token = jsonwebtoken.sign(
+                { id: user._id, email: user.email, role: user.role },
+                process.env.JWT_KEY,
+                { expiresIn: '2d' }
+            );
+            res.status(200).json({ 
+                message: 'Login successful', 
+                token, 
+                role: user.role
+            });
         }
-
-        // Generate JWT token
-        const token = jsonwebtoken.sign(
-            { id: user._id, email: user.email, children: user.children.map(child => child._id), role: user.role },
-            process.env.JWT_KEY,
-            { expiresIn: '2d' }
-        );
-
-        res.status(200).json({ 
-            message: 'Login successful', 
-            token, 
-            children: user.children,  // Sending full child data
-            parent: user._id, 
-            role: user.role
-        });
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'An error occurred during login', detail: error.message });

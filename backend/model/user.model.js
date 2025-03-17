@@ -50,7 +50,6 @@ const psychologistSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['psychologist'],
     default: 'psychologist',
   },
   firstName: {

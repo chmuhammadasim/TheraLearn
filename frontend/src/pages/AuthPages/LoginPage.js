@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { logInUser } from '../../services/authService';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../components/AuthContext/AuthContext";
 
 function LoginPage() {
@@ -15,7 +14,6 @@ function LoginPage() {
   const [children, setChildren] = useState([]);
   const [showChildPopup, setShowChildPopup] = useState(false);
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -48,14 +46,13 @@ function LoginPage() {
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('authRole', data.role);
-      localStorage.setItem('authUser', JSON.stringify(data.parent));
-      localStorage.setItem('authChildren', JSON.stringify(data.children));
-      setChildren(data.children);
-      console.log('====================================');
-      console.log(data.children);
-      console.log('====================================');
+      if(data.role === 'parent') {
+        localStorage.setItem('authUser', JSON.stringify(data.parent));
+        localStorage.setItem('authChildren', JSON.stringify(data.children));
+        setChildren(data.children);
+        setShowChildPopup(true);
+      }
       login(data.token, data.role);
-      setShowChildPopup(true);
     } catch (error) {
       setMessage(error.message || 'Something went wrong, please try again.');
     } finally {
