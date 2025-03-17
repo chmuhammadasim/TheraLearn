@@ -67,7 +67,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("authRole", userRole);
         setIsLoggedIn(true);
         setRole(userRole);
-        window.location.href = "/";
+        if (userRole === "psychologist") {
+          window.location.href = "/";
+        }
       } else {
         throw new Error("Invalid or expired token.");
       }

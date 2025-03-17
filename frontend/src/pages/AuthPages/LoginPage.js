@@ -52,6 +52,9 @@ function LoginPage() {
         setChildren(data.children);
         setShowChildPopup(true);
       }
+      if(data.role === 'child') {
+        localStorage.setItem('authUser', JSON.stringify(data.child));
+      }
       login(data.token, data.role);
     } catch (error) {
       setMessage(error.message || 'Something went wrong, please try again.');
