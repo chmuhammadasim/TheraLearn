@@ -9,6 +9,7 @@ adminController.Checkapi = (req, res) => {
 const {Parent, Child} = require("../model/parentchild.model");
 const Psychologist = require("../model/user.model");
 
+
 adminController.getAllUsers = async (req, res) => {
   try {
 
@@ -84,6 +85,61 @@ adminController.updateUserStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating user status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+adminController.addPsychologist = async (req, res) => {
+  try {
+    const {
+      username,
+      email,
+      password,
+      role,
+      firstName,
+      lastName,
+      profilePictureUrl,
+      contact,
+      address,
+      city,
+      country,
+      dateOfBirth,
+      bio,
+      education,
+      experience,
+      specialization,
+      therapyMethods,
+      certifications,
+      availability,
+      consultationFee
+    } = req.body;
+
+    const psychologist = new Psychologist({
+      username,
+      email,
+      password,
+      role,
+      firstName,
+      lastName,
+      profilePictureUrl,
+      contact,
+      address,
+      city,
+      country,
+      dateOfBirth,
+      bio,
+      education,
+      experience,
+      specialization,
+      therapyMethods,
+      certifications,
+      availability,
+      consultationFee
+    });
+
+    await Psychologist.save();
+    res.status(201).json({ message: "Psychologist added successfully", psychologist });
+  } catch (error) {
+    console.error("Error adding psychologist:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

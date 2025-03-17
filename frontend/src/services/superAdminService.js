@@ -34,3 +34,21 @@ export const updateUserStatus = async (userId, isActive) => {
     throw error;
   }
 };
+
+export const addPsychologist = async (isActive) => {
+  try {
+    const response = await axios.patch(`${process.env.REACT_APP_API_KEY}/superadmin/add/psychologist`, 
+      { isActive },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    throw error;
+  }
+};

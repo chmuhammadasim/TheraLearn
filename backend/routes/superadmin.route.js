@@ -11,5 +11,11 @@ router.patch(
   admin,
   adminController.updateUserStatus
 );
+router.patch(
+  "/add/psychologist",
+  checkAuth,
+  admin,
+  adminController.addPsychologist
+);
 
 module.exports = router;
