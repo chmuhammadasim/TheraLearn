@@ -17,7 +17,7 @@ const psychologist = (req, res, next) => {
 };
 
 const user = (req, res, next) => {
-  if (req.userData.role === "user") {
+  if (req.userData.role === "parent") {
     next();
   } else {
     res.status(403);
@@ -27,7 +27,7 @@ const user = (req, res, next) => {
 
 const userpsychologistadmin = (req, res, next) => {
   if (
-    req.userData.role === "user" ||
+    req.userData.role === "parent" ||
     req.userData.role === "psychologist" ||
     req.userData.role === "admin"
   ) {

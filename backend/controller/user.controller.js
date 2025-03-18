@@ -9,7 +9,7 @@ userController.Checkapi = (req, res) => {
 };
 userController.GetUserById = async (req, res) => {
   console.log(req.userData);
-
+  
   const id = req.userData.id;
 
   try {
@@ -20,24 +20,28 @@ userController.GetUserById = async (req, res) => {
       });
     }
 
-    // Fetch user data, including children details
-    const user = await Parent.findById(id)
-      .populate("children")
-      .lean(); 
+    // Fetch parent data and populate children
+    const parent = await Parent.findById(id)
+      .populate({
+        path: 'children',
+        model: 'Child',
+      })
+      .lean(); // Convert document to plain object
 
-    if (!user) {
+    if (!parent) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Parent not found",
       });
     }
-
+    console.log("Parent:", parent);
+    
     res.status(200).json({
       success: true,
-      data: user,
+      data: parent,
     });
   } catch (error) {
-    console.error("Error fetching user by ID:", error);
+    console.error("Error fetching parent by ID:", error);
 
     if (error.name === "CastError") {
       return res.status(400).json({
@@ -58,6 +62,8 @@ userController.GetUserById = async (req, res) => {
     });
   }
 };
+
+
 userController.UpdateUserById = async (req, res) => {
   console.log("Update Request:", req.userData);
 

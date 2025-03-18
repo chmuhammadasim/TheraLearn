@@ -35,7 +35,7 @@ export default function Navbar() {
     navigate("/");
   };
 
-  const isUser = role === "user";
+  const isUser = role === "parent";
   const isSuperAdmin = role === "admin";
   const isPsychologist = role === "psychologist";
 
@@ -48,7 +48,7 @@ export default function Navbar() {
   ];
 
   const roleLinks = {
-    user: [
+    parent: [
       { to: "/dashboard", label: "Dashboard", color: "#6a4c93" }, // Deep Purple
       {
         to: "/psychologistslist",
