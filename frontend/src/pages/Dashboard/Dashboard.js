@@ -1,42 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import Loading from '../../components/Loading';
 import { getUserData } from '../../services/userService';
-import { getUserGames } from '../../services/gameService';
-import { Line, Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { motion } from 'framer-motion';
 import { FaUser, FaGamepad } from 'react-icons/fa';
 
 function Dashboard() {
   const [loading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [userGames, setUserGames] = useState([]);
   const [error, setError] = useState(null);
+  const [overallTrend, setOverallTrend] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [user, games] = await Promise.all([getUserData(), getUserGames()]);
+        const user = await getUserData();
         setUserData(user.data);
-        setUserGames(games.data);
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setError('There was an issue retrieving data. Please try again later.');
       }
     };
-
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log(userData);
-    
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
+
+  // Build overall session trend
+  useEffect(() => {
+    if (userData) {
+      const allSessions = [];
+      userData.children?.forEach((child) => {
+        child.games?.forEach((game) => {
+          game.sessions?.forEach((s) => allSessions.push(s));
+        });
+      });
+      // Group by date
+      const byDate = {};
+      allSessions.forEach((s) => {
+        const d = new Date(s.datePlayed).toLocaleDateString();
+        if (!byDate[d]) byDate[d] = [];
+        byDate[d].push(s.score);
+      });
+      // Average each date
+      const labels = Object.keys(byDate).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
+      const data = labels.map((d) => {
+        const scores = byDate[d];
+        return scores.reduce((p, c) => p + c, 0) / scores.length;
+      });
+      setOverallTrend({ labels, data });
+    }
+  }, [userData]);
 
   if (loading) {
     return <Loading />;
@@ -59,82 +81,35 @@ function Dashboard() {
     );
   }
 
-  const groupedGames = userGames.reduce((acc, game) => {
-    game.sessions.forEach(session => {
-      if (!acc[session.gameName]) {
-        acc[session.gameName] = [];
-      }
-      acc[session.gameName].push(session);
+  const allChildrenSessions = userData?.children?.map((child) => {
+    return {
+      childName: `${child.firstName} ${child.lastName}`,
+      games: child.games || [],
+    };
+  }) || [];
+
+  const compareGames = {};
+  allChildrenSessions.forEach((childItem) => {
+    childItem.games.forEach((game) => {
+      game.sessions?.forEach((session) => {
+        const { gameName, datePlayed, score } = session;
+        if (!compareGames[gameName]) compareGames[gameName] = [];
+        let existingChild = compareGames[gameName].find(
+          (c) => c.childName === childItem.childName
+        );
+        if (!existingChild) {
+          existingChild = {
+            childName: childItem.childName,
+            labels: [],
+            scores: [],
+          };
+          compareGames[gameName].push(existingChild);
+        }
+        existingChild.labels.push(new Date(datePlayed).toLocaleDateString());
+        existingChild.scores.push(score);
+      });
     });
-    return acc;
-  }, {});
-
-  const getGameScoreData = (sessions) => {
-    const labels = sessions.map((session) => new Date(session.datePlayed).toLocaleDateString());
-    const scores = sessions.map((session) => session.score);
-    const highestScore = Math.max(...scores);
-    const averageScore = scores.reduce((acc, score) => acc + score, 0) / scores.length;
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Scores Over Time',
-          data: scores,
-          fill: false,
-          backgroundColor: 'rgba(75,192,192,1)',
-          borderColor: 'rgba(75,192,192,0.4)',
-          borderWidth: 2,
-          tension: 0.4,
-          pointBackgroundColor: 'rgba(75,192,192,1)',
-          pointBorderColor: 'rgba(75,192,192,1)',
-        },
-        {
-          label: 'Highest Score',
-          data: new Array(scores.length).fill(highestScore),
-          fill: false,
-          backgroundColor: 'rgba(255,99,132,1)',
-          borderColor: 'rgba(255,99,132,0.4)',
-          borderWidth: 2,
-          tension: 0.4,
-        },
-        {
-          label: 'Average Score',
-          data: new Array(scores.length).fill(averageScore),
-          fill: false,
-          backgroundColor: 'rgba(54,162,235,1)',
-          borderColor: 'rgba(54,162,235,0.4)',
-          borderWidth: 2,
-          tension: 0.4,
-        },
-      ],
-    };
-  };
-
-  const getGameBarData = (sessions) => {
-    const highestScore = Math.max(...sessions.map(session => session.score));
-    const currentScore = sessions[sessions.length - 1]?.score || 0;
-
-    return {
-      labels: ['Highest Score vs Current Score'],
-      datasets: [
-        {
-          label: 'Highest Score',
-          data: [highestScore],
-          backgroundColor: 'rgba(255,99,132,0.6)',
-          borderColor: 'rgba(255,99,132,1)',
-          borderWidth: 1,
-        },
-        {
-          label: 'Current Score',
-          data: [currentScore],
-          backgroundColor: 'rgba(75,192,192,0.6)',
-          borderColor: 'rgba(75,192,192,1)',
-          borderWidth: 1,
-        },
-      ],
-    };
-  };
+  });
 
   const chartOptions = {
     responsive: true,
@@ -144,12 +119,9 @@ function Dashboard() {
         backgroundColor: '#ffeb3b',
         bodyColor: '#000',
         callbacks: {
-          title: (tooltipItems) => {
-            return `Score on ${tooltipItems[0].label}`;
-          },
-          label: (tooltipItem) => {
-            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
-          },
+          title: (tooltipItems) => `Score on ${tooltipItems[0].label}`,
+          label: (tooltipItem) =>
+            `${tooltipItem.dataset.label}: ${tooltipItem.raw}`,
         },
       },
       legend: {
@@ -183,6 +155,70 @@ function Dashboard() {
     },
   };
 
+  const getComparativeLineData = (gameSessions) => {
+    const allLabels = Array.from(
+      new Set(gameSessions.flatMap((child) => child.labels))
+    );
+    return {
+      labels: allLabels,
+      datasets: gameSessions.map((childData) => {
+        const filledScores = allLabels.map((label) => {
+          const idx = childData.labels.indexOf(label);
+          return idx >= 0 ? childData.scores[idx] : null;
+        });
+        return {
+          label: childData.childName,
+          data: filledScores,
+          borderWidth: 2,
+        };
+      }),
+    };
+  };
+
+  const allGames = Object.keys(compareGames);
+  const averageScores = allGames.map((gameName) => {
+    let sum = 0;
+    let count = 0;
+    compareGames[gameName].forEach((child) => {
+      child.scores.forEach((score) => {
+        sum += score;
+        count++;
+      });
+    });
+    return count > 0 ? sum / count : 0;
+  });
+
+  const allGamesData = {
+    labels: allGames,
+    datasets: [
+      {
+        label: 'Average Score',
+        data: averageScores,
+        backgroundColor: 'rgba(54,162,235,0.6)',
+        borderColor: 'rgba(54,162,235,1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Sample doughnut chart for total sessions per game
+  const sessionCounts = allGames.map((g) => {
+    return compareGames[g].reduce((acc, child) => acc + child.scores.length, 0);
+  });
+  const sessionDistData = {
+    labels: allGames,
+    datasets: [
+      {
+        label: 'Sessions',
+        data: sessionCounts,
+        backgroundColor: [
+          '#f94144','#f3722c','#f8961e','#f9c74f',
+          '#90be6d','#43aa8b','#577590','#742774'
+        ],
+      },
+    ],
+  };
+
   return (
     <motion.div
       className="min-h-screen bg-gradient-to-b from-slate-400 via-slate-500 to-slate-600 p-10 pt-20 flex flex-col items-center"
@@ -195,7 +231,6 @@ function Dashboard() {
           <FaUser className="text-yellow-400" /> User Dashboard
         </h1>
 
-        {/* Parent Information */}
         {userData && (
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-blue-500 pb-2">
@@ -216,8 +251,11 @@ function Dashboard() {
               <p><strong>Emergency Authorization:</strong> {userData.emergencyAuthorization ? 'Yes' : 'No'}</p>
               <p><strong>Policy #:</strong> {userData.insurancePolicy?.policyNumber || 'N/A'}</p>
               <p><strong>Coverage:</strong> {userData.insurancePolicy?.coverageDetails || 'N/A'}</p>
-              <p><strong>Policy Valid Until:</strong> {userData.insurancePolicy?.validUntil ?
-                new Date(userData.insurancePolicy.validUntil).toLocaleDateString() : 'N/A'}
+              <p>
+                <strong>Policy Valid Until:</strong>{' '}
+                {userData.insurancePolicy?.validUntil
+                  ? new Date(userData.insurancePolicy.validUntil).toLocaleDateString()
+                  : 'N/A'}
               </p>
             </div>
           </div>
@@ -230,7 +268,10 @@ function Dashboard() {
             </h2>
             <div className="space-y-4 ">
               {userData.children.map((child) => (
-                <div key={child._id} className="bg-blue-50 p-4 grid grid-cols-1 md:grid-cols-3 rounded-xl shadow-md space-y-2 hover:bg-blue-100 transition">
+                <div
+                  key={child._id}
+                  className="bg-blue-50 p-4 grid grid-cols-1 md:grid-cols-3 rounded-xl shadow-md space-y-2 hover:bg-blue-100 transition"
+                >
                   <p><strong>Name:</strong> {child.firstName} {child.lastName}</p>
                   <p><strong>Role:</strong> {child.role}</p>
                   <p><strong>Date of Birth:</strong> {new Date(child.dateOfBirth).toLocaleDateString()}</p>
@@ -336,36 +377,67 @@ function Dashboard() {
           </div>
         )}
 
-        {Object.keys(groupedGames).length > 0 && (
+        {allGames.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-indigo-500 pb-2">
+              All Games Comparison
+            </h2>
+            <div className="bg-gray-100 p-4 rounded-xl shadow-lg">
+              <div className="w-full md:w-1/2 mx-auto mb-6">
+                <Bar data={allGamesData} options={chartOptions} />
+              </div>
+              <div className="w-full md:w-1/2 mx-auto">
+                <Doughnut data={sessionDistData} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {overallTrend && overallTrend.labels.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-red-500 pb-2">
+              Overall Score Trend
+            </h2>
+            <div className="bg-gray-100 p-4 rounded-xl shadow-lg w-full md:w-1/2 mx-auto">
+              <Line
+                data={{
+                  labels: overallTrend.labels,
+                  datasets: [
+                    {
+                      label: 'Average Score (All Children)',
+                      data: overallTrend.data,
+                      borderColor: 'rgba(255,99,132,1)',
+                      borderWidth: 2,
+                      fill: false,
+                    },
+                  ],
+                }}
+                options={chartOptions}
+              />
+            </div>
+          </div>
+        )}
+
+        {Object.keys(compareGames).length > 0 && (
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-700 mb-4 flex items-center gap-2 border-b-4 border-yellow-500 pb-2">
-              <FaGamepad className="text-yellow-500" /> Games Played
+              <FaGamepad className="text-yellow-500" /> Child Comparisons
             </h2>
-            {Object.entries(groupedGames).map(([gameName, sessions]) => (
+            {Object.entries(compareGames).map(([gameName, sessions]) => (
               <div key={gameName} className="mb-12">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4 underline">{gameName}</h3>
-
+                <h3 className="text-2xl font-semibold text-gray-700 mb-4 underline">
+                  {gameName}
+                </h3>
                 <div className="bg-gray-100 p-4 rounded-xl shadow-lg mb-6">
-                  <h4 className="text-xl font-semibold text-gray-700 mb-4">Score Improvement Over Time</h4>
-                  <div className="w-full md:w-1/2 mx-auto">
-                    <Line data={getGameScoreData(sessions)} options={chartOptions} />
-                  </div>
-                </div>
-
-                <div className="bg-gray-100 p-4 rounded-xl shadow-lg mb-6">
-                  <h4 className="text-xl font-semibold text-gray-700 mb-4">Highest vs Current Score</h4>
-                  <div className="w-full md:w-1/2 mx-auto">
-                    <Bar data={getGameBarData(sessions)} options={chartOptions} />
-                  </div>
-                </div>
-
-                <div className="bg-gray-100 p-4 rounded-xl shadow-lg">
                   <h4 className="text-xl font-semibold text-gray-700 mb-4">
-                    Detailed Results for {gameName}
+                    Child Score Comparison
                   </h4>
-                  <p><strong>Highest Score:</strong> {Math.max(...sessions.map(session => session.score))}</p>
-                  <p><strong>Current Score:</strong> {sessions[sessions.length - 1]?.score || 0}</p>
-                  <p><strong>Total Sessions Played:</strong> {sessions.length}</p>
+                  <div className="w-full md:w-1/2 mx-auto">
+                    <Line
+                      data={getComparativeLineData(sessions)}
+                      options={chartOptions}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

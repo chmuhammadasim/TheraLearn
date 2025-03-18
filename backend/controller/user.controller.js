@@ -20,13 +20,16 @@ userController.GetUserById = async (req, res) => {
       });
     }
 
-    // Fetch parent data and populate children
     const parent = await Parent.findById(id)
       .populate({
         path: 'children',
         model: 'Child',
+        populate: {
+          path: 'games',
+          model: 'Game' // Fetch game details using game IDs from children
+        }
       })
-      .lean(); // Convert document to plain object
+      .lean();
 
     if (!parent) {
       return res.status(404).json({
@@ -34,6 +37,7 @@ userController.GetUserById = async (req, res) => {
         message: "Parent not found",
       });
     }
+    
     console.log("Parent:", parent);
     
     res.status(200).json({
@@ -43,18 +47,6 @@ userController.GetUserById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching parent by ID:", error);
 
-    if (error.name === "CastError") {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid user ID format",
-      });
-    }
-    if (error.name === "MongoError") {
-      return res.status(500).json({
-        success: false,
-        message: "Database error occurred while fetching user",
-      });
-    }
     res.status(500).json({
       success: false,
       message: "Server error: Unable to fetch user",

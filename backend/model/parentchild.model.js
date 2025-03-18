@@ -165,7 +165,11 @@ const childSchema = new mongoose.Schema({
   parentalConcerns: [{
     type: String,
     trim: true,
-  }]
+  }],
+    games: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Game',
+    }],
 });
 
 const parentSchema = new mongoose.Schema({
