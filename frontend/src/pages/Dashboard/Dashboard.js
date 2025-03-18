@@ -10,6 +10,8 @@ function Dashboard() {
   const [loading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
+  // Track selected child to show individual charts
+  const [selectedChildIndex, setSelectedChildIndex] = useState(null);
   const [overallTrend, setOverallTrend] = useState(null);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ function Dashboard() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -60,10 +62,7 @@ function Dashboard() {
     }
   }, [userData]);
 
-  if (loading) {
-    return <Loading />;
-  }
-
+  if (loading) return <Loading />;
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-red-100 p-6">
@@ -81,13 +80,15 @@ function Dashboard() {
     );
   }
 
-  const allChildrenSessions = userData?.children?.map((child) => {
-    return {
-      childName: `${child.firstName} ${child.lastName}`,
-      games: child.games || [],
-    };
-  }) || [];
+  const allChildrenSessions =
+    userData?.children?.map((child) => {
+      return {
+        childName: `${child.firstName} ${child.lastName}`,
+        games: child.games || [],
+      };
+    }) || [];
 
+  // Prepare data for all children comparison
   const compareGames = {};
   allChildrenSessions.forEach((childItem) => {
     childItem.games.forEach((game) => {
@@ -113,6 +114,7 @@ function Dashboard() {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         enabled: true,
@@ -128,25 +130,16 @@ function Dashboard() {
         position: 'top',
         labels: {
           boxWidth: 5,
-          font: {
-            size: 14,
-          },
+          font: { size: 14 },
         },
       },
     },
     scales: {
       x: {
-        grid: {
-          display: true,
-          borderDash: [2, 2],
-          color: '#bbb',
-        },
+        grid: { display: true, borderDash: [2, 2], color: '#bbb' },
       },
       y: {
-        grid: {
-          borderDash: [2, 2],
-          color: '#bbb',
-        },
+        grid: { borderDash: [2, 2], color: '#bbb' },
         ticks: {
           beginAtZero: true,
           stepSize: 1,
@@ -158,7 +151,7 @@ function Dashboard() {
   const getComparativeLineData = (gameSessions) => {
     const allLabels = Array.from(
       new Set(gameSessions.flatMap((child) => child.labels))
-    );
+    ).sort((a, b) => new Date(a) - new Date(b));
     return {
       labels: allLabels,
       datasets: gameSessions.map((childData) => {
@@ -175,6 +168,7 @@ function Dashboard() {
     };
   };
 
+  // All games average and count
   const allGames = Object.keys(compareGames);
   const averageScores = allGames.map((gameName) => {
     let sum = 0;
@@ -187,7 +181,6 @@ function Dashboard() {
     });
     return count > 0 ? sum / count : 0;
   });
-
   const allGamesData = {
     labels: allGames,
     datasets: [
@@ -200,8 +193,6 @@ function Dashboard() {
       },
     ],
   };
-
-  // Sample doughnut chart for total sessions per game
   const sessionCounts = allGames.map((g) => {
     return compareGames[g].reduce((acc, child) => acc + child.scores.length, 0);
   });
@@ -212,12 +203,40 @@ function Dashboard() {
         label: 'Sessions',
         data: sessionCounts,
         backgroundColor: [
-          '#f94144','#f3722c','#f8961e','#f9c74f',
-          '#90be6d','#43aa8b','#577590','#742774'
+          '#f94144',
+          '#f3722c',
+          '#f8961e',
+          '#f9c74f',
+          '#90be6d',
+          '#43aa8b',
+          '#577590',
+          '#742774',
         ],
       },
     ],
   };
+
+  // Single child data
+  const singleChild = selectedChildIndex !== null && userData?.children
+    ? userData.children[selectedChildIndex]
+    : null;
+
+  // Prepare single child chart data
+  const singleChildGames = {};
+  if (singleChild) {
+    singleChild.games?.forEach((game) => {
+      game.sessions?.forEach((session) => {
+        const { gameName, datePlayed, score } = session;
+        if (!singleChildGames[gameName]) {
+          singleChildGames[gameName] = { labels: [], scores: [] };
+        }
+        singleChildGames[gameName].labels.push(
+          new Date(datePlayed).toLocaleDateString()
+        );
+        singleChildGames[gameName].scores.push(score);
+      });
+    });
+  }
 
   return (
     <motion.div
@@ -266,11 +285,13 @@ function Dashboard() {
             <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-green-500 pb-2">
               Children
             </h2>
-            <div className="space-y-4 ">
-              {userData.children.map((child) => (
+            <div className="space-y-4">
+              {/* Child list with clickable option */}
+              {userData.children.map((child, idx) => (
                 <div
                   key={child._id}
-                  className="bg-blue-50 p-4 grid grid-cols-1 md:grid-cols-3 rounded-xl shadow-md space-y-2 hover:bg-blue-100 transition"
+                  className="bg-blue-50 p-4 grid grid-cols-1 md:grid-cols-3 rounded-xl shadow-md space-y-2 hover:bg-blue-100 transition cursor-pointer"
+                  onClick={() => setSelectedChildIndex(idx)}
                 >
                   <p><strong>Name:</strong> {child.firstName} {child.lastName}</p>
                   <p><strong>Role:</strong> {child.role}</p>
@@ -284,8 +305,8 @@ function Dashboard() {
                     <div>
                       <strong>Doctor Notes:</strong>
                       <ul className="list-disc pl-5">
-                        {child.doctorNotes.map((note, idx) => (
-                          <li key={idx}>
+                        {child.doctorNotes.map((note, noteIdx) => (
+                          <li key={noteIdx}>
                             Date: {new Date(note.date).toLocaleDateString()} | Notes: {note.notes || 'N/A'}
                           </li>
                         ))}
@@ -301,8 +322,8 @@ function Dashboard() {
                     <div>
                       <strong>Mental Health Notes:</strong>
                       <ul className="list-disc pl-5">
-                        {child.mentalHealthNotes.map((mhNote, idx) => (
-                          <li key={idx}>
+                        {child.mentalHealthNotes.map((mhNote, noteIdx) => (
+                          <li key={noteIdx}>
                             Date: {new Date(mhNote.date).toLocaleDateString()} | Notes: {mhNote.notes || 'N/A'}
                           </li>
                         ))}
@@ -313,8 +334,8 @@ function Dashboard() {
                     <div>
                       <strong>Hospital Visits:</strong>
                       <ul className="list-disc pl-5">
-                        {child.hospitalVisits.map((visit, idx) => (
-                          <li key={idx}>
+                        {child.hospitalVisits.map((visit, visitIdx) => (
+                          <li key={visitIdx}>
                             Date: {new Date(visit.date).toLocaleDateString()} | Reason: {visit.reason || 'N/A'}
                           </li>
                         ))}
@@ -325,8 +346,8 @@ function Dashboard() {
                     <div>
                       <strong>Lab Tests:</strong>
                       <ul className="list-disc pl-5">
-                        {child.labTests.map((test, idx) => (
-                          <li key={idx}>
+                        {child.labTests.map((test, testIdx) => (
+                          <li key={testIdx}>
                             Date: {new Date(test.date).toLocaleDateString()} | Test: {test.testName} | Result: {test.result}
                           </li>
                         ))}
@@ -377,28 +398,66 @@ function Dashboard() {
           </div>
         )}
 
+        {/* Single Child Graphs */}
+        {singleChild && (
+          <div>
+          <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-purple-500 pb-2">
+          {singleChild.firstName} {singleChild.lastName} - Game Scores
+        </h2>
+          <div className="mb-8 grid grid-cols-2">
+            
+            {Object.entries(singleChildGames).map(([childGame, data]) => (
+              <div key={childGame} className=" bg-gray-100 p-4 rounded-xl shadow-lg mb-6 text-center">
+                <h4 className="text-xl font-semibold text-gray-700 mb-4 underline">
+                  {childGame}
+                </h4>
+                <div className="w-full h-72 md:w-1/2 mx-auto">
+                  <Line
+                    data={{
+                      labels: data.labels,
+                      datasets: [
+                        {
+                          label: `${singleChild.firstName}'s Scores`,
+                          data: data.scores,
+                          borderColor: 'rgba(75,192,192,1)',
+                          borderWidth: 2,
+                          fill: false,
+                        },
+                      ],
+                    }}
+                    options={chartOptions}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          </div>
+        )}
+
+        {/* Overall games comparison */}
         {allGames.length > 0 && (
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-indigo-500 pb-2">
               All Games Comparison
             </h2>
             <div className="bg-gray-100 p-4 rounded-xl shadow-lg">
-              <div className="w-full md:w-1/2 mx-auto mb-6">
+              <div className="w-full h-72 md:w-1/2 mx-auto mb-6">
                 <Bar data={allGamesData} options={chartOptions} />
               </div>
-              <div className="w-full md:w-1/2 mx-auto">
+              <div className="w-full h-72 md:w-1/2 mx-auto">
                 <Doughnut data={sessionDistData} />
               </div>
             </div>
           </div>
         )}
 
+        {/* Overall Score Trend */}
         {overallTrend && overallTrend.labels.length > 0 && (
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-700 mb-4 border-b-4 border-red-500 pb-2">
               Overall Score Trend
             </h2>
-            <div className="bg-gray-100 p-4 rounded-xl shadow-lg w-full md:w-1/2 mx-auto">
+            <div className="bg-gray-100 p-4 rounded-xl shadow-lg w-full h-72 md:w-1/2 mx-auto">
               <Line
                 data={{
                   labels: overallTrend.labels,
@@ -418,29 +477,28 @@ function Dashboard() {
           </div>
         )}
 
+        {/* Child comparisons */}
         {Object.keys(compareGames).length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-700 mb-4 flex items-center gap-2 border-b-4 border-yellow-500 pb-2">
+          <div>
+          <h2 className="text-3xl font-bold text-gray-700 mb-4 flex items-center gap-2 border-b-4 border-yellow-500 pb-2">
               <FaGamepad className="text-yellow-500" /> Child Comparisons
             </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            
             {Object.entries(compareGames).map(([gameName, sessions]) => (
-              <div key={gameName} className="mb-12">
+              <div key={gameName} className="text-center ">
                 <h3 className="text-2xl font-semibold text-gray-700 mb-4 underline">
                   {gameName}
                 </h3>
-                <div className="bg-gray-100 p-4 rounded-xl shadow-lg mb-6">
-                  <h4 className="text-xl font-semibold text-gray-700 mb-4">
-                    Child Score Comparison
-                  </h4>
-                  <div className="w-full md:w-1/2 mx-auto">
-                    <Line
-                      data={getComparativeLineData(sessions)}
-                      options={chartOptions}
-                    />
-                  </div>
+                <div className="bg-gray-100 p-4 rounded-xl shadow-lg mb-6 w-full h-72 md:w-1/2 mx-auto">
+                  <Line
+                    data={getComparativeLineData(sessions)}
+                    options={chartOptions}
+                  />
                 </div>
               </div>
             ))}
+          </div>
           </div>
         )}
       </div>
