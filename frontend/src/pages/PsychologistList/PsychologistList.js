@@ -31,6 +31,7 @@ function PsychologistListPage() {
   }, []);
 
   const handlePsychologistClick = (psychologistId) => {
+    localStorage.setItem("psychologistId", psychologistId);
     navigate(`/psychologistsdetail/${psychologistId}`);
   };
 

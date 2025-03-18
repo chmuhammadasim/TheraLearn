@@ -7,7 +7,13 @@ import {
   sendMessageToPsychologist,
   getChatHistoryUser,
 } from "../../services/psychologistService";
-import { FiPhone, FiMail, FiMapPin, FiAward } from "react-icons/fi";
+import {
+  FiPhone,
+  FiMail,
+  FiMapPin,
+  FiAward,
+  FiStar,
+} from "react-icons/fi";
 
 function PsychologistDetailsPage() {
   const { id } = useParams();
@@ -15,7 +21,6 @@ function PsychologistDetailsPage() {
   const [isDoctorSelected, setIsDoctorSelected] = useState(false);
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -26,44 +31,39 @@ function PsychologistDetailsPage() {
 
         const assignedPsychologists = await getAssignedPsychologists();
         if (assignedPsychologists) {
-          setIsDoctorSelected(true);  
+          setIsDoctorSelected(true);
           const history = await getChatHistoryUser(assignedPsychologists);
           setChatHistory(history.filteredMessages);
         } else {
           setIsDoctorSelected(false);
         }
       } catch (error) {
-        console.error("Error fetching psychologist or assigned psychologists:", error);
+        console.error("Error:", error);
       }
     };
-
     fetchData();
   }, [id]);
 
   const handleSelectDoctor = async () => {
+    if (!psychologist?._id) return;
     try {
       await assignPsychologistToPatient(psychologist._id);
       setIsDoctorSelected(true);
-      alert("Psychologist selected as your doctor successfully!");
-    } catch (error) {
-      console.error("Error assigning psychologist:", error);
-      alert("Failed to select psychologist as your doctor.");
+      alert("Psychologist selected successfully!");
+    } catch {
+      alert("Failed to select psychologist.");
     }
   };
 
   const handleSendMessage = async () => {
-    if (!message.trim()) {
-      alert("Message cannot be empty!");
-      return;
-    }
+    if (!message.trim() || !psychologist?._id) return;
     try {
       const newMessage = { sender: "Patient", message, timestamp: new Date() };
       await sendMessageToPsychologist(psychologist._id, message);
       setChatHistory((prev) => [...prev, newMessage]);
       setMessage("");
       scrollToBottom();
-    } catch (error) {
-      console.error("Error sending message:", error);
+    } catch {
       alert("Failed to send message.");
     }
   };
@@ -85,20 +85,19 @@ function PsychologistDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 pt-20 py-10">
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-3">
-        {/* Sidebar Section */}
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-white flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300 pt-20 py-10">
+      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden grid grid-cols-1 md:grid-cols-3 transition-all">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 text-white flex flex-col items-center relative">
           <img
             src={psychologist.profilePictureUrl}
             alt={`${psychologist.firstName} ${psychologist.lastName}`}
-            className="w-32 h-32 rounded-full border-4 border-white shadow-lg mb-6"
+            className="w-32 h-32 rounded-full border-4 border-white shadow-lg mb-6 transform hover:scale-105 transition-transform"
           />
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-3xl font-semibold mb-1">
             {psychologist.firstName} {psychologist.lastName}
           </h1>
-          <p className="text-lg mt-2 italic">{psychologist.specialization}</p>
-          <div className="mt-8 space-y-4 text-sm">
+          <p className="text-lg italic">{psychologist.specialization}</p>
+          <div className="mt-5 space-y-3 text-sm">
             <p className="flex items-center gap-2">
               <FiPhone className="text-yellow-300" /> {psychologist.contact}
             </p>
@@ -106,122 +105,118 @@ function PsychologistDetailsPage() {
               <FiMail className="text-yellow-300" /> {psychologist.email}
             </p>
             <p className="flex items-center gap-2">
-              <FiMapPin className="text-yellow-300" /> {psychologist.city},{" "}
+              <FiMapPin className="text-yellow-300" /> {psychologist.city},
               {psychologist.country}
             </p>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="col-span-2 p-8">
-          {/* About Section */}
-          <div className="bg-gray-50 rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 pb-2 border-gray-300">
-              About
-            </h2>
-            <p className="text-gray-700 mt-4 leading-relaxed">
+        <div className="col-span-2 p-8 space-y-6">
+          <div className="bg-gray-50 rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">About</h2>
+            <p className="text-gray-700 leading-relaxed">
               {psychologist.bio}
             </p>
           </div>
 
-          {/* Professional Details Section */}
-          <div className="bg-gray-50 rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 pb-2 border-gray-300">
+          <div className="bg-gray-50 rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
               Professional Details
             </h2>
-            <ul className="mt-4 text-gray-700 space-y-4">
+            <ul className="text-gray-700 space-y-4 mt-4">
               <li className="flex items-center gap-2">
                 <FiAward className="text-indigo-600" />
-                <strong>Years of Experience:</strong> {psychologist.experience}{" "}
-                years
+                <strong>Experience:</strong>{" "}
+                {psychologist.experience?.join(", ") || "N/A"}
               </li>
               <li className="flex items-center gap-2">
                 <FiAward className="text-indigo-600" />
-                <strong>Education:</strong> {psychologist.education}
+                <strong>Education:</strong>{" "}
+                {psychologist.education?.join(", ") || "N/A"}
               </li>
               <li className="flex items-center gap-2">
                 <FiAward className="text-indigo-600" />
-                <strong>Clinic Address:</strong> {psychologist.clinicAddress}
+                <strong>Availability:</strong>{" "}
+                {psychologist.availability || "N/A"}
+              </li>
+              <li className="flex items-center gap-2">
+                <FiAward className="text-indigo-600" />
+                <strong>Consultation Fee:</strong>{" "}
+                {psychologist.consultationFee
+                  ? `$${psychologist.consultationFee}`
+                  : "N/A"}
+              </li>
+              <li className="flex items-center gap-2">
+                <FiStar className="text-yellow-400" />
+                <strong>Rating:</strong> {psychologist.rating || "N/A"} / 5
               </li>
             </ul>
           </div>
 
-          {/* Action Section */}
+          <div className="bg-gray-50 rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              Therapy Methods & Certifications
+            </h2>
+            <ul className="text-gray-700 space-y-2">
+              <li>
+                <strong>Therapy Methods:</strong>{" "}
+                {psychologist.therapyMethods?.length
+                  ? psychologist.therapyMethods.join(", ")
+                  : "N/A"}
+              </li>
+              <li>
+                <strong>Certifications:</strong>{" "}
+                {psychologist.certifications?.length
+                  ? psychologist.certifications.join(", ")
+                  : "N/A"}
+              </li>
+            </ul>
+          </div>
+
           <div className="bg-gray-50 rounded-lg shadow-md p-6">
             {!isDoctorSelected ? (
               <button
                 onClick={handleSelectDoctor}
-                className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg shadow-lg hover:from-green-600 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all"
+                className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg hover:from-green-600 hover:to-blue-600 shadow-lg transition-all"
               >
                 Select as My Doctor
               </button>
             ) : (
               <div className="text-green-600 text-lg font-semibold text-center">
-                You have selected this psychologist as your doctor.
+                You have selected this psychologist.
               </div>
             )}
           </div>
 
-          {/* Chat Box Section */}
           {isDoctorSelected && (
-            <div className="bg-gray-50 rounded-lg shadow-md p-6 mt-6">
+            <div className="bg-gray-50 rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
                 Chat with {psychologist.firstName}
               </h2>
-              {chatHistory.length > 0 ? (
-        chatHistory.map((chat, index) => (
-          <div
-            key={index}
-            className={`mb-3 ${
-              chat.sender === "user" ? "text-left" : "text-right"
-            }`}
-          >
-            <p
-              className={`inline-block px-4 py-2 rounded-lg ${
-                chat.sender === "user"
-                  ? "bg-blue-100 text-blue-600"
-                  : "bg-green-100 text-green-600"
-              }`}
-            >
-              {chat.message}
-            </p>
-          </div>
-        ))
-      ) : (
-        <p className="text-gray-400">Start the conversation...</p>
-      )}
-              {/* <div className="max-h-60 overflow-y-auto bg-white p-4 border border-gray-200 rounded-lg mb-4">
-                {chatHistory.length > 0 ? (
-                  chatHistory.map((chat, index) => (
-                    <div
-                      key={index}
-                      className={`mb-3 ${
-                        chat.sender === "Patient" ? "text-right" : "text-left"
+              <div className="max-h-64 overflow-auto mb-4">
+                {chatHistory.map((chat, index) => (
+                  <div
+                    key={index}
+                    className={`mb-3 ${
+                      chat.sender === "user"
+                        ? "text-left"
+                        : "text-right"
+                    }`}
+                  >
+                    <p
+                      className={`inline-block px-4 py-2 rounded-xl ${
+                        chat.sender === "user"
+                          ? "bg-blue-100 text-blue-600"
+                          : "bg-green-100 text-green-600"
                       }`}
                     >
-                      <p
-                        className={`inline-block px-4 py-2 rounded-lg ${
-                          chat.sender === "Patient"
-                            ? "bg-blue-100 text-blue-600"
-                            : "bg-green-100 text-green-600"
-                        }`}
-                      >
-                        {chat.message}
-                      </p>
-                      <span className="text-xs text-gray-500 block mt-1">
-                        {new Date(chat.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400">Start the conversation...</p>
-                )}
-                {isTyping && (
-                  <p className="text-gray-500 italic">Psychologist is typing...</p>
-                )}
+                      {chat.message}
+                    </p>
+                  </div>
+                ))}
                 <div ref={chatEndRef} />
-              </div> */}
-              <div className="flex gap-4 flex-col sm:flex-row">
+              </div>
+              <div className="flex gap-4 flex-col sm:flex-row mt-4">
                 <textarea
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   rows="2"
@@ -231,7 +226,7 @@ function PsychologistDetailsPage() {
                 />
                 <button
                   onClick={handleSendMessage}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
                 >
                   Send
                 </button>

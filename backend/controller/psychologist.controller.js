@@ -1,4 +1,4 @@
-const Users = require("../model/user.model");
+const Psychologist = require("../model/user.model");
 const Blog = require("../model/blog.model");
 const psychologistController = {};
 psychologistController.Checkapi = (req, res) => {
@@ -8,7 +8,7 @@ psychologistController.Checkapi = (req, res) => {
 };
 psychologistController.getAllPsychologists = async (req, res) => {
   try {
-    const psychologists = await Users.find({
+    const psychologists = await Psychologist.find({
       role: "psychologist",
       isActive: true,
     });
@@ -24,7 +24,7 @@ psychologistController.getAllPsychologists = async (req, res) => {
 psychologistController.getPsychologistById = async (req, res) => {
   const id = req.headers.psychologistid;
   try {
-    const psychologist = await Users.findById(id);
+    const psychologist = await Psychologist.findById(id);
     if (!psychologist) {
       return res.status(404).json({ message: "Psychologist not found." });
     }

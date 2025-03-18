@@ -114,10 +114,7 @@ const childSchema = new mongoose.Schema({
     ref: 'Parent',
     required: true,
   },
-  assignedDoctor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doctor',
-  },
+
   therapySessions: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TherapySession',
@@ -262,7 +259,11 @@ const parentSchema = new mongoose.Schema({
   preferredHospital: {
     type: String,
     trim: true,
-  }
+  },
+  assignedDoctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Psychologist',
+  },
 });
 
 const Parent = mongoose.model('Parent', parentSchema);

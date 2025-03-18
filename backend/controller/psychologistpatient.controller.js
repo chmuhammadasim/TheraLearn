@@ -1,5 +1,8 @@
-const User = require("../model/user.model");
+const Psychologist = require("../model/user.model");
+const {Parent, child} = require("../model/parentchild.model");
 const psychologistpatient = {};
+
+
 psychologistpatient.getPsychologistDetails = async (req, res) => {
   try {
     if (!req.userData || !req.userData.userId) {
@@ -150,19 +153,21 @@ psychologistpatient.getPsyChat = async (req, res) => {
 psychologistpatient.assignPsychologistToPatient = async (req, res) => {
   try {
     const { psychologistid } = req.headers;
-    const userId = req.userData.userId; 
+    const userId = req.userData.id;
+    
+
     if (!psychologistid) {
       return res.status(400).json({ message: 'Psychologist ID is required' });
     }
-    const psychologist = await User.findById(psychologistid);
+    const psychologist = await Psychologist.findById(psychologistid);
     if (!psychologist) {
       return res.status(404).json({ message: 'Psychologist not found' });
     }
-    const patient = await User.findById(userId);
+    const patient = await Parent.findById(userId);
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
-    patient.psychologist = psychologistid;
+    patient.assignedDoctor = psychologistid;
     await patient.save();
     return res.status(200).json({ message: 'Psychologist assigned successfully', patient });
   } catch (error) {
