@@ -24,6 +24,9 @@ function PsychologistPatientDashboard() {
         getPsychologistDetails(),
         getPatients(),
       ]);
+      console.log("Psychologist Data:", psychologistData);
+      console.log("Patients Data:", patientsData);
+      
       setPsychologist(psychologistData);
       setPatients(patientsData);
     } catch (error) {

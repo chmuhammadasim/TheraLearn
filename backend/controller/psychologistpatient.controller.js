@@ -5,10 +5,13 @@ const psychologistpatient = {};
 
 psychologistpatient.getPsychologistDetails = async (req, res) => {
   try {
-    if (!req.userData || !req.userData.userId) {
+    if (!req.userData || !req.userData.id) {
       return res.status(400).json({ message: "Invalid user data" });
     }
-    const psychologist = await User.findById(req.userData.userId);
+    
+    
+    const psychologist = await Psychologist.findById(req.userData.id);
+    console.log(psychologist);
     if (!psychologist || psychologist.role !== "psychologist") {
       return res.status(404).json({ message: "Psychologist not found" });
     }
@@ -180,7 +183,7 @@ psychologistpatient.getAssignedPsychologists = async (req, res) => {
 
   try {
     const patientId = req.userData.userId;
-    const patient = await User.findById(patientId);
+    const patient = await Parent.findById(patientId);
     
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
