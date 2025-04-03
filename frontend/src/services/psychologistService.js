@@ -216,6 +216,7 @@ export const getPatients   = async () => {
         'Content-Type': 'application/json',
       }
     });
+    
     return response.data;
   } catch (error) {
     console.error('Error fetching psychologist details:', error);

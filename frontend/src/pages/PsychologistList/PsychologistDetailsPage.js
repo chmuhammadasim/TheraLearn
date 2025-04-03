@@ -23,36 +23,25 @@ function PsychologistDetailsPage() {
   const [chatHistory, setChatHistory] = useState([]);
   const chatEndRef = useRef(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const psychologistData = await getPsychologistById(id);
-        setPsychologist(psychologistData);
-        const storedId = localStorage.getItem("psychologistId");
-        if (storedId) {
-          setIsDoctorSelected(true);
-        }else{
-          const assignedPsychologist = await getAssignedPsychologists();
-          if (assignedPsychologist) {
-            setIsDoctorSelected(true); 
-            const history = await getChatHistoryUser(assignedPsychologist);
-            setChatHistory(history.filteredMessages);
-          } else {
-            setIsDoctorSelected(false);
-          }
-        }
-        const assignedPsychologists = await getAssignedPsychologists();
-        if (assignedPsychologists) {
-          setIsDoctorSelected(true);
-          const history = await getChatHistoryUser(assignedPsychologists);
-          setChatHistory(history.filteredMessages);
-        } else {
-          setIsDoctorSelected(false);
-        }
-      } catch (error) {
-        console.error("Error:", error);
+  const fetchData = async () => {
+    try {
+      const psychologistData = await getPsychologistById(id);
+      setPsychologist(psychologistData);
+      let storedId = localStorage.getItem("psychologistId");
+      if (!storedId) {
+        storedId = await getAssignedPsychologists();
       }
-    };
+      if (storedId) {
+        setIsDoctorSelected(true);
+        const history = await getChatHistoryUser(storedId);
+        setChatHistory(history.filteredMessages);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [id]);
 
@@ -126,9 +115,7 @@ function PsychologistDetailsPage() {
         <div className="col-span-2 p-8 space-y-6">
           <div className="bg-gray-50 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-2">About</h2>
-            <p className="text-gray-700 leading-relaxed">
-              {psychologist.bio}
-            </p>
+            <p className="text-gray-700 leading-relaxed">{psychologist.bio}</p>
           </div>
 
           <div className="bg-gray-50 rounded-lg shadow-md p-6">
@@ -166,26 +153,6 @@ function PsychologistDetailsPage() {
           </div>
 
           <div className="bg-gray-50 rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              Therapy Methods & Certifications
-            </h2>
-            <ul className="text-gray-700 space-y-2">
-              <li>
-                <strong>Therapy Methods:</strong>{" "}
-                {psychologist.therapyMethods?.length
-                  ? psychologist.therapyMethods.join(", ")
-                  : "N/A"}
-              </li>
-              <li>
-                <strong>Certifications:</strong>{" "}
-                {psychologist.certifications?.length
-                  ? psychologist.certifications.join(", ")
-                  : "N/A"}
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-gray-50 rounded-lg shadow-md p-6">
             {!isDoctorSelected ? (
               <button
                 onClick={handleSelectDoctor}
@@ -210,9 +177,7 @@ function PsychologistDetailsPage() {
                   <div
                     key={index}
                     className={`mb-3 ${
-                      chat.sender === "user"
-                        ? "text-left"
-                        : "text-right"
+                      chat.sender === "user" ? "text-left" : "text-right"
                     }`}
                   >
                     <p

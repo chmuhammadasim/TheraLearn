@@ -117,7 +117,7 @@ const psychologistSchema = new mongoose.Schema({
   },
   patients: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Parent',
   }],
   reviews: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
