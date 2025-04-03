@@ -81,7 +81,8 @@ AuthController.LogInUser = async (req, res) => {
                 token, 
                 children: user.children,
                 parent: user._id, 
-                role: user.role
+                role: user.role,
+                assignedDoctor: user.assignedDoctor
             });
         }
 

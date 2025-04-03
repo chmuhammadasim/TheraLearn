@@ -28,7 +28,19 @@ function PsychologistDetailsPage() {
       try {
         const psychologistData = await getPsychologistById(id);
         setPsychologist(psychologistData);
-
+        const storedId = localStorage.getItem("psychologistId");
+        if (storedId) {
+          setIsDoctorSelected(true);
+        }else{
+          const assignedPsychologist = await getAssignedPsychologists();
+          if (assignedPsychologist) {
+            setIsDoctorSelected(true); 
+            const history = await getChatHistoryUser(assignedPsychologist);
+            setChatHistory(history.filteredMessages);
+          } else {
+            setIsDoctorSelected(false);
+          }
+        }
         const assignedPsychologists = await getAssignedPsychologists();
         if (assignedPsychologists) {
           setIsDoctorSelected(true);

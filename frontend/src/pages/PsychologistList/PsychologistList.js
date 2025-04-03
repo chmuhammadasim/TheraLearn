@@ -10,10 +10,16 @@ function PsychologistListPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedId = localStorage.getItem("psychologistId");
+    if (storedId) {
+      navigate(`/psychologistsdetail/${storedId}`);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -26,7 +32,6 @@ function PsychologistListPage() {
         console.error("Error fetching psychologists:", error);
       }
     };
-
     fetchPsychologists();
   }, []);
 
@@ -41,13 +46,11 @@ function PsychologistListPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-t from-[#008cff] to-[#60efff] p-10 pt-16 relative">
-      {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
         <div className="absolute bg-clouds -top-16 left-0 w-full h-56 opacity-50 animate-float" />
         <div className="absolute bg-balloons -bottom-16 right-0 w-56 h-56 opacity-50 animate-float" />
       </div>
 
-      {/* Page Header */}
       <header className="text-center py-8">
         <motion.h1
           className="text-6xl font-extrabold text-blue-900 mb-4 font-fun"
@@ -62,7 +65,6 @@ function PsychologistListPage() {
         </p>
       </header>
 
-      {/* Psychologist Cards */}
       <motion.div
         className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-10"
         initial={{ opacity: 0 }}
@@ -78,12 +80,8 @@ function PsychologistListPage() {
             key={psychologist._id}
             className="group relative bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2 cursor-pointer overflow-hidden border-4 border-pink-300 hover:border-pink-500"
             onClick={() => handlePsychologistClick(psychologist._id)}
-            whileHover={{
-              scale: 1.05,
-              rotate: [0, 2, -2, 0],
-            }}
+            whileHover={{ scale: 1.05, rotate: [0, 2, -2, 0] }}
           >
-            {/* Profile Picture */}
             <motion.img
               src={psychologist.profilePictureUrl}
               alt={psychologist.firstName}
@@ -96,12 +94,16 @@ function PsychologistListPage() {
               <h3 className="text-3xl font-bold text-gray-900 group-hover:text-pink-700 transition-colors duration-300">
                 {psychologist.name}
               </h3>
-              <p className="text-pink-600 mt-1">{psychologist.firstName} {psychologist.lastName}</p>
+              <p className="text-pink-600 mt-1">
+                {psychologist.firstName} {psychologist.lastName}
+              </p>
               <p className="text-gray-500 mt-2">{psychologist.email}</p>
               <p className="text-gray-500">{psychologist.contact}</p>
-              <p className="text-gray-500">{psychologist.address}, {psychologist.city}, {psychologist.country}</p>
+              <p className="text-gray-500">
+                {psychologist.address}, {psychologist.city},{" "}
+                {psychologist.country}
+              </p>
             </div>
-            {/* Hover Effect */}
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <motion.span
                 className="text-white font-bold px-6 py-3 bg-gradient-to-r from-yellow-400 to-pink-500 rounded-full shadow-lg"
@@ -113,7 +115,6 @@ function PsychologistListPage() {
                 View Details
               </motion.span>
             </div>
-            {/* Decorative Shapes */}
             <div className="absolute -top-4 -right-4 w-12 h-12 bg-pink-300 rounded-full group-hover:scale-110 transition-transform duration-300" />
             <div className="absolute -bottom-4 -left-4 w-8 h-8 bg-yellow-300 rounded-full group-hover:scale-125 transition-transform duration-300" />
             <div className="absolute -top-10 -left-10 w-10 h-10 bg-yellow-200 rounded-full opacity-50 animate-pulse" />
