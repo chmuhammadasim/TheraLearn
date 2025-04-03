@@ -7,9 +7,7 @@ userController.Checkapi = (req, res) => {
     message: "Auth API is working",
   });
 };
-userController.GetUserById = async (req, res) => {
-  console.log(req.userData);
-  
+userController.GetUserById = async (req, res) => {  
   const id = req.userData.id;
 
   try {
@@ -37,8 +35,7 @@ userController.GetUserById = async (req, res) => {
         message: "Parent not found",
       });
     }
-    
-    console.log("Parent:", parent);
+
     
     res.status(200).json({
       success: true,
