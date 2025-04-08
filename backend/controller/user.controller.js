@@ -1,4 +1,4 @@
-const User = require("../model/user.model");
+const {Psychologist} = require("../model/user.model");
 const {Parent, Child} = require("../model/parentchild.model");
 const userController = {};
 const mongoose = require("mongoose");
@@ -9,7 +9,6 @@ userController.Checkapi = (req, res) => {
 };
 userController.GetUserById = async (req, res) => {  
   const id = req.userData.id;
-
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -17,30 +16,45 @@ userController.GetUserById = async (req, res) => {
         message: "Invalid user ID format",
       });
     }
-
-    const parent = await Parent.findById(id)
+    if (req.userData.role === "parent") {
+      const parent = await Parent.findById(id)
       .populate({
         path: 'children',
         model: 'Child',
         populate: {
-          path: 'games',
-          model: 'Game' // Fetch game details using game IDs from children
+        path: 'games',
+        model: 'Game' // Fetch game details using game IDs from children
         }
       })
       .lean();
-
-    if (!parent) {
+      if (!parent) {
       return res.status(404).json({
         success: false,
         message: "Parent not found",
       });
-    }
-
-    
-    res.status(200).json({
+      }
+      res.status(200).json({
       success: true,
       data: parent,
-    });
+      });
+    } else if (req.userData.role === "psychologist") {
+      const psychologist = await Psychologist.findById(id).lean();
+      if (!psychologist) {
+      return res.status(404).json({
+        success: false,
+        message: "Psychologist not found",
+      });
+      }
+      res.status(200).json({
+      success: true,
+      data: psychologist,
+      });
+    } else {
+      return res.status(403).json({
+      success: false,
+      message: "Access denied: Invalid role",
+      });
+    }
   } catch (error) {
     console.error("Error fetching parent by ID:", error);
 

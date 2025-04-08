@@ -93,6 +93,7 @@ function PsychologistPatientDashboard() {
 
   const handlePatientSelection = async (patient) => {
     setSelectedPatient(patient);
+    localStorage.setItem("patientid", patient._id);
     try {
       const history = await getChatHistory(patient._id);
       setChatHistory(history.filteredMessages || []);

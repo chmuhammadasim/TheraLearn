@@ -120,14 +120,13 @@ const psychologistSchema = new mongoose.Schema({
     ref: 'Parent',
   }],
   reviews: [{
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Parent' },
     rating: { type: Number, min: 1, max: 5 },
     comment: { type: String, trim: true },
   }],
   messages: [{
-    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    message: { type: String, trim: true },
-    timestamp: { type: Date, default: Date.now },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
   }],
   createdAt: {
     type: Date,
@@ -141,5 +140,7 @@ const psychologistSchema = new mongoose.Schema({
     default: true,
   }
 });
+const Psychologist = mongoose.model('Psychologist', psychologistSchema);
+const Message = mongoose.model('Message', messageSchema);
 
-module.exports = mongoose.model('Psychologist', psychologistSchema);
+module.exports = { Psychologist, Message };

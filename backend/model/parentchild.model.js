@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const childSchema = new mongoose.Schema({
   firstName: {
@@ -16,60 +16,74 @@ const childSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'child',
+    default: "child",
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'other'],
+    enum: ["male", "female", "other"],
     required: true,
   },
   bloodType: {
     type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+    enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
     trim: true,
   },
-  medicalConditions: [{
-    type: String,
-    trim: true,
-  }],
-  allergies: [{
-    type: String,
-    trim: true,
-  }],
-  medications: [{
-    type: String,
-    trim: true,
-  }],
-  doctorNotes: [{
-    date: {
-      type: Date,
-      default: Date.now,
-    },
-    doctorId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Doctor',
-    },
-    notes: {
+  medicalConditions: [
+    {
       type: String,
       trim: true,
     },
-    prescriptions: [{
-      medication: String,
-      dosage: String,
-      instructions: String,
-    }],
-    followUpDate: {
-      type: Date,
-    }
-  }],
-  geneticDisorders: [{
-    type: String,
-    trim: true,
-  }],
-  familyMedicalHistory: [{
-    type: String,
-    trim: true,
-  }],
+  ],
+  allergies: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  medications: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  doctorNotes: [
+    {
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+      doctorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Doctor",
+      },
+      notes: {
+        type: String,
+        trim: true,
+      },
+      prescriptions: [
+        {
+          medication: String,
+          dosage: String,
+          instructions: String,
+        },
+      ],
+      followUpDate: {
+        type: Date,
+      },
+    },
+  ],
+  geneticDisorders: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  familyMedicalHistory: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
   height: {
     type: Number,
   },
@@ -79,23 +93,32 @@ const childSchema = new mongoose.Schema({
   bmi: {
     type: Number,
   },
-  mentalHealthNotes: [{
-    date: { type: Date, default: Date.now },
-    psychologistId: { type: mongoose.Schema.Types.ObjectId, ref: 'Psychologist' },
-    notes: { type: String, trim: true }
-  }],
-  hospitalVisits: [{
-    date: { type: Date, default: Date.now },
-    hospital: { type: String, trim: true },
-    reason: { type: String, trim: true },
-    doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' }
-  }],
-  labTests: [{
-    testName: { type: String, trim: true },
-    result: { type: String, trim: true },
-    date: { type: Date, default: Date.now },
-    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' },
-  }],
+  mentalHealthNotes: [
+    {
+      date: { type: Date, default: Date.now },
+      psychologistId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Psychologist",
+      },
+      notes: { type: String, trim: true },
+    },
+  ],
+  hospitalVisits: [
+    {
+      date: { type: Date, default: Date.now },
+      hospital: { type: String, trim: true },
+      reason: { type: String, trim: true },
+      doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
+    },
+  ],
+  labTests: [
+    {
+      testName: { type: String, trim: true },
+      result: { type: String, trim: true },
+      date: { type: Date, default: Date.now },
+      doctorId: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
+    },
+  ],
   emergencyContact: {
     name: String,
     relationship: String,
@@ -111,46 +134,64 @@ const childSchema = new mongoose.Schema({
   },
   parent: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Parent',
+    ref: "Parent",
     required: true,
   },
 
-  therapySessions: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'TherapySession',
-  }],
-  behavioralIssues: [{
-    type: String,
-    trim: true,
-  }],
-  developmentalMilestones: [{
-    type: String,
-    trim: true,
-  }],
-  dietRestrictions: [{
-    type: String,
-    trim: true,
-  }],
-  activityPreferences: [{
-    type: String,
-    trim: true,
-  }],
-  hobbies: [{
-    type: String,
-    trim: true,
-  }],
-  favoriteSubjects: [{
-    type: String,
-    trim: true,
-  }],
-  extracurricularActivities: [{
-    type: String,
-    trim: true,
-  }],
-  languageSpoken: [{
-    type: String,
-    trim: true,
-  }],
+  therapySessions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TherapySession",
+    },
+  ],
+  behavioralIssues: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  developmentalMilestones: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  dietRestrictions: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  activityPreferences: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  hobbies: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  favoriteSubjects: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  extracurricularActivities: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  languageSpoken: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
   specialNeeds: {
     type: String,
     trim: true,
@@ -159,14 +200,18 @@ const childSchema = new mongoose.Schema({
     bedtime: String,
     wakeUpTime: String,
   },
-  parentalConcerns: [{
-    type: String,
-    trim: true,
-  }],
-    games: [{
+  parentalConcerns: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
+  games: [
+    {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Game',
-    }],
+      ref: "Game",
+    },
+  ],
 });
 
 const parentSchema = new mongoose.Schema({
@@ -178,7 +223,7 @@ const parentSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'user',
+    default: "user",
   },
   email: {
     type: String,
@@ -230,10 +275,12 @@ const parentSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  children: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Child',
-  }],
+  children: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Child",
+    },
+  ],
   primaryCarePhysician: {
     name: String,
     contact: String,
@@ -248,10 +295,12 @@ const parentSchema = new mongoose.Schema({
     coverageDetails: String,
     validUntil: Date,
   },
-  medicalHistory: [{
-    type: String,
-    trim: true,
-  }],
+  medicalHistory: [
+    {
+      type: String,
+      trim: true,
+    },
+  ],
   insuranceProvider: {
     type: String,
     trim: true,
@@ -262,11 +311,17 @@ const parentSchema = new mongoose.Schema({
   },
   assignedDoctor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Psychologist',
+    ref: "Psychologist",
   },
+  messages: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
 });
 
-const Parent = mongoose.model('Parent', parentSchema);
-const Child = mongoose.model('Child', childSchema);
+const Parent = mongoose.model("Parent", parentSchema);
+const Child = mongoose.model("Child", childSchema);
 
 module.exports = { Parent, Child };

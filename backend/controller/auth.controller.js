@@ -1,6 +1,6 @@
 const Users = require("../model/user.model");
 const {Parent,Child} = require("../model/parentchild.model");
-const Psychologist = require("../model/user.model");
+const {Psychologist}= require("../model/user.model");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const { validationResult } = require("express-validator");

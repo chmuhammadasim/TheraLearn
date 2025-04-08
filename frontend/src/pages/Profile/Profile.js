@@ -140,7 +140,6 @@ const ProfilePage = () => {
 
   const handleSaveChanges = async () => {
     try {
-      // Convert medicalHistory back to array
       const updatedData = {
         ...formData,
         medicalHistory: formData.medicalHistory
@@ -165,26 +164,34 @@ const ProfilePage = () => {
   };
 
   const addChild = () => {
-    setFormData((prev) => ({
-      ...prev,
-      children: [
-        ...prev.children,
-        {
-          firstName: "",
-          lastName: "",
-          dateOfBirth: "",
-          gender: "",
-          bloodType: "",
-          medicalConditions: "",
-          allergies: "",
-          medications: "",
-          role: "child",
-        },
-      ],
-    }));
+    const role = localStorage.getItem("authrole");
+    if (role === "parent") {
+      setFormData((prev) => ({
+        ...prev,
+        children: [
+          ...prev.children,
+          {
+            firstName: "",
+            lastName: "",
+            dateOfBirth: "",
+            gender: "",
+            bloodType: "",
+            medicalConditions: "",
+            allergies: "",
+            medications: "",
+            role: "child",
+          },
+        ],
+      }));
+    }
   };
 
   const removeChild = (index) => {
+    const role = localStorage.getItem("authrole");
+    if (role !== "parent") {
+      setError("You do not have permission to remove children.");
+      return;
+    }
     const updatedChildren = formData.children.filter((_, i) => i !== index);
     setFormData({ ...formData, children: updatedChildren });
   };
