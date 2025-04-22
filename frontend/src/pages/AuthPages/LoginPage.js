@@ -49,6 +49,7 @@ function LoginPage() {
       if(data.role === 'parent') {
         localStorage.setItem('authUser', JSON.stringify(data.parent));
         localStorage.setItem('authChildren', JSON.stringify(data.children));
+        localStorage.setItem('assignedDoctor', JSON.stringify(data.assignedDoctor));
         setChildren(data.children);
         setShowChildPopup(true);
       }

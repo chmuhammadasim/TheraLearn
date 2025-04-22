@@ -10,9 +10,10 @@ function PsychologistListPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedId = localStorage.getItem("psychologistId");
+    const storedId = localStorage.getItem("assignedDoctor");
     if (storedId) {
-      navigate(`/psychologistsdetail/${storedId}`);
+      const cleanId = storedId.replace(/^"|"$/g, "");
+      navigate(`/psychologistsdetail/${cleanId}`);
     }
   }, [navigate]);
 
@@ -35,9 +36,9 @@ function PsychologistListPage() {
     fetchPsychologists();
   }, []);
 
-  const handlePsychologistClick = (psychologistId) => {
-    localStorage.setItem("psychologistId", psychologistId);
-    navigate(`/psychologistsdetail/${psychologistId}`);
+  const handlePsychologistClick = (assignedDoctor) => {
+    localStorage.setItem("assignedDoctor", assignedDoctor);
+    navigate(`/psychologistsdetail/${assignedDoctor}`);
   };
 
   if (isLoading) {

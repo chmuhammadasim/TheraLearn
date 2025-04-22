@@ -22,8 +22,6 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
 const mongoSanitize = require("express-mongo-sanitize");
-
-
 const clientOptions = {
   serverApi: { version: "1", strict: true, deprecationErrors: true },
 };
@@ -37,12 +35,10 @@ app.use(
     extended: true,
   })
 );
-app.use(require('cookie-parser')());
 app.use(bodyParser.json());
 app.use(bodyParser.json({ limit: "100kb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "100kb" }));
-
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 if (process.env.NODE_ENV !== "test") {
   mongoose
     .connect(process.env.THERALEARN_DB_URL, clientOptions)
@@ -59,7 +55,6 @@ if (process.env.NODE_ENV !== "test") {
       process.exit(1);
     });
 }
-
 app.use(xssprotection);
 app.get("/api", function (req, res) {
   res.status(200).send({
@@ -83,7 +78,6 @@ app.use("/api/psychologist", psychologistRoute);
 app.use("/api/game", gameRoute);
 app.use("/api/content", contentRoute);
 app.use("/api/psychologistpatient", psychologistpatientRoute);
-
 app.use((_req, res, next) => {
   res.status(404).send({
     error: "Not Found",

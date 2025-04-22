@@ -25,9 +25,11 @@ function PsychologistDetailsPage() {
 
   const fetchData = async () => {
     try {
-      const psychologistData = await getPsychologistById(id);
+      let storedId = localStorage.getItem("assignedDoctor");
+       storedId = storedId.replace(/^"|"$/g, "");
+      const psychologistData = await getPsychologistById(storedId);
       setPsychologist(psychologistData);
-      let storedId = localStorage.getItem("psychologistId");
+      
       if (!storedId) {
         storedId = await getAssignedPsychologists();
       }
