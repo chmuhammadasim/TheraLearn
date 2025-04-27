@@ -1,0 +1,158 @@
+config:
+  target: 'http://localhost:3000'  # Your app's base URL
+  phases:
+    - duration: 10  # Test duration in seconds
+      arrivalRate: 100  # Number of virtual users arriving per second
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+scenarios:
+  - name: 'Landing and Navigation Flow'
+    flow:
+      - get:
+          url: '/'
+      - get:
+          url: '/games'
+      - get:
+          url: '/blogs'
+      - get:
+          url: '/contactus'
+      - get:
+          url: '/aboutus'
+
+  - name: 'Psychologist Login Flow'
+    flow:
+      - post:
+          url: '/api/login'
+          json:
+            email: 'drsmith@example.com'
+            password: 'asimasim'
+      - think: 2  # Wait for 2 seconds before the next action
+      - get:
+          url: '/dashboard'
+
+  - name: 'Blog Post Creation'
+    flow:
+      - post:
+          url: '/api/blogs'
+          json:
+            title: 'Performance Test Blog'
+            content: 'This is a blog post created during the performance test.'
+            author: 'Dr. Smith'
+
+  - name: 'Patient Info Navigation'
+    flow:
+      - get:
+          url: '/patientinfo'
+      - think: 1  # Wait for 1 second before the next action
+      - get:
+          url: '/patientinfo/details/123'  # Assuming this fetches details of a specific patient
+
+  - name: 'Patient Info Update'
+    flow:
+      - post:
+          url: '/api/patientinfo/123'
+          json:
+            name: 'John Doe'
+            age: 30
+            condition: 'Autism'
+      - think: 2
+      - get:
+          url: '/patientinfo/details/123'
+
+  - name: 'Psychologist Profile Update'
+    flow:
+      - post:
+          url: '/api/psychologist/update'
+          json:
+            name: 'Dr. Smith'
+            specialization: 'Child Psychology'
+            email: 'drsmith@example.com'
+      - think: 1
+      - get:
+          url: '/dashboard'
+
+  - name: 'Blog Panel Navigation'
+    flow:
+      - get:
+          url: '/blogpanel'
+      - think: 1  # Wait for 1 second before the next action
+      - get:
+          url: '/blogpanel/create'
+
+  - name: 'Contact Us Form Submission'
+    flow:
+      - post:
+          url: '/api/contactus'
+          json:
+            name: 'John Doe'
+            email: 'john.doe@example.com'
+            message: 'This is a test message for the contact form.'
+      - think: 2
+      - get:
+          url: '/contactus'
+
+  - name: 'Search Functionality'
+    flow:
+      - get:
+          url: '/search?q=therapy'
+      - think: 1
+      - get:
+          url: '/search?q=games'
+
+  - name: 'Logout Flow'
+    flow:
+      - post:
+          url: '/api/logout'
+      - think: 1
+      - get:
+          url: '/'
+
+  - name: 'Form Submission Stress'
+    flow:
+      - post:
+          url: '/api/blogs'
+          json:
+            title: 'Stress Test Blog'
+            content: 'This is a test blog submitted under stress.'
+            author: 'Dr. Smith'
+
+  - name: 'Multiple API Calls'
+    flow:
+      - get:
+          url: '/games'
+      - think: 1
+      - get:
+          url: '/blogs'
+      - think: 1
+      - get:
+          url: '/contactus'
+      - think: 1
+      - get:
+          url: '/aboutus'
+
+  - name: 'Admin Dashboard Access'
+    flow:
+      - post:
+          url: '/api/admin/login'
+          json:
+            username: 'admin'
+            password: 'adminpassword'
+      - think: 2
+      - get:
+          url: '/admin/dashboard'
+      - get:
+          url: '/admin/users'
+
+  - name: 'User Registration Flow'
+    flow:
+      - post:
+          url: '/api/register'
+          json:
+            name: 'New User'
+            email: 'newuser@example.com'
+            password: 'password123'
+      - think: 2
+      - get:
+          url: '/dashboard'
+
