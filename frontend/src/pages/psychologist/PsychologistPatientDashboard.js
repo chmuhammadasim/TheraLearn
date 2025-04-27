@@ -9,6 +9,7 @@ import {
 } from "../../services/psychologistService";
 import Loading from "../../components/Loading";
 
+// New component for showing quick stats
 const DashboardStats = ({ totalPatients }) => (
   <div className="w-full bg-yellow-50 p-6 rounded-lg shadow-md text-center mb-6">
     <h2 className="text-xl font-semibold text-yellow-600 flex items-center justify-center gap-2">
