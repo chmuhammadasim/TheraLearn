@@ -4,7 +4,7 @@ import { getUserData } from '../../services/userService';
 import 'chart.js/auto';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { motion } from 'framer-motion';
-import { FaUser, FaGamepad } from 'react-icons/fa';
+import { FaUser, FaGamepad, FaArrowLeft, FaChild, FaEnvelope, FaMapMarkerAlt, FaBirthdayCake } from 'react-icons/fa';
 
 function Dashboard() {
   const [loading, setIsLoading] = useState(true);
@@ -144,15 +144,29 @@ function Dashboard() {
     ).sort((a, b) => new Date(a) - new Date(b));
     return {
       labels: allLabels,
-      datasets: gameSessions.map((childData) => {
+      datasets: gameSessions.map((childData, idx) => {
         const filledScores = allLabels.map((label) => {
-          const idx = childData.labels.indexOf(label);
-          return idx >= 0 ? childData.scores[idx] : null;
+          const i = childData.labels.indexOf(label);
+          return i >= 0 ? childData.scores[i] : null;
         });
+        // Assign a color for each child
+        const colors = [
+          'rgba(75,192,192,1)',
+          'rgba(255,99,132,1)',
+          'rgba(54,162,235,1)',
+          'rgba(255,206,86,1)',
+          'rgba(153,102,255,1)',
+          'rgba(255,159,64,1)',
+        ];
         return {
           label: childData.childName,
           data: filledScores,
           borderWidth: 2,
+          borderColor: colors[idx % colors.length],
+          backgroundColor: colors[idx % colors.length],
+          fill: false,
+          pointRadius: 4,
+          pointHoverRadius: 6,
         };
       }),
     };
@@ -179,6 +193,7 @@ function Dashboard() {
         backgroundColor: 'rgba(54,162,235,0.6)',
         borderColor: 'rgba(54,162,235,1)',
         borderWidth: 1,
+        borderRadius: 8,
       },
     ],
   };
@@ -227,13 +242,16 @@ function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-400 via-slate-500 to-slate-600 pt-20">
-      {/* Simple header bar */}
-      <header className="w-full fixed top-0 left-0 bg-white shadow-md z-10 p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-blue-600 flex items-center gap-2">
-          <FaUser className="text-yellow-400" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 pt-24">
+      {/* Header */}
+      <header className="w-full fixed top-0 left-0 bg-white/90 shadow-lg z-20 p-4 flex justify-between items-center backdrop-blur">
+        <h1 className="text-2xl font-extrabold text-blue-700 flex items-center gap-3 tracking-tight">
+          <FaUser className="text-yellow-400 text-3xl" />
           TheraLearn Dashboard
         </h1>
+        <span className="hidden md:inline text-gray-500 font-medium">
+          Welcome, {userData?.firstName}
+        </span>
       </header>
 
       <motion.div
@@ -242,166 +260,133 @@ function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="w-full max-w-6xl bg-white p-6 md:p-8 mt-4 shadow-2xl rounded-2xl">
+        <div className="w-full max-w-6xl bg-white/80 p-6 md:p-10 mt-4 shadow-2xl rounded-3xl border border-blue-100">
+          {/* Parent Info */}
           {userData && (
-            <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-700 mb-4 border-b-4 border-blue-500 pb-2">
-                Parent Information
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-blue-700 mb-4 flex items-center gap-2 border-b-4 border-blue-400 pb-2">
+                <FaUser className="text-blue-400" /> Parent Information
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-blue-50 p-4 rounded-xl shadow-md">
-                <p><strong>First Name:</strong> {userData.firstName}</p>
-                <p><strong>Last Name:</strong> {userData.lastName}</p>
-                <p><strong>Username:</strong> {userData.username}</p>
-                <p><strong>Role:</strong> {userData.role || 'N/A'}</p>
-                <p><strong>Email:</strong> {userData.email}</p>
-                <p><strong>City:</strong> {userData.city || 'N/A'}</p>
-                <p><strong>Country:</strong> {userData.country || 'N/A'}</p>
-                <p><strong>Joined:</strong> {new Date(userData.createdAt).toLocaleDateString()}</p>
-                <p><strong>Contact:</strong> {userData.contact || 'N/A'}</p>
-                <p><strong>Address:</strong> {userData.address || 'N/A'}</p>
-                <p><strong>Active:</strong> {userData.isActive ? 'Yes' : 'No'}</p>
-                <p><strong>Emergency Authorization:</strong> {userData.emergencyAuthorization ? 'Yes' : 'No'}</p>
-                <p><strong>Policy #:</strong> {userData.insurancePolicy?.policyNumber || 'N/A'}</p>
-                <p><strong>Coverage:</strong> {userData.insurancePolicy?.coverageDetails || 'N/A'}</p>
-                <p>
-                  <strong>Policy Valid Until:</strong>{' '}
-                  {userData.insurancePolicy?.validUntil
-                    ? new Date(userData.insurancePolicy.validUntil).toLocaleDateString()
-                    : 'N/A'}
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-2xl shadow-inner">
+                <div className="flex items-center gap-2">
+                  <FaUser className="text-blue-400" />
+                  <span><strong>First Name:</strong> {userData.firstName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaUser className="text-blue-400" />
+                  <span><strong>Last Name:</strong> {userData.lastName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaEnvelope className="text-blue-400" />
+                  <span><strong>Email:</strong> {userData.email}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaMapMarkerAlt className="text-blue-400" />
+                  <span><strong>City:</strong> {userData.city || 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaMapMarkerAlt className="text-blue-400" />
+                  <span><strong>Country:</strong> {userData.country || 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaUser className="text-blue-400" />
+                  <span><strong>Username:</strong> {userData.username}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-block bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
+                    {userData.role || 'N/A'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaBirthdayCake className="text-blue-400" />
+                  <span><strong>Joined:</strong> {new Date(userData.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span><strong>Active:</strong> <span className={`inline-block px-2 py-1 rounded-full text-xs font-bold ${userData.isActive ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>{userData.isActive ? 'Yes' : 'No'}</span></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span><strong>Emergency Authorization:</strong> <span className={`inline-block px-2 py-1 rounded-full text-xs font-bold ${userData.emergencyAuthorization ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>{userData.emergencyAuthorization ? 'Yes' : 'No'}</span></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span><strong>Policy #:</strong> {userData.insurancePolicy?.policyNumber || 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span><strong>Coverage:</strong> {userData.insurancePolicy?.coverageDetails || 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span><strong>Policy Valid Until:</strong> {userData.insurancePolicy?.validUntil ? new Date(userData.insurancePolicy.validUntil).toLocaleDateString() : 'N/A'}</span>
+                </div>
               </div>
             </div>
           )}
 
-          {userData?.children && userData.children.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-700 mb-4 border-b-4 border-green-500 pb-2">
-                Children
+          {/* Children Section */}
+          {userData?.children && userData.children.length > 0 && !singleChild && (
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-4 flex items-center gap-2 border-b-4 border-green-400 pb-2">
+                <FaChild className="text-green-400" /> Children
               </h2>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {userData.children.map((child, idx) => (
-                  <div
+                  <motion.div
                     key={child._id}
-                    className="bg-white border-l-4 border-blue-400 p-4 rounded-xl shadow-md hover:bg-blue-50 transition cursor-pointer grid grid-cols-1 md:grid-cols-3 gap-2"
+                    className="bg-white border-l-8 border-blue-300 p-6 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer flex flex-col gap-2 relative"
+                    whileHover={{ y: -4 }}
                     onClick={() => setSelectedChildIndex(idx)}
                   >
-                    <p><strong>Name:</strong> {child.firstName} {child.lastName}</p>
-                    <p><strong>Role:</strong> {child.role}</p>
-                    <p><strong>DOB:</strong> {new Date(child.dateOfBirth).toLocaleDateString()}</p>
-                    <p><strong>Gender:</strong> {child.gender}</p>
-                    <p><strong>Blood Type:</strong> {child.bloodType || 'N/A'}</p>
-                    <p><strong>Medical Conditions:</strong> {child.medicalConditions?.join(', ') || 'N/A'}</p>
-                    <p><strong>Allergies:</strong> {child.allergies?.join(', ') || 'N/A'}</p>
-                    <p><strong>Medications:</strong> {child.medications?.join(', ') || 'N/A'}</p>
-                    {child.doctorNotes && child.doctorNotes.length > 0 && (
-                      <div className="md:col-span-3">
-                        <strong>Doctor Notes:</strong>
-                        <ul className="list-disc pl-5">
-                          {child.doctorNotes.map((note, noteIdx) => (
-                            <li key={noteIdx}>
-                              Date: {new Date(note.date).toLocaleDateString()} | Notes: {note.notes || 'N/A'}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    <p><strong>Genetic Disorders:</strong> {child.geneticDisorders?.join(', ') || 'N/A'}</p>
-                    <p><strong>Family Medical History:</strong> {child.familyMedicalHistory?.join(', ') || 'N/A'}</p>
-                    <p><strong>Height:</strong> {child.height || 'N/A'}</p>
-                    <p><strong>Weight:</strong> {child.weight || 'N/A'}</p>
-                    <p><strong>BMI:</strong> {child.bmi || 'N/A'}</p>
-                    {child.mentalHealthNotes && child.mentalHealthNotes.length > 0 && (
-                      <div className="md:col-span-3">
-                        <strong>Mental Health Notes:</strong>
-                        <ul className="list-disc pl-5">
-                          {child.mentalHealthNotes.map((mhNote, noteIdx) => (
-                            <li key={noteIdx}>
-                              Date: {new Date(mhNote.date).toLocaleDateString()} | Notes: {mhNote.notes || 'N/A'}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {child.hospitalVisits && child.hospitalVisits.length > 0 && (
-                      <div className="md:col-span-3">
-                        <strong>Hospital Visits:</strong>
-                        <ul className="list-disc pl-5">
-                          {child.hospitalVisits.map((visit, visitIdx) => (
-                            <li key={visitIdx}>
-                              Date: {new Date(visit.date).toLocaleDateString()} | Reason: {visit.reason || 'N/A'}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {child.labTests && child.labTests.length > 0 && (
-                      <div className="md:col-span-3">
-                        <strong>Lab Tests:</strong>
-                        <ul className="list-disc pl-5">
-                          {child.labTests.map((test, testIdx) => (
-                            <li key={testIdx}>
-                              Date: {new Date(test.date).toLocaleDateString()} | Test: {test.testName} | Result: {test.result}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {child.emergencyContact && (
-                      <p>
-                        <strong>Emergency Contact:</strong> {child.emergencyContact.name} (Relationship: {child.emergencyContact.relationship}, Phone: {child.emergencyContact.phone})
-                      </p>
-                    )}
-                    <p><strong>School:</strong> {child.school || 'N/A'}</p>
-                    <p><strong>Grade:</strong> {child.grade || 'N/A'}</p>
-                    {child.behavioralIssues?.length > 0 && (
-                      <p className="md:col-span-3"><strong>Behavioral Issues:</strong> {child.behavioralIssues.join(', ')}</p>
-                    )}
-                    {child.developmentalMilestones?.length > 0 && (
-                      <p className="md:col-span-3"><strong>Developmental Milestones:</strong> {child.developmentalMilestones.join(', ')}</p>
-                    )}
-                    {child.dietRestrictions?.length > 0 && (
-                      <p><strong>Diet Restrictions:</strong> {child.dietRestrictions.join(', ')}</p>
-                    )}
-                    {child.activityPreferences?.length > 0 && (
-                      <p><strong>Activities:</strong> {child.activityPreferences.join(', ')}</p>
-                    )}
-                    {child.hobbies?.length > 0 && (
-                      <p><strong>Hobbies:</strong> {child.hobbies.join(', ')}</p>
-                    )}
-                    {child.favoriteSubjects?.length > 0 && (
-                      <p><strong>Subjects:</strong> {child.favoriteSubjects.join(', ')}</p>
-                    )}
-                    {child.extracurricularActivities?.length > 0 && (
-                      <p className="md:col-span-3"><strong>Extracurriculars:</strong> {child.extracurricularActivities.join(', ')}</p>
-                    )}
-                    {child.languageSpoken?.length > 0 && (
-                      <p><strong>Languages:</strong> {child.languageSpoken.join(', ')}</p>
-                    )}
-                    <p><strong>Special Needs:</strong> {child.specialNeeds || 'N/A'}</p>
-                    {child.sleepSchedule && (
-                      <p>
-                        <strong>Sleep Schedule:</strong> Bedtime: {child.sleepSchedule.bedtime || 'N/A'}, Wake Up: {child.sleepSchedule.wakeUpTime || 'N/A'}
-                      </p>
-                    )}
-                    {child.parentalConcerns?.length > 0 && (
-                      <p className="md:col-span-3"><strong>Parental Concerns:</strong> {child.parentalConcerns.join(', ')}</p>
-                    )}
-                  </div>
+                    <div className="absolute top-4 right-4">
+                      <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold shadow">
+                        {child.role}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <FaChild className="text-blue-400 text-xl" />
+                      <span className="text-lg font-semibold">{child.firstName} {child.lastName}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-sm text-gray-600">
+                      <span className="flex items-center gap-1"><FaBirthdayCake className="text-pink-400" /> {new Date(child.dateOfBirth).toLocaleDateString()}</span>
+                      <span className="flex items-center gap-1">{child.gender}</span>
+                      <span className="flex items-center gap-1">Blood: {child.bloodType || 'N/A'}</span>
+                      <span className="flex items-center gap-1">School: {child.school || 'N/A'}</span>
+                      <span className="flex items-center gap-1">Grade: {child.grade || 'N/A'}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {child.medicalConditions?.length > 0 && (
+                        <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">Medical: {child.medicalConditions.join(', ')}</span>
+                      )}
+                      {child.allergies?.length > 0 && (
+                        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">Allergies: {child.allergies.join(', ')}</span>
+                      )}
+                      {child.specialNeeds && (
+                        <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-semibold">Special Needs</span>
+                      )}
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
           )}
 
+          {/* Single Child View */}
           {singleChild && (
-            <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-700 mb-6 border-b-4 border-purple-500 pb-2">
-                {singleChild.firstName} {singleChild.lastName} - Game Scores
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mb-12">
+              <div className="flex items-center gap-4 mb-6">
+                <button
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full shadow transition"
+                  onClick={() => setSelectedChildIndex(null)}
+                >
+                  <FaArrowLeft /> Back to All Children
+                </button>
+                <h2 className="text-2xl md:text-3xl font-bold text-purple-700 border-b-4 border-purple-400 pb-2 flex items-center gap-2">
+                  <FaChild className="text-purple-400" />
+                  {singleChild.firstName} {singleChild.lastName} - Game Scores
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {Object.entries(singleChildGames).map(([childGame, data]) => (
                   <div
                     key={childGame}
-                    className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center"
+                    className="bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-2xl shadow-xl flex flex-col items-center"
                   >
                     <h4 className="text-xl font-semibold text-gray-700 mb-4 underline">
                       {childGame}
@@ -417,6 +402,8 @@ function Dashboard() {
                               borderColor: 'rgba(75,192,192,1)',
                               borderWidth: 2,
                               fill: false,
+                              pointRadius: 4,
+                              pointHoverRadius: 6,
                             },
                           ],
                         }}
@@ -429,12 +416,13 @@ function Dashboard() {
             </div>
           )}
 
+          {/* All Games Comparison */}
           {allGames.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-700 mb-6 border-b-4 border-indigo-500 pb-2">
-                All Games Comparison
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-indigo-700 mb-6 flex items-center gap-2 border-b-4 border-indigo-400 pb-2">
+                <FaGamepad className="text-indigo-400" /> All Games Comparison
               </h2>
-              <div className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col md:flex-row items-center md:items-start justify-around gap-6">
+              <div className="bg-gradient-to-r from-indigo-50 to-indigo-100 p-6 rounded-2xl shadow-xl flex flex-col md:flex-row items-center md:items-start justify-around gap-8">
                 <div className="w-full md:w-1/2 h-72">
                   <Bar data={allGamesData} options={chartOptions} />
                 </div>
@@ -445,12 +433,13 @@ function Dashboard() {
             </div>
           )}
 
+          {/* Overall Score Trend */}
           {overallTrend && overallTrend.labels.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-700 mb-6 border-b-4 border-red-500 pb-2">
-                Overall Score Trend
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-red-700 mb-6 flex items-center gap-2 border-b-4 border-red-400 pb-2">
+                <FaGamepad className="text-red-400" /> Overall Score Trend
               </h2>
-              <div className="bg-gray-50 p-4 rounded-xl shadow-lg w-full md:w-1/2 mx-auto h-72">
+              <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-2xl shadow-xl w-full md:w-2/3 mx-auto h-72">
                 <Line
                   data={{
                     labels: overallTrend.labels,
@@ -461,6 +450,8 @@ function Dashboard() {
                         borderColor: 'rgba(255,99,132,1)',
                         borderWidth: 2,
                         fill: false,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
                       },
                     ],
                   }}
@@ -470,14 +461,15 @@ function Dashboard() {
             </div>
           )}
 
+          {/* Child Comparisons */}
           {Object.keys(compareGames).length > 0 && (
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-700 mb-6 flex items-center gap-2 border-b-4 border-yellow-500 pb-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-yellow-700 mb-6 flex items-center gap-2 border-b-4 border-yellow-400 pb-2">
                 <FaGamepad className="text-yellow-500" /> Child Comparisons
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {Object.entries(compareGames).map(([gameName, sessions]) => (
-                  <div key={gameName} className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center">
+                  <div key={gameName} className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-2xl shadow-xl flex flex-col items-center">
                     <h3 className="text-xl font-semibold text-gray-700 mb-4 underline">
                       {gameName}
                     </h3>

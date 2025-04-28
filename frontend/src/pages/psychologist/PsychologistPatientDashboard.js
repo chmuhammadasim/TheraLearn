@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FiPhone, FiMail, FiUser, FiSearch, FiBarChart2, FiSend, FiRefreshCw } from "react-icons/fi";
+import {
+  FiPhone,
+  FiMail,
+  FiUser,
+  FiSearch,
+  FiBarChart2,
+  FiSend,
+  FiRefreshCw,
+  FiMapPin,
+  FiBookOpen,
+  FiBriefcase,
+} from "react-icons/fi";
 import {
   getPsychologistDetails,
   getPatients,
@@ -11,15 +22,15 @@ import Loading from "../../components/Loading";
 
 // Enhanced dashboard stats component with better visual elements
 const DashboardStats = ({ totalPatients }) => (
-  <div className="w-full bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg shadow-md text-center mb-6 border-l-4 border-yellow-400">
-    <h2 className="text-xl font-semibold text-yellow-600 flex items-center justify-center gap-2">
+  <div className="w-full bg-gradient-to-r from-yellow-100 to-orange-200 p-8 rounded-2xl shadow-lg text-center mb-8 border-l-8 border-yellow-400">
+    <h2 className="text-2xl font-bold text-yellow-700 flex items-center justify-center gap-3">
       <FiBarChart2 className="text-yellow-500" />
       Dashboard Overview
     </h2>
-    <div className="mt-4 flex justify-center">
-      <div className="px-6 py-3 bg-white rounded-lg shadow-sm">
-        <p className="text-gray-600">Total Patients</p>
-        <p className="text-3xl font-bold text-yellow-600">{totalPatients}</p>
+    <div className="mt-6 flex justify-center">
+      <div className="px-8 py-5 bg-white rounded-xl shadow-md border-2 border-yellow-200">
+        <p className="text-gray-600 text-lg">Total Patients</p>
+        <p className="text-4xl font-extrabold text-yellow-600">{totalPatients}</p>
       </div>
     </div>
   </div>
@@ -54,7 +65,7 @@ function PsychologistPatientDashboard() {
   }, [fetchDashboardData]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2000);
+    const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -69,7 +80,10 @@ function PsychologistPatientDashboard() {
     }
     try {
       await sendMessageToPatient(selectedPatient._id, message);
-      setChatHistory((prev) => [...prev, { sender: "Psychologist", message }]);
+      setChatHistory((prev) => [
+        ...prev,
+        { sender: "psychologist", message },
+      ]);
       setMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
@@ -87,7 +101,7 @@ function PsychologistPatientDashboard() {
       if (patientResponse.response) {
         setChatHistory((prev) => [
           ...prev,
-          { sender: "Patient", message: patientResponse.response },
+          { sender: "patient", message: patientResponse.response },
         ]);
       }
     } catch (error) {
@@ -116,27 +130,34 @@ function PsychologistPatientDashboard() {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-r from-blue-100 to-indigo-100 p-6">
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <header className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6">
-          <h1 className="text-3xl font-bold">Psychologist Dashboard</h1>
-          <p className="text-blue-100">Manage your patients and communications</p>
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 p-6">
+      <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-indigo-100">
+        <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 rounded-b-3xl shadow">
+          <h1 className="text-4xl font-extrabold tracking-tight flex items-center gap-3">
+            <FiUser className="text-3xl" />
+            Psychologist Dashboard
+          </h1>
+          <p className="text-blue-100 mt-2 text-lg">
+            Manage your patients and communications
+          </p>
         </header>
 
-        <div className="p-8">
+        <div className="p-10">
           {/* Show quick stats */}
           <DashboardStats totalPatients={patients.length} />
 
-          <div className="flex flex-wrap gap-6">
-            {psychologist && <PsychologistDetails psychologist={psychologist} />}
-            <div className="w-full sm:w-2/3">
+          <div className="flex flex-col md:flex-row gap-8">
+            {psychologist && (
+              <PsychologistDetails psychologist={psychologist} />
+            )}
+            <div className="w-full md:w-2/3">
               {/* Patient Search */}
-              <div className="relative mb-6">
-                <FiSearch className="absolute left-3 top-3 text-gray-400" />
+              <div className="relative mb-8">
+                <FiSearch className="absolute left-4 top-4 text-gray-400 text-xl" />
                 <input
                   type="text"
                   placeholder="Search patients by name..."
-                  className="pl-10 p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all"
+                  className="pl-12 p-4 border-2 border-gray-200 rounded-xl w-full focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 transition-all text-lg shadow"
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                 />
@@ -169,25 +190,42 @@ function PsychologistPatientDashboard() {
 }
 
 const PsychologistDetails = React.memo(({ psychologist }) => (
-  <div className="w-full sm:w-1/3 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-    <h2 className="text-2xl font-semibold text-blue-700 mb-4">Your Profile</h2>
-    <div className="space-y-3">
-      <p className="flex items-center font-medium text-gray-700">
-        <FiUser className="mr-3 text-blue-500" /> 
-        <span>{psychologist.firstName} {psychologist.lastName}</span>
+  <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-2xl shadow-lg border-l-8 border-blue-400 flex flex-col items-center mb-8 md:mb-0">
+    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-200 to-indigo-300 flex items-center justify-center mb-4 shadow-lg">
+      <FiUser className="text-5xl text-blue-700" />
+    </div>
+    <h2 className="text-2xl font-bold text-blue-800 mb-2">Your Profile</h2>
+    <div className="space-y-3 w-full">
+      <p className="flex items-center font-medium text-gray-700 text-lg">
+        <FiUser className="mr-3 text-blue-500" />
+        <span>
+          {psychologist.firstName} {psychologist.lastName}
+        </span>
       </p>
-      <p className="flex items-center font-medium text-gray-700">
-        <FiMail className="mr-3 text-blue-500" /> 
+      <p className="flex items-center font-medium text-gray-700 text-lg">
+        <FiMail className="mr-3 text-blue-500" />
         <span>{psychologist.email}</span>
       </p>
-      <p className="flex items-center font-medium text-gray-700">
-        <FiPhone className="mr-3 text-blue-500" /> 
+      <p className="flex items-center font-medium text-gray-700 text-lg">
+        <FiPhone className="mr-3 text-blue-500" />
         <span>{psychologist.contact}</span>
       </p>
-      <div className="pt-2">
-        <p className="text-gray-700"><span className="font-medium">Education:</span> {psychologist.education.join(", ")}</p>
-        <p className="text-gray-700"><span className="font-medium">Experience:</span> {psychologist.experience.join(", ")}</p>
-        <p className="text-gray-700"><span className="font-medium">Address:</span> {psychologist.address}</p>
+      <div className="pt-2 space-y-1">
+        <p className="flex items-center text-gray-700">
+          <FiBookOpen className="mr-2 text-indigo-500" />
+          <span className="font-medium">Education:</span>{" "}
+          <span className="ml-1">{psychologist.education.join(", ")}</span>
+        </p>
+        <p className="flex items-center text-gray-700">
+          <FiBriefcase className="mr-2 text-indigo-500" />
+          <span className="font-medium">Experience:</span>{" "}
+          <span className="ml-1">{psychologist.experience.join(", ")}</span>
+        </p>
+        <p className="flex items-center text-gray-700">
+          <FiMapPin className="mr-2 text-indigo-500" />
+          <span className="font-medium">Address:</span>{" "}
+          <span className="ml-1">{psychologist.address}</span>
+        </p>
       </div>
     </div>
   </div>
@@ -195,40 +233,46 @@ const PsychologistDetails = React.memo(({ psychologist }) => (
 
 const PatientList = React.memo(({ patients, selectedPatient, onSelect }) => (
   <div>
-    <h2 className="text-2xl font-semibold mb-4 text-blue-700">Your Patients</h2>
-    <div className="max-h-80 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+    <h2 className="text-2xl font-bold mb-4 text-blue-800">Your Patients</h2>
+    <div className="max-h-96 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
       {patients.length > 0 ? (
         patients.map((patient) => (
           <div
             key={patient._id}
-            className={`p-4 rounded-lg border-2 shadow-md cursor-pointer transition-all hover:transform hover:scale-[1.01] ${
+            className={`p-5 rounded-xl border-2 shadow-md cursor-pointer transition-all hover:scale-[1.02] flex items-center gap-4 ${
               selectedPatient?._id === patient._id
-                ? "bg-blue-100 border-blue-500"
-                : "bg-white border-gray-200 hover:border-blue-300"
+                ? "bg-indigo-100 border-indigo-400"
+                : "bg-white border-gray-200 hover:border-indigo-300"
             }`}
             onClick={() => onSelect(patient)}
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-semibold text-lg text-blue-800">
-                  {patient.firstName} {patient.lastName}
-                </p>
-                <p className="text-gray-600">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-indigo-200 to-blue-200 flex items-center justify-center">
+              <FiUser className="text-2xl text-indigo-700" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-lg text-blue-900">
+                {patient.firstName} {patient.lastName}
+              </p>
+              <div className="flex flex-wrap gap-3 text-gray-600 text-sm mt-1">
+                <span className="flex items-center">
                   <FiMail className="inline-block mr-1" /> {patient.email}
-                </p>
-                <p className="text-gray-600">
+                </span>
+                <span className="flex items-center">
                   <FiPhone className="inline-block mr-1" /> {patient.contact}
-                </p>
+                </span>
               </div>
-              <div className="text-right text-gray-500 text-sm">
-                <p>{patient.city}</p>
-                <p>{patient.country}</p>
-              </div>
+            </div>
+            <div className="text-right text-gray-500 text-sm min-w-[80px]">
+              <p className="flex items-center gap-1">
+                <FiMapPin className="inline-block" />
+                {patient.city}
+              </p>
+              <p>{patient.country}</p>
             </div>
           </div>
         ))
       ) : (
-        <div className="text-center p-8 bg-gray-50 rounded-lg">
+        <div className="text-center p-8 bg-gray-50 rounded-xl">
           <p className="text-gray-500">No patients found</p>
         </div>
       )}
@@ -236,51 +280,69 @@ const PatientList = React.memo(({ patients, selectedPatient, onSelect }) => (
   </div>
 ));
 
-const ChatBox = ({ patient, chatHistory, message, setMessage, onSendMessage, onRefresh }) => (
-  <div className="mt-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-    <div className="flex justify-between items-center mb-4">
-      <h3 className="text-xl font-semibold text-blue-700">
+const ChatBox = ({
+  patient,
+  chatHistory,
+  message,
+  setMessage,
+  onSendMessage,
+  onRefresh,
+}) => (
+  <div className="mt-12 p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiUser className="text-xl" />
         Chat with {patient.firstName} {patient.lastName}
       </h3>
       <button
         onClick={onRefresh}
-        className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition"
+        className="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition font-semibold shadow"
       >
         <FiRefreshCw /> Refresh
       </button>
     </div>
-    
-    <div className="h-80 overflow-y-auto mb-4 bg-gray-50 p-4 border border-gray-200 rounded-lg shadow-inner">
+
+    <div className="h-80 overflow-y-auto mb-6 bg-white p-6 border border-gray-200 rounded-xl shadow-inner custom-scrollbar">
       {chatHistory.length > 0 ? (
         chatHistory.map((chat, index) => (
           <div
             key={index}
-            className={`mb-4 flex ${chat.sender === "psychologist" ? "justify-start" : "justify-end"}`}
+            className={`mb-5 flex ${
+              chat.sender === "psychologist" ? "justify-end" : "justify-start"
+            }`}
           >
             <div
-              className={`max-w-[80%] px-4 py-3 rounded-lg shadow-sm ${
+              className={`max-w-[75%] px-5 py-3 rounded-2xl shadow-md ${
                 chat.sender === "psychologist"
-                  ? "bg-blue-500 text-white rounded-bl-none"
-                  : "bg-gray-200 text-gray-800 rounded-br-none"
+                  ? "bg-indigo-600 text-white rounded-br-none"
+                  : "bg-gray-200 text-gray-900 rounded-bl-none"
               }`}
             >
-              <p>{chat.message}</p>
-              <p className={`text-xs mt-1 ${chat.sender === "psychologist" ? "text-blue-100" : "text-gray-500"}`}>
-                {chat.sender}
+              <p className="text-base">{chat.message}</p>
+              <p
+                className={`text-xs mt-2 ${
+                  chat.sender === "psychologist"
+                    ? "text-indigo-100"
+                    : "text-gray-500"
+                }`}
+              >
+                {chat.sender === "psychologist" ? "You" : "Patient"}
               </p>
             </div>
           </div>
         ))
       ) : (
         <div className="h-full flex items-center justify-center">
-          <p className="text-gray-400">No messages yet. Start the conversation...</p>
+          <p className="text-gray-400">
+            No messages yet. Start the conversation...
+          </p>
         </div>
       )}
     </div>
-    
-    <div className="flex gap-3">
+
+    <div className="flex gap-4">
       <textarea
-        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow"
         rows="2"
         placeholder="Type your message..."
         value={message}
@@ -288,7 +350,7 @@ const ChatBox = ({ patient, chatHistory, message, setMessage, onSendMessage, onR
       />
       <button
         onClick={onSendMessage}
-        className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition flex items-center gap-2"
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
       >
         <FiSend /> Send
       </button>

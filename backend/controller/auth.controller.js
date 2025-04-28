@@ -98,28 +98,6 @@ AuthController.LogInUser = async (req, res) => {
     }
 
     var user = await Psychologist.findOne({ email });
-    console.log(user);
-    if (user && user.role == "psychologist") {
-      if (!user) {
-        return res.status(400).json({ message: "Invalid email or password." });
-      } else {
-        user = await Psychologist.findOne({ email });
-      }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Invalid email or password." });
-      }
-      const token = jsonwebtoken.sign(
-        { id: user._id, email: user.email, role: user.role },
-        process.env.JWT_KEY,
-        { expiresIn: "2d" }
-      );
-      res.status(200).json({
-        message: "Login successful",
-        token,
-        role: user.role,
-      });
-    }
     if (user && user.role == "psychologist" || user.role == "admin") {
       if (!user) {
         return res.status(400).json({ message: "Invalid email or password." });
