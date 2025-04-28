@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("authRole", userRole);
         setIsLoggedIn(true);
         setRole(userRole);
-        if (userRole === "psychologist") {
+        if (userRole === "psychologist" || userRole === "admin") {
           window.location.href = "/";
         }
       } else {

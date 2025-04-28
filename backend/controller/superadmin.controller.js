@@ -1,5 +1,6 @@
 const adminController = {};
-const User = require("../model/user.model");
+const {Psychologist} = require("../model/user.model");
+
 adminController.Checkapi = (req, res) => {
   res.status(200).send({
     message: "Auth API is working",
@@ -7,7 +8,6 @@ adminController.Checkapi = (req, res) => {
 };
 
 const {Parent, Child} = require("../model/parentchild.model");
-const Psychologist = require("../model/user.model");
 
 
 adminController.getAllUsers = async (req, res) => {
@@ -20,8 +20,8 @@ adminController.getAllUsers = async (req, res) => {
 
     // Fetch all children separately with parent data
     const children = await Child.find({})
-      .populate("parent", "firstName lastName contact email")
-      .populate("assignedDoctor", "firstName lastName contact email")
+      .populate("parent", "firstName lastName ")
+      .populate("firstName lastName")
       .select("-password");
 
     // Fetch all psychologists with their patients

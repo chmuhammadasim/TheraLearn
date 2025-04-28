@@ -43,6 +43,7 @@ function LoginPage() {
     try {
       const credentials = { email, password };
       const data = await logInUser(credentials);
+      console.log(data);
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('authRole', data.role);
@@ -53,14 +54,12 @@ function LoginPage() {
         setChildren(data.children);
         setShowChildPopup(true);
       }
-      if(data.role === 'child') {
-        localStorage.setItem('authUser', JSON.stringify(data.child));
-      }
       login(data.token, data.role);
     } catch (error) {
       setMessage(error.message || 'Something went wrong, please try again.');
     } finally {
       setLoggingIn(false);
+      
     }
   };
 

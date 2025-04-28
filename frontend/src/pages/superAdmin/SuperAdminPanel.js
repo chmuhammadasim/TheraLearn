@@ -10,6 +10,9 @@ import {
   FaTimes,
   FaChevronDown,
   FaChevronUp,
+  FaPlus,
+  FaSave,
+  FaTimesCircle,
 } from "react-icons/fa";
 import { RiLoader4Line } from "react-icons/ri";
 import { ToastContainer, toast } from "react-toastify";
@@ -155,15 +158,15 @@ const SuperAdminPanel = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 py-10 px-5 md:px-10">
       <ToastContainer />
-      <div className="max-w-7xl mx-auto bg-white border border-gray-200 rounded-lg shadow-lg mt-16">
-        <header className="p-6 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center rounded-t-lg">
-          <h2 className="text-3xl font-bold mb-1">Super Admin Panel</h2>
-          <p className="text-blue-100">Manage Accounts & View Statistics</p>
+      <div className="max-w-7xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-2xl mt-16">
+        <header className="p-8 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center rounded-t-2xl shadow-lg">
+          <h2 className="text-4xl font-extrabold mb-2 tracking-tight">Super Admin Panel</h2>
+          <p className="text-blue-100 text-lg">Manage Accounts & View Statistics</p>
           <button
             onClick={openAddPsychologistForm}
-            className="mt-4 bg-blue-600 px-4 py-2 rounded-md hover:scale-105 transition"
+            className="mt-6 bg-blue-600 px-6 py-2 rounded-lg hover:scale-105 transition flex items-center gap-2 shadow-lg font-semibold text-lg"
           >
-            Add Psychologist
+            <FaPlus /> Add Psychologist
           </button>
         </header>
 
@@ -173,128 +176,147 @@ const SuperAdminPanel = () => {
           </div>
         )}
 
-        <section className="p-6 flex flex-col lg:flex-row gap-6">
-          <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-sm">
-            <Bar data={activeData} options={chartOptions} />
+        <section className="p-8 flex flex-col lg:flex-row gap-8">
+          <div className="w-full lg:w-1/2">
+            <div className="bg-white rounded-xl shadow-md p-6 border border-blue-100">
+              <h3 className="text-lg font-bold mb-4 text-blue-700">User Status</h3>
+              <Bar data={activeData} options={chartOptions} />
+            </div>
           </div>
-          <div className="w-full lg:w-1/2 p-4 bg-gray-50 rounded-md shadow-sm">
-            <Bar data={roleData} options={chartOptions} />
+          <div className="w-full lg:w-1/2">
+            <div className="bg-white rounded-xl shadow-md p-6 border border-blue-100">
+              <h3 className="text-lg font-bold mb-4 text-blue-700">User Roles</h3>
+              <Bar data={roleData} options={chartOptions} />
+            </div>
           </div>
         </section>
 
-        <section className="px-4 pb-6 overflow-x-auto">
-          <table className="w-full table-auto text-left border-t">
-            <thead className="bg-gray-800 text-white">
-              <tr>
-                <th className="px-4 py-3">Username</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">First Name</th>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userData.map((user) => {
-                const showChildren = expandedParents[user._id];
-                const relatedChildren = childrenData.filter(
-                  (child) => child.parentId === user._id
-                );
-                const parentHasChildren = relatedChildren.length > 0;
+        <section className="px-6 pb-10">
+          <h3 className="text-2xl font-bold mb-4 text-gray-700">User Accounts</h3>
+          <div className="overflow-x-auto rounded-xl shadow">
+            <table className="w-full table-auto text-left border-t border-gray-200">
+              <thead className="bg-gray-800 text-white sticky top-0 z-10">
+                <tr>
+                  <th className="px-4 py-3">Username</th>
+                  <th className="px-4 py-3">Email</th>
+                  <th className="px-4 py-3">First Name</th>
+                  <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userData.map((user, idx) => {
+                  const showChildren = expandedParents[user._id];
+                  const relatedChildren = childrenData.filter(
+                    (child) => child.parentId === user._id
+                  );
+                  const parentHasChildren = relatedChildren.length > 0;
 
-                return (
-                  <React.Fragment key={user._id}>
-                    <tr className="hover:bg-gray-100 border-b text-sm">
-                      <td className="px-4 py-3 flex items-center space-x-2">
-                        <FaUserAlt className="text-gray-600" />
-                        <span>{user.username}</span>
-                      </td>
-                      <td className="px-4 py-3">{user.email}</td>
-                      <td className="px-4 py-3">{user.firstName || "N/A"}</td>
-                      <td className="px-4 py-3 uppercase">{user.role || "N/A"}</td>
-                      <td className="px-4 py-3">
-                        {user.isActive ? (
-                          <span className="flex items-center space-x-1 text-green-500">
-                            <FaCheck />
-                            <span>Active</span>
-                          </span>
-                        ) : (
-                          <span className="flex items-center space-x-1 text-red-500">
-                            <FaTimes />
-                            <span>Inactive</span>
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 flex items-center space-x-2">
-                        <button
-                          onClick={() =>
-                            handleUserStatusToggle(user._id, user.isActive)
-                          }
-                          className={`px-3 py-1 rounded-full text-white transition hover:scale-105 shadow-md ${
-                            user.isActive ? "bg-red-500" : "bg-green-500"
-                          }`}
-                        >
-                          {user.isActive ? "Deactivate" : "Activate"}
-                        </button>
-                        {user.role === "parent" && parentHasChildren && (
+                  return (
+                    <React.Fragment key={user._id}>
+                      <tr
+                        className={`${
+                          idx % 2 === 0 ? "bg-gray-50" : "bg-white"
+                        } hover:bg-blue-50 border-b text-sm transition`}
+                      >
+                        <td className="px-4 py-3 flex items-center space-x-2 font-medium">
+                          <FaUserAlt className="text-gray-600" />
+                          <span>{user.username}</span>
+                        </td>
+                        <td className="px-4 py-3">{user.email}</td>
+                        <td className="px-4 py-3">{user.firstName || "N/A"}</td>
+                        <td className="px-4 py-3 uppercase">{user.role || "N/A"}</td>
+                        <td className="px-4 py-3">
+                          {user.isActive ? (
+                            <span className="flex items-center space-x-1 text-green-500 font-semibold">
+                              <FaCheck />
+                              <span>Active</span>
+                            </span>
+                          ) : (
+                            <span className="flex items-center space-x-1 text-red-500 font-semibold">
+                              <FaTimes />
+                              <span>Inactive</span>
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 flex items-center space-x-2">
                           <button
-                            onClick={() => toggleExpanded(user._id)}
-                            className="bg-blue-500 text-white px-3 py-1 rounded-full hover:scale-105 transition"
+                            onClick={() =>
+                              handleUserStatusToggle(user._id, user.isActive)
+                            }
+                            className={`px-3 py-1 rounded-full text-white transition hover:scale-105 shadow-md font-semibold flex items-center gap-1 ${
+                              user.isActive ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"
+                            }`}
                           >
-                            {showChildren ? <FaChevronUp /> : <FaChevronDown />}
+                            {user.isActive ? <FaTimesCircle /> : <FaCheck />}
+                            {user.isActive ? "Deactivate" : "Activate"}
                           </button>
-                        )}
-                      </td>
-                    </tr>
-                    {showChildren && (
-                      <tr>
-                        <td colSpan={6} className="bg-gray-50">
-                          <div className="p-4">
-                            <h3 className="font-bold mb-2">
-                              Children of {user.username}:
-                            </h3>
-                            <table className="w-full text-sm">
-                              <thead className="text-left bg-gray-200">
-                                <tr>
-                                  <th className="px-2 py-1">Name</th>
-                                  <th className="px-2 py-1">Age</th>
-                                  <th className="px-2 py-1">Status</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {relatedChildren.map((child) => (
-                                  <tr key={child._id} className="border-b">
-                                    <td className="px-2 py-1">{child.username || "N/A"}</td>
-                                    <td className="px-2 py-1">{child.age || "N/A"}</td>
-                                    <td className="px-2 py-1">
-                                      {child.isActive ? "Active" : "Inactive"}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
+                          {user.role === "parent" && parentHasChildren && (
+                            <button
+                              onClick={() => toggleExpanded(user._id)}
+                              className="bg-blue-500 text-white px-3 py-1 rounded-full hover:scale-105 transition flex items-center"
+                              title={showChildren ? "Hide Children" : "Show Children"}
+                            >
+                              {showChildren ? <FaChevronUp /> : <FaChevronDown />}
+                            </button>
+                          )}
                         </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </tbody>
-          </table>
+                      {showChildren && (
+                        <tr>
+                          <td colSpan={6} className="bg-blue-50">
+                            <div className="p-4 rounded-lg border border-blue-100">
+                              <h4 className="font-bold mb-2 text-blue-700">
+                                Children of {user.username}:
+                              </h4>
+                              <table className="w-full text-sm rounded">
+                                <thead className="text-left bg-blue-100">
+                                  <tr>
+                                    <th className="px-2 py-1">Name</th>
+                                    <th className="px-2 py-1">Age</th>
+                                    <th className="px-2 py-1">Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {relatedChildren.map((child) => (
+                                    <tr key={child._id} className="border-b">
+                                      <td className="px-2 py-1">{child.username || "N/A"}</td>
+                                      <td className="px-2 py-1">{child.age || "N/A"}</td>
+                                      <td className="px-2 py-1">
+                                        {child.isActive ? (
+                                          <span className="text-green-600 font-semibold">Active</span>
+                                        ) : (
+                                          <span className="text-red-600 font-semibold">Inactive</span>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </section>
       </div>
 
       {showAddPsychologist && (
-        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm overflow-y-auto">
           <form
             onSubmit={handleAddPsychologist}
-            className="bg-white w-full max-w-5xl p-6 rounded-md shadow-md space-y-4 transform transition-all max-h-[95vh] overflow-y-auto"
+            className="bg-white w-full max-w-5xl p-8 rounded-2xl shadow-2xl space-y-6 transform transition-all max-h-[95vh] overflow-y-auto border-2 border-blue-200"
           >
-            <h2 className="text-xl font-bold mb-2 text-gray-800">
-              Add Psychologist
+            <h2 className="text-2xl font-bold mb-4 text-blue-800 flex items-center gap-2">
+              <FaPlus /> Add Psychologist
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <label className="block text-sm font-medium text-gray-700">
                 Username
                 <input
@@ -440,18 +462,19 @@ const SuperAdminPanel = () => {
                 />
               </label>
             </div>
-            <div className="flex justify-end space-x-4 pt-3">
+            <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:scale-105 transition"
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:scale-105 transition flex items-center gap-2 font-semibold"
               >
-                Save
+                <FaSave /> Save
               </button>
               <button
+                type="button"
                 onClick={closeAddPsychologistForm}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:scale-105 transition"
+                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:scale-105 transition flex items-center gap-2 font-semibold"
               >
-                Cancel
+                <FaTimes /> Cancel
               </button>
             </div>
           </form>
