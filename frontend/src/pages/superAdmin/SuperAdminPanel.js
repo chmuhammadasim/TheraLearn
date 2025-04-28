@@ -105,7 +105,6 @@ const SuperAdminPanel = () => {
       await addPsychologist(newPsychologist);
       toast.success("Psychologist added.", { position: "top-center", autoClose: 2000 });
       setShowAddPsychologist(false);
-      // Optionally refresh user list or do other updates
     } catch {
       toast.error("Failed to add psychologist.", { position: "top-center", autoClose: 2000 });
     }

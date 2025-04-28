@@ -111,7 +111,8 @@ adminController.addPsychologist = async (req, res) => {
       certifications,
       availability,
       consultationFee
-    } = req.body;
+    } = req.body.isActive;
+    console.log("Received data:", req.body.isActive);
 
     const psychologist = new Psychologist({
       username,
@@ -136,7 +137,7 @@ adminController.addPsychologist = async (req, res) => {
       consultationFee
     });
 
-    await Psychologist.save();
+    await psychologist.save();
     res.status(201).json({ message: "Psychologist added successfully", psychologist });
   } catch (error) {
     console.error("Error adding psychologist:", error);
