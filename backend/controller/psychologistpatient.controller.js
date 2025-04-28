@@ -14,7 +14,6 @@ psychologistpatient.getPsychologistDetails = async (req, res) => {
     }
     res.status(200).json(psychologist);
   } catch (error) {
-    console.error(error);
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid user ID format" });
     }
@@ -27,8 +26,6 @@ psychologistpatient.getMyPatients = async (req, res) => {
     if (!req.userData || !req.userData.id) {
       return res.status(400).json({ message: "Invalid user data" });
     }
-
-
 
     const psychologist = await Psychologist.findById(req.userData.id)
       .populate("patients")
@@ -44,8 +41,6 @@ psychologistpatient.getMyPatients = async (req, res) => {
         .status(404)
         .json({ message: "No parents found for this psychologist" });
     }
-     console.log("Parents with their children:", parents);
-
     // const psychologist = await Psychologist.findById(req.userData.id)
     // .populate({
     //   path: "patients", // Fetch parents (patients)
@@ -67,7 +62,6 @@ psychologistpatient.getMyPatients = async (req, res) => {
     // console.log("Patients:", psychologist);
     res.status(200).json(psychologist.patients);
   } catch (error) {
-    console.error(error);
     if (error.name === "CastError") {
       return res.status(400).json({ message: "Invalid user ID format" });
     }
