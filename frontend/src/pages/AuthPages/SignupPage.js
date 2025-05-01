@@ -294,7 +294,7 @@ const App = () => {
                 <div className="relative group">
                   <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#3498db]/30 shadow-lg">
                     <img 
-                      src={uploadedImage || "https://via.placeholder.com/150?text=Upload+Photo"} 
+                      src={uploadedImage || "https://placehold.co/600x400/transparent/blue?text=Upload\nImage"} 
                       alt="Profile Preview" 
                       className="w-full h-full object-cover"
                     />
@@ -396,7 +396,8 @@ const App = () => {
                   name="city" 
                   value={formData.city} 
                   onChange={handleChange} 
-                  error={errors.city} 
+                  error={errors.city}
+                  icon={<FaAddressCard className="text-gray-400" />}
                 />
                 <EnhancedInputGroup 
                   title="Country" 
@@ -405,6 +406,7 @@ const App = () => {
                   value={formData.country} 
                   onChange={handleChange} 
                   error={errors.country} 
+                  icon={<FaAddressCard className="text-gray-400" />}
                 />
                 <EnhancedInputGroup 
                   title="Bio" 
@@ -413,6 +415,7 @@ const App = () => {
                   value={formData.bio} 
                   onChange={handleChange} 
                   error={errors.bio} 
+                  placeholder="Tell us about yourself..."
                 />
               </div>
             </motion.div>
