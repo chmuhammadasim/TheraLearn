@@ -23,7 +23,7 @@ userController.GetUserById = async (req, res) => {
         model: 'Child',
         populate: {
         path: 'games',
-        model: 'Game' // Fetch game details using game IDs from children
+        model: 'Game' 
         }
       })
       .lean();

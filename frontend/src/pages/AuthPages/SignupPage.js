@@ -59,7 +59,18 @@ const App = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleChildChange = (index, e) => {
@@ -254,26 +265,7 @@ const App = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputGroup title="Emergency Contact Name" name="emergencyContact.name" value={formData.emergencyContact.name} onChange={handleChange} error={errors.emergencyContact?.name} />
-            <div className="relative mb-6">
-              <label className="block text-lg font-medium text-[#34495e] mb-2">Emergency Contact Number</label>
-              <PhoneInput
-                country={"pk"}
-                value={formData.emergencyContact.contact}
-                onChange={(value) => handleChange({ target: { name: "emergencyContact.contact", value } })}
-                inputStyle={{
-                  width: "100%",
-                  border: errors.emergencyContact?.contact ? "1px solid #e74c3c" : "1px solid #ccc",
-                  borderRadius: "0.5rem",
-                  fontSize: "1rem",
-                  padding: "0.75rem 1rem"
-                }}
-                buttonStyle={{
-                  border: errors.emergencyContact?.contact ? "1px solid #e74c3c" : "1px solid #ccc",
-                  borderRadius: "0.5rem"
-                }}
-              />
-              {errors.emergencyContact?.contact && <p className="text-red-500 text-sm mt-1">{errors.emergencyContact.contact}</p>}
-            </div>
+
           </div>
 
           {/* Children Management */}
