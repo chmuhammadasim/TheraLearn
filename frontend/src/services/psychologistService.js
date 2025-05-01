@@ -269,3 +269,153 @@ export const getAssignedPsychologists = async () => {
     throw new Error('Error assigning psychologist');
   }
 };
+export const savePatientNotes = async (patientId, notes) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-notes`, 
+      { notes }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving patient notes:', error);
+    throw error;
+  }
+};
+
+export const savePrescription = async (patientId, prescription) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-prescription`, 
+      { prescription }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving prescription:', error);
+    throw error;
+  }
+};
+
+export const scheduleFollowUp = async (patientId, followUpData) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/schedule-followup`, 
+      followUpData, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error scheduling follow-up:', error);
+    throw error;
+  }
+};
+
+export const saveMentalHealthNotes = async (patientId, notes) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-mental-health-notes`, 
+      { notes }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving mental health notes:', error);
+    throw error;
+  }
+};
+
+export const saveLabTests = async (patientId, labTests) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-lab-tests`, 
+      { labTests }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving lab tests:', error);
+    throw error;
+  }
+};
+
+export const saveTherapySession = async (patientId, sessionNotes) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-therapy-session`, 
+      { sessionNotes }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving therapy session:', error);
+    throw error;
+  }
+};
+
+export const saveDietRestrictions = async (patientId, dietRestrictions) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-diet-restrictions`, 
+      { dietRestrictions }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving diet restrictions:', error);
+    throw error;
+  }
+};
+export const getPatientRecords = async (patientId, dietRestrictions) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-diet-restrictions`, 
+      { dietRestrictions }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'patientid': patientId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving diet restrictions:', error);
+    throw error;
+  }
+};

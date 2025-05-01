@@ -10,6 +10,13 @@ import {
   FiMapPin,
   FiBookOpen,
   FiBriefcase,
+  FiCalendar,
+  FiClipboard,
+  FiFileText,
+  FiActivity,
+  FiLayers,
+  FiClock,
+  FiCoffee,
 } from "react-icons/fi";
 import {
   getPsychologistDetails,
@@ -17,10 +24,17 @@ import {
   sendMessageToPatient,
   getPatientResponse,
   getChatHistory,
+  savePatientNotes,
+  savePrescription,
+  scheduleFollowUp,
+  saveMentalHealthNotes,
+  saveLabTests,
+  saveTherapySession,
+  saveDietRestrictions,
+  getPatientRecords,
 } from "../../services/psychologistService";
 import Loading from "../../components/Loading";
 
-// Enhanced dashboard stats component with better visual elements
 const DashboardStats = ({ totalPatients }) => (
   <div className="w-full bg-gradient-to-r from-yellow-100 to-orange-200 p-8 rounded-2xl shadow-lg text-center mb-8 border-l-8 border-yellow-400">
     <h2 className="text-2xl font-bold text-yellow-700 flex items-center justify-center gap-3">
@@ -44,6 +58,16 @@ function PsychologistPatientDashboard() {
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [activeTab, setActiveTab] = useState("chat");
+  const [patientRecords, setPatientRecords] = useState({
+    notes: "",
+    prescription: "",
+    followUpDate: "",
+    mentalHealthNotes: "",
+    labTests: "",
+    therapySessions: [],
+    dietRestrictions: "",
+  });
 
   const fetchDashboardData = useCallback(async () => {
     try {
@@ -68,6 +92,25 @@ function PsychologistPatientDashboard() {
     const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
+
+  const fetchPatientRecords = async (patientId) => {
+    try {
+      const records = await getPatientRecords(patientId);
+      setPatientRecords(records);
+    } catch (error) {
+      console.error("Error fetching patient records:", error);
+      // Initialize with empty values if records don't exist
+      setPatientRecords({
+        notes: "",
+        prescription: "",
+        followUpDate: "",
+        mentalHealthNotes: "",
+        labTests: "",
+        therapySessions: [],
+        dietRestrictions: "",
+      });
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!selectedPatient) {
@@ -116,9 +159,136 @@ function PsychologistPatientDashboard() {
     try {
       const history = await getChatHistory(patient._id);
       setChatHistory(history.filteredMessages || []);
+      await fetchPatientRecords(patient._id);
     } catch (error) {
       console.error("Error fetching chat history:", error);
       alert("Failed to load chat history.");
+    }
+  };
+
+  const saveNotes = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await savePatientNotes(selectedPatient._id, patientRecords.notes);
+      alert("Notes saved successfully!");
+    } catch (error) {
+      console.error("Error saving notes:", error);
+      alert("Failed to save notes.");
+    }
+  };
+
+  const savePrescriptionData = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await savePrescription(selectedPatient._id, patientRecords.prescription);
+      alert("Prescription saved successfully!");
+    } catch (error) {
+      console.error("Error saving prescription:", error);
+      alert("Failed to save prescription.");
+    }
+  };
+
+  const saveFollowUpDate = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await scheduleFollowUp(selectedPatient._id, patientRecords.followUpDate);
+      alert("Follow-up date scheduled successfully!");
+    } catch (error) {
+      console.error("Error scheduling follow-up:", error);
+      alert("Failed to schedule follow-up.");
+    }
+  };
+
+  const saveMentalHealth = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await saveMentalHealthNotes(selectedPatient._id, patientRecords.mentalHealthNotes);
+      alert("Mental health notes saved successfully!");
+    } catch (error) {
+      console.error("Error saving mental health notes:", error);
+      alert("Failed to save mental health notes.");
+    }
+  };
+
+  const saveLabTestData = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await saveLabTests(selectedPatient._id, patientRecords.labTests);
+      alert("Lab tests saved successfully!");
+    } catch (error) {
+      console.error("Error saving lab tests:", error);
+      alert("Failed to save lab tests.");
+    }
+  };
+
+  const addTherapySession = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    const newSession = {
+      date: new Date().toISOString().split('T')[0],
+      notes: "",
+      duration: 60,
+    };
+    setPatientRecords(prev => ({
+      ...prev,
+      therapySessions: [...prev.therapySessions, newSession]
+    }));
+  };
+
+  const updateTherapySession = async (index, field, value) => {
+    const updatedSessions = [...patientRecords.therapySessions];
+    updatedSessions[index] = {
+      ...updatedSessions[index],
+      [field]: value
+    };
+    setPatientRecords(prev => ({
+      ...prev,
+      therapySessions: updatedSessions
+    }));
+  };
+
+  const saveTherapySessions = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await saveTherapySession(selectedPatient._id, patientRecords.therapySessions);
+      alert("Therapy sessions saved successfully!");
+    } catch (error) {
+      console.error("Error saving therapy sessions:", error);
+      alert("Failed to save therapy sessions.");
+    }
+  };
+
+  const saveDietRestrictionData = async () => {
+    if (!selectedPatient) {
+      alert("Please select a patient first!");
+      return;
+    }
+    try {
+      await saveDietRestrictions(selectedPatient._id, patientRecords.dietRestrictions);
+      alert("Diet restrictions saved successfully!");
+    } catch (error) {
+      console.error("Error saving diet restrictions:", error);
+      alert("Failed to save diet restrictions.");
     }
   };
 
@@ -172,22 +342,156 @@ function PsychologistPatientDashboard() {
             </div>
           </div>
 
-          {/* Chat Box */}
+          {/* Tabs and content for selected patient */}
           {selectedPatient && (
-            <ChatBox
-              patient={selectedPatient}
-              chatHistory={chatHistory}
-              message={message}
-              setMessage={setMessage}
-              onSendMessage={handleSendMessage}
-              onRefresh={handleGetResponse}
-            />
+            <div className="mt-12">
+              <div className="flex flex-wrap gap-2 mb-6 border-b-2 border-gray-200 pb-2">
+                <TabButton 
+                  active={activeTab === "chat"} 
+                  onClick={() => setActiveTab("chat")}
+                  icon={<FiSend />}
+                  label="Chat"
+                />
+                <TabButton 
+                  active={activeTab === "notes"} 
+                  onClick={() => setActiveTab("notes")}
+                  icon={<FiFileText />}
+                  label="Notes"
+                />
+                <TabButton 
+                  active={activeTab === "prescription"} 
+                  onClick={() => setActiveTab("prescription")}
+                  icon={<FiClipboard />}
+                  label="Prescription"
+                />
+                <TabButton 
+                  active={activeTab === "followup"} 
+                  onClick={() => setActiveTab("followup")}
+                  icon={<FiCalendar />}
+                  label="Follow-up"
+                />
+                <TabButton 
+                  active={activeTab === "mentalhealth"} 
+                  onClick={() => setActiveTab("mentalhealth")}
+                  icon={<FiActivity />}
+                  label="Mental Health"
+                />
+                <TabButton 
+                  active={activeTab === "labtests"} 
+                  onClick={() => setActiveTab("labtests")}
+                  icon={<FiLayers />}
+                  label="Lab Tests"
+                />
+                <TabButton 
+                  active={activeTab === "therapy"} 
+                  onClick={() => setActiveTab("therapy")}
+                  icon={<FiClock />}
+                  label="Therapy Sessions"
+                />
+                <TabButton 
+                  active={activeTab === "diet"} 
+                  onClick={() => setActiveTab("diet")}
+                  icon={<FiCoffee />}
+                  label="Diet Restrictions"
+                />
+              </div>
+
+              {/* Tab content */}
+              {activeTab === "chat" && (
+                <ChatBox
+                  patient={selectedPatient}
+                  chatHistory={chatHistory}
+                  message={message}
+                  setMessage={setMessage}
+                  onSendMessage={handleSendMessage}
+                  onRefresh={handleGetResponse}
+                />
+              )}
+
+              {activeTab === "notes" && (
+                <NotesTab 
+                  notes={patientRecords.notes} 
+                  onNotesChange={(value) => setPatientRecords(prev => ({...prev, notes: value}))} 
+                  onSave={saveNotes}
+                  patient={selectedPatient}
+                />
+              )}
+
+              {activeTab === "prescription" && (
+                <PrescriptionTab 
+                  prescription={patientRecords.prescription} 
+                  onPrescriptionChange={(value) => setPatientRecords(prev => ({...prev, prescription: value}))} 
+                  onSave={savePrescriptionData}
+                  patient={selectedPatient}
+                />
+              )}
+
+              {activeTab === "followup" && (
+                <FollowUpTab 
+                  followUpDate={patientRecords.followUpDate} 
+                  onDateChange={(value) => setPatientRecords(prev => ({...prev, followUpDate: value}))} 
+                  onSave={saveFollowUpDate}
+                  patient={selectedPatient}
+                />
+              )}
+
+              {activeTab === "mentalhealth" && (
+                <MentalHealthTab 
+                  mentalHealthNotes={patientRecords.mentalHealthNotes} 
+                  onNotesChange={(value) => setPatientRecords(prev => ({...prev, mentalHealthNotes: value}))} 
+                  onSave={saveMentalHealth}
+                  patient={selectedPatient}
+                />
+              )}
+
+              {activeTab === "labtests" && (
+                <LabTestsTab 
+                  labTests={patientRecords.labTests} 
+                  onLabTestsChange={(value) => setPatientRecords(prev => ({...prev, labTests: value}))} 
+                  onSave={saveLabTestData}
+                  patient={selectedPatient}
+                />
+              )}
+
+              {activeTab === "therapy" && (
+                <TherapySessionsTab 
+                  sessions={patientRecords.therapySessions} 
+                  onAddSession={addTherapySession}
+                  onUpdateSession={updateTherapySession}
+                  onSave={saveTherapySessions}
+                  patient={selectedPatient}
+                />
+              )}
+
+              {activeTab === "diet" && (
+                <DietRestrictionsTab 
+                  dietRestrictions={patientRecords.dietRestrictions} 
+                  onDietChange={(value) => setPatientRecords(prev => ({...prev, dietRestrictions: value}))} 
+                  onSave={saveDietRestrictionData}
+                  patient={selectedPatient}
+                />
+              )}
+            </div>
           )}
         </div>
       </div>
     </div>
   );
 }
+
+const TabButton = ({ active, onClick, icon, label }) => (
+  <button
+    className={`px-4 py-3 rounded-t-lg font-medium flex items-center gap-2 transition-all ${
+      active 
+        ? "bg-indigo-600 text-white" 
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+    }`}
+    onClick={onClick}
+  >
+    {icon}
+    {label}
+  </button>
+);
 
 const PsychologistDetails = React.memo(({ psychologist }) => (
   <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-2xl shadow-lg border-l-8 border-blue-400 flex flex-col items-center mb-8 md:mb-0">
@@ -288,7 +592,7 @@ const ChatBox = ({
   onSendMessage,
   onRefresh,
 }) => (
-  <div className="mt-12 p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiUser className="text-xl" />
@@ -353,6 +657,250 @@ const ChatBox = ({
         className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
       >
         <FiSend /> Send
+      </button>
+    </div>
+  </div>
+);
+
+const NotesTab = ({ notes, onNotesChange, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiFileText className="text-xl" />
+        Doctor Notes - {patient.firstName} {patient.lastName}
+      </h3>
+    </div>
+    
+    <div className="mb-6">
+      <textarea
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
+        placeholder="Add your clinical notes about the patient here..."
+        value={notes}
+        onChange={(e) => onNotesChange(e.target.value)}
+      />
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Notes
+      </button>
+    </div>
+  </div>
+);
+
+const PrescriptionTab = ({ prescription, onPrescriptionChange, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiClipboard className="text-xl" />
+        Prescription - {patient.firstName} {patient.lastName}
+      </h3>
+    </div>
+    
+    <div className="mb-6">
+      <textarea
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
+        placeholder="Enter prescription details here..."
+        value={prescription}
+        onChange={(e) => onPrescriptionChange(e.target.value)}
+      />
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Prescription
+      </button>
+    </div>
+  </div>
+);
+
+const FollowUpTab = ({ followUpDate, onDateChange, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiCalendar className="text-xl" />
+        Follow-up Schedule - {patient.firstName} {patient.lastName}
+      </h3>
+    </div>
+    
+    <div className="mb-6">
+      <label className="block text-gray-700 text-lg font-medium mb-2">Follow-up Date</label>
+      <input
+        type="date"
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-lg shadow"
+        value={followUpDate}
+        onChange={(e) => onDateChange(e.target.value)}
+      />
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Schedule Follow-up
+      </button>
+    </div>
+  </div>
+);
+
+const MentalHealthTab = ({ mentalHealthNotes, onNotesChange, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiActivity className="text-xl" />
+        Mental Health Assessment - {patient.firstName} {patient.lastName}
+      </h3>
+    </div>
+    
+    <div className="mb-6">
+      <textarea
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
+        placeholder="Add mental health assessment notes, observations, and treatment plans..."
+        value={mentalHealthNotes}
+        onChange={(e) => onNotesChange(e.target.value)}
+      />
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Assessment
+      </button>
+    </div>
+  </div>
+);
+
+const LabTestsTab = ({ labTests, onLabTestsChange, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiLayers className="text-xl" />
+        Lab Tests - {patient.firstName} {patient.lastName}
+      </h3>
+    </div>
+    
+    <div className="mb-6">
+      <textarea
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
+        placeholder="Add lab test requirements, results, and observations..."
+        value={labTests}
+        onChange={(e) => onLabTestsChange(e.target.value)}
+      />
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Lab Tests
+      </button>
+    </div>
+  </div>
+);
+
+const TherapySessionsTab = ({ sessions, onAddSession, onUpdateSession, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiClock className="text-xl" />
+        Therapy Sessions - {patient.firstName} {patient.lastName}
+      </h3>
+      <button
+        onClick={onAddSession}
+        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold shadow flex items-center gap-2"
+      >
+        + Add New Session
+      </button>
+    </div>
+    
+    <div className="mb-6 space-y-4">
+      {sessions.length > 0 ? (
+        sessions.map((session, index) => (
+          <div key={index} className="p-4 bg-white rounded-lg shadow border border-gray-200">
+            <div className="flex flex-wrap gap-4 mb-3">
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-gray-700 font-medium mb-1">Session Date</label>
+                <input
+                  type="date"
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                  value={session.date}
+                  onChange={(e) => onUpdateSession(index, 'date', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Duration (minutes)</label>
+                <input
+                  type="number"
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                  value={session.duration}
+                  onChange={(e) => onUpdateSession(index, 'duration', parseInt(e.target.value))}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-gray-700 font-medium mb-1">Session Notes</label>
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
+                rows="4"
+                placeholder="Enter session notes..."
+                value={session.notes}
+                onChange={(e) => onUpdateSession(index, 'notes', e.target.value)}
+              />
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="text-center p-8 bg-gray-50 rounded-xl">
+          <p className="text-gray-500">No therapy sessions recorded yet</p>
+        </div>
+      )}
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Sessions
+      </button>
+    </div>
+  </div>
+);
+
+const DietRestrictionsTab = ({ dietRestrictions, onDietChange, onSave, patient }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiCoffee className="text-xl" />
+        Diet Restrictions - {patient.firstName} {patient.lastName}
+      </h3>
+    </div>
+    
+    <div className="mb-6">
+      <textarea
+        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
+        placeholder="Add dietary restrictions, recommendations, and nutritional guidelines..."
+        value={dietRestrictions}
+        onChange={(e) => onDietChange(e.target.value)}
+      />
+    </div>
+    
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Diet Restrictions
       </button>
     </div>
   </div>
