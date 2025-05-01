@@ -36,7 +36,7 @@ function PsychologistDetailsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      let storedId = localStorage.getItem("assignedDoctor");
+      let storedId = localStorage.getItem("assignedDoctortemp");
       storedId = storedId ? storedId.replace(/^"|"$/g, "") : "";
       
       if (!storedId) {
@@ -126,7 +126,7 @@ function PsychologistDetailsPage() {
       <div className="flex justify-center items-center h-screen bg-gradient-to-b from-blue-50 to-blue-100">
         <div className="bg-white p-8 rounded-lg shadow-lg text-center">
           <p className="text-xl text-red-500 mb-4">Psychologist not found</p>
-          <a href="/psychologists" className="text-blue-500 hover:underline">Return to psychologists list</a>
+          <a href="/psychologistslist" className="text-blue-500 hover:underline">Return to psychologists list</a>
         </div>
       </div>
     );
@@ -155,10 +155,10 @@ function PsychologistDetailsPage() {
           
           <div className="relative group">
             <img
-              src={psychologist.profilePictureUrl || "https://via.placeholder.com/200"}
+              src={psychologist.profilePictureUrl || "https://placehold.co/600x400"}
               alt={`${psychologist.firstName} ${psychologist.lastName}`}
               className="w-36 h-36 rounded-full border-4 border-white shadow-lg mb-6 transform transition-transform duration-300 group-hover:scale-105 object-cover"
-              onError={(e) => {e.target.src = "https://via.placeholder.com/200?text=No+Image"}}
+              onError={(e) => {e.target.src = "https://placehold.co/600x400?text=No+Image"}}
             />
             <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-center justify-center transition-all duration-300"></div>
           </div>
