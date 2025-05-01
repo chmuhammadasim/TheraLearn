@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Retrieve the authentication token from local storage
+
 const token = localStorage.getItem('authToken');
 
 // Fetch all psychologists

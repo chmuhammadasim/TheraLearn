@@ -9,16 +9,26 @@ psychologistController.Checkapi = (req, res) => {
 
 psychologistController.getAllPsychologists = async (_req, res) => {
   try {
+    if (!Psychologist || typeof Psychologist.find !== "function") {
+      return res.status(500).json({ message: "Psychologist model is not available." });
+    }
     const psychologists = await Psychologist.find({
       role: "psychologist",
       isActive: true,
-    });
-    console.log("Fetched psychologists:", psychologists);
-    if (!psychologists || psychologists.length === 0) {
+    }).lean();
+    if (!Array.isArray(psychologists)) {
+      return res.status(500).json({ message: "Unexpected data format received." });
+    }
+    if (psychologists.length === 0) {
       return res.status(404).json({ message: "No psychologists found." });
     }
-    res.status(200).json(psychologists);
+    const sanitized = psychologists.map(({ password, ...rest }) => rest);
+    res.status(200).json(sanitized);
   } catch (error) {
+    console.error("Error fetching psychologists:", error);
+    if (error.name === "MongoNetworkError") {
+      return res.status(503).json({ message: "Database connection error." });
+    }
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };

@@ -48,8 +48,6 @@ function PsychologistListPage() {
     };
 
     fetchData();
-    
-    // No cleanup needed in the return function
   }, [navigate]);
 
   const handlePsychologistClick = (id) => {
@@ -69,7 +67,6 @@ function PsychologistListPage() {
     return <Loading />;
   }
 
-  // Error display component
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-t from-[#008cff] to-[#60efff] flex items-center justify-center p-10">
