@@ -141,7 +141,6 @@ function PsychologistPatientDashboard() {
   const fetchChildRecords = async (childId) => {
     try {
       const records = await getChildRecords(childId);
-      console.log("Fetched child records:", records);
       setChildRecords({
         doctorNotes: Array.isArray(records.doctorNotes) ? records.doctorNotes : [{
           date: new Date().toISOString().split("T")[0],
@@ -153,7 +152,7 @@ function PsychologistPatientDashboard() {
           dosage: "",
           instructions: "",
         }],
-        followUpDate: records.followUpDate || "",
+        followUpDate: records.doctorNotes.followUpDate || "",
         mentalHealthNotes: Array.isArray(records.mentalHealthNotes) ? records.mentalHealthNotes : [{
           date: new Date().toISOString().split("T")[0],
           notes: "",
@@ -162,7 +161,7 @@ function PsychologistPatientDashboard() {
         labTests: Array.isArray(records.labTests) ? records.labTests : [{
           testName: "",
           testDate: "",
-          results: "",
+          result: "",
         }],
         therapySessions: Array.isArray(records.therapySessions) ? records.therapySessions : [],
         dietRestrictions: Array.isArray(records.dietRestrictions) ? records.dietRestrictions : [],
@@ -210,6 +209,7 @@ function PsychologistPatientDashboard() {
   const fetchPatientChildren = async (patientId) => {
     try {
       const children = await getPatientChildren(patientId);
+      setPatientChildren(children);
       if (children.length > 0) {
         setSelectedChild(children[0]);
         await fetchChildRecords(children[0]._id);
@@ -1015,7 +1015,7 @@ const MentalHealthTab = ({
             <input
               type="date"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 mb-2"
-              value={note.date}
+              value={note.date ? note.date.split("T")[0] : ""}
               onChange={(e) => onNotesChange(idx, "date", e.target.value)}
             />
             <textarea
@@ -1068,7 +1068,7 @@ const LabTestsTab = ({ labTests, onLabTestsChange, onSave, child }) => (
             <input
               type="date"
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 mb-2"
-              value={test.testDate}
+              value={ test.date ? test.date.split("T")[0] : ""}
               onChange={(e) => onLabTestsChange(idx, "testDate", e.target.value)}
             />
             <label className="block text-gray-700 font-medium mb-1">
@@ -1076,7 +1076,7 @@ const LabTestsTab = ({ labTests, onLabTestsChange, onSave, child }) => (
             </label>
             <textarea
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
-              value={test.results}
+              value={test.result}
               onChange={(e) => onLabTestsChange(idx, "results", e.target.value)}
             />
           </div>
@@ -1118,7 +1118,7 @@ const FollowUpTab = ({ followUpDate, onDateChange, onSave, child }) => (
       <input
         type="date"
         className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
-        value={followUpDate}
+        value={followUpDate.date ? followUpDate.date.split("T")[0] : ""}
         onChange={(e) => onDateChange(e.target.value)}
       />
     </div>
