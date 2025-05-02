@@ -17,6 +17,11 @@ import {
   FiLayers,
   FiClock,
   FiCoffee,
+  FiUsers,
+  FiPlusCircle,
+  FiUserPlus,
+  FiChevronDown,
+  FiChevronRight,
 } from "react-icons/fi";
 import {
   getPsychologistDetails,
@@ -24,27 +29,35 @@ import {
   sendMessageToPatient,
   getPatientResponse,
   getChatHistory,
-  savePatientNotes,
-  savePrescription,
-  scheduleFollowUp,
-  saveMentalHealthNotes,
-  saveLabTests,
-  saveTherapySession,
-  saveDietRestrictions,
-  getPatientRecords,
+
+  getPatientChildren,
+  addChildToPatient,
+  getChildRecords,
+  saveChildNotes,
+  saveChildPrescription,
+  saveChildFollowUp,
+  saveChildMentalHealthNotes,
+  saveChildLabTests,
+  saveChildTherapySession,
+  saveChildDietRestrictions,
+
 } from "../../services/psychologistService";
 import Loading from "../../components/Loading";
 
-const DashboardStats = ({ totalPatients }) => (
+const DashboardStats = ({ totalPatients, totalChildren }) => (
   <div className="w-full bg-gradient-to-r from-yellow-100 to-orange-200 p-8 rounded-2xl shadow-lg text-center mb-8 border-l-8 border-yellow-400">
     <h2 className="text-2xl font-bold text-yellow-700 flex items-center justify-center gap-3">
       <FiBarChart2 className="text-yellow-500" />
       Dashboard Overview
     </h2>
-    <div className="mt-6 flex justify-center">
+    <div className="mt-6 flex justify-center gap-6">
       <div className="px-8 py-5 bg-white rounded-xl shadow-md border-2 border-yellow-200">
         <p className="text-gray-600 text-lg">Total Patients</p>
         <p className="text-4xl font-extrabold text-yellow-600">{totalPatients}</p>
+      </div>
+      <div className="px-8 py-5 bg-white rounded-xl shadow-md border-2 border-yellow-200">
+        <p className="text-gray-600 text-lg">Total Children</p>
+        <p className="text-4xl font-extrabold text-yellow-600">{totalChildren}</p>
       </div>
     </div>
   </div>
@@ -55,11 +68,22 @@ function PsychologistPatientDashboard() {
   const [psychologist, setPsychologist] = useState(null);
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [patientChildren, setPatientChildren] = useState([]);
+  const [selectedChild, setSelectedChild] = useState(null);
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [activeTab, setActiveTab] = useState("chat");
-  const [patientRecords, setPatientRecords] = useState({
+  const [totalChildrenCount, setTotalChildrenCount] = useState(0);
+  const [showAddChildForm, setShowAddChildForm] = useState(false);
+  const [newChildData, setNewChildData] = useState({
+    firstName: "",
+    lastName: "",
+    age: "",
+    gender: "",
+    notes: ""
+  });
+  const [childRecords, setChildRecords] = useState({
     notes: "",
     prescription: "",
     followUpDate: "",
@@ -77,6 +101,14 @@ function PsychologistPatientDashboard() {
       ]);
       setPsychologist(psychologistData);
       setPatients(patientsData);
+      
+      // Count total children across all patients
+      let childrenCount = 0;
+      for (const patient of patientsData) {
+        const children = await getPatientChildren(patient._id);
+        childrenCount += children.length;
+      }
+      setTotalChildrenCount(childrenCount);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("Failed to load dashboard data.");
@@ -93,14 +125,14 @@ function PsychologistPatientDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  const fetchPatientRecords = async (patientId) => {
+  const fetchChildRecords = async (childId) => {
     try {
-      const records = await getPatientRecords(patientId);
-      setPatientRecords(records);
+      const records = await getChildRecords(childId);
+      setChildRecords(records);
     } catch (error) {
-      console.error("Error fetching patient records:", error);
+      console.error("Error fetching child records:", error);
       // Initialize with empty values if records don't exist
-      setPatientRecords({
+      setChildRecords({
         notes: "",
         prescription: "",
         followUpDate: "",
@@ -109,6 +141,32 @@ function PsychologistPatientDashboard() {
         therapySessions: [],
         dietRestrictions: "",
       });
+    }
+  };
+
+  const fetchPatientChildren = async (patientId) => {
+    try {
+      const children = await getPatientChildren(patientId);
+      setPatientChildren(children);
+      if (children.length > 0) {
+        setSelectedChild(children[0]);
+        await fetchChildRecords(children[0]._id);
+      } else {
+        setSelectedChild(null);
+        setChildRecords({
+          notes: "",
+          prescription: "",
+          followUpDate: "",
+          mentalHealthNotes: "",
+          labTests: "",
+          therapySessions: [],
+          dietRestrictions: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching patient children:", error);
+      setPatientChildren([]);
+      setSelectedChild(null);
     }
   };
 
@@ -159,20 +217,65 @@ function PsychologistPatientDashboard() {
     try {
       const history = await getChatHistory(patient._id);
       setChatHistory(history.filteredMessages || []);
-      await fetchPatientRecords(patient._id);
+      await fetchPatientChildren(patient._id);
     } catch (error) {
       console.error("Error fetching chat history:", error);
       alert("Failed to load chat history.");
     }
+    setActiveTab("chat");
   };
 
-  const saveNotes = async () => {
+  const handleChildSelection = async (child) => {
+    setSelectedChild(child);
+    try {
+      await fetchChildRecords(child._id);
+    } catch (error) {
+      console.error("Error fetching child records:", error);
+      alert("Failed to load child records.");
+    }
+  };
+
+  const handleAddChild = async () => {
     if (!selectedPatient) {
       alert("Please select a patient first!");
       return;
     }
+    
+    if (!newChildData.firstName || !newChildData.lastName || !newChildData.age) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+    
     try {
-      await savePatientNotes(selectedPatient._id, patientRecords.notes);
+      const childData = {
+        ...newChildData,
+        patientId: selectedPatient._id
+      };
+      
+      await addChildToPatient(childData);
+      await fetchPatientChildren(selectedPatient._id);
+      setShowAddChildForm(false);
+      setNewChildData({
+        firstName: "",
+        lastName: "",
+        age: "",
+        gender: "",
+        notes: ""
+      });
+      alert("Child added successfully!");
+    } catch (error) {
+      console.error("Error adding child:", error);
+      alert("Failed to add child.");
+    }
+  };
+
+  const saveNotes = async () => {
+    if (!selectedChild) {
+      alert("Please select a child first!");
+      return;
+    }
+    try {
+      await saveChildNotes(selectedChild._id, childRecords.notes);
       alert("Notes saved successfully!");
     } catch (error) {
       console.error("Error saving notes:", error);
@@ -181,12 +284,12 @@ function PsychologistPatientDashboard() {
   };
 
   const savePrescriptionData = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     try {
-      await savePrescription(selectedPatient._id, patientRecords.prescription);
+      await saveChildPrescription(selectedChild._id, childRecords.prescription);
       alert("Prescription saved successfully!");
     } catch (error) {
       console.error("Error saving prescription:", error);
@@ -195,12 +298,12 @@ function PsychologistPatientDashboard() {
   };
 
   const saveFollowUpDate = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     try {
-      await scheduleFollowUp(selectedPatient._id, patientRecords.followUpDate);
+      await saveChildFollowUp(selectedChild._id, childRecords.followUpDate);
       alert("Follow-up date scheduled successfully!");
     } catch (error) {
       console.error("Error scheduling follow-up:", error);
@@ -209,12 +312,12 @@ function PsychologistPatientDashboard() {
   };
 
   const saveMentalHealth = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     try {
-      await saveMentalHealthNotes(selectedPatient._id, patientRecords.mentalHealthNotes);
+      await saveChildMentalHealthNotes(selectedChild._id, childRecords.mentalHealthNotes);
       alert("Mental health notes saved successfully!");
     } catch (error) {
       console.error("Error saving mental health notes:", error);
@@ -223,12 +326,12 @@ function PsychologistPatientDashboard() {
   };
 
   const saveLabTestData = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     try {
-      await saveLabTests(selectedPatient._id, patientRecords.labTests);
+      await saveChildLabTests(selectedChild._id, childRecords.labTests);
       alert("Lab tests saved successfully!");
     } catch (error) {
       console.error("Error saving lab tests:", error);
@@ -237,8 +340,8 @@ function PsychologistPatientDashboard() {
   };
 
   const addTherapySession = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     const newSession = {
@@ -246,31 +349,31 @@ function PsychologistPatientDashboard() {
       notes: "",
       duration: 60,
     };
-    setPatientRecords(prev => ({
+    setChildRecords(prev => ({
       ...prev,
       therapySessions: [...prev.therapySessions, newSession]
     }));
   };
 
   const updateTherapySession = async (index, field, value) => {
-    const updatedSessions = [...patientRecords.therapySessions];
+    const updatedSessions = [...childRecords.therapySessions];
     updatedSessions[index] = {
       ...updatedSessions[index],
       [field]: value
     };
-    setPatientRecords(prev => ({
+    setChildRecords(prev => ({
       ...prev,
       therapySessions: updatedSessions
     }));
   };
 
   const saveTherapySessions = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     try {
-      await saveTherapySession(selectedPatient._id, patientRecords.therapySessions);
+      await saveChildTherapySession(selectedChild._id, childRecords.therapySessions);
       alert("Therapy sessions saved successfully!");
     } catch (error) {
       console.error("Error saving therapy sessions:", error);
@@ -279,12 +382,12 @@ function PsychologistPatientDashboard() {
   };
 
   const saveDietRestrictionData = async () => {
-    if (!selectedPatient) {
-      alert("Please select a patient first!");
+    if (!selectedChild) {
+      alert("Please select a child first!");
       return;
     }
     try {
-      await saveDietRestrictions(selectedPatient._id, patientRecords.dietRestrictions);
+      await saveChildDietRestrictions(selectedChild._id, childRecords.dietRestrictions);
       alert("Diet restrictions saved successfully!");
     } catch (error) {
       console.error("Error saving diet restrictions:", error);
@@ -308,13 +411,16 @@ function PsychologistPatientDashboard() {
             Psychologist Dashboard
           </h1>
           <p className="text-blue-100 mt-2 text-lg">
-            Manage your patients and communications
+            Manage your patients, their children, and communications
           </p>
         </header>
 
         <div className="p-10">
           {/* Show quick stats */}
-          <DashboardStats totalPatients={patients.length} />
+          <DashboardStats 
+            totalPatients={patients.length} 
+            totalChildren={totalChildrenCount}
+          />
 
           <div className="flex flex-col md:flex-row gap-8">
             {psychologist && (
@@ -342,9 +448,136 @@ function PsychologistPatientDashboard() {
             </div>
           </div>
 
-          {/* Tabs and content for selected patient */}
+          {/* Selected patient's children section */}
           {selectedPatient && (
+            <div className="mt-10 bg-indigo-50 p-6 rounded-xl border-2 border-indigo-100 shadow-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-indigo-800 flex items-center gap-2">
+                  <FiUsers className="text-xl" />
+                  {selectedPatient.firstName} {selectedPatient.lastName}'s Children
+                </h2>
+                <button
+                  onClick={() => setShowAddChildForm(!showAddChildForm)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold shadow flex items-center gap-2"
+                >
+                  <FiUserPlus /> {showAddChildForm ? "Cancel" : "Add Child"}
+                </button>
+              </div>
+
+              {/* Add Child Form */}
+              {showAddChildForm && (
+                <div className="mb-6 p-4 bg-white rounded-lg shadow-md border border-indigo-200">
+                  <h3 className="text-lg font-semibold text-indigo-700 mb-3">Add New Child</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1">First Name*</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        value={newChildData.firstName}
+                        onChange={(e) => setNewChildData({...newChildData, firstName: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1">Last Name*</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        value={newChildData.lastName}
+                        onChange={(e) => setNewChildData({...newChildData, lastName: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1">Age*</label>
+                      <input
+                        type="number"
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        value={newChildData.age}
+                        onChange={(e) => setNewChildData({...newChildData, age: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-1">Gender</label>
+                      <select
+                        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        value={newChildData.gender}
+                        onChange={(e) => setNewChildData({...newChildData, gender: e.target.value})}
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 font-medium mb-1">Initial Notes</label>
+                    <textarea
+                      className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
+                      rows="3"
+                      value={newChildData.notes}
+                      onChange={(e) => setNewChildData({...newChildData, notes: e.target.value})}
+                    ></textarea>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleAddChild}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow"
+                    >
+                      Add Child
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Children List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {patientChildren.length > 0 ? (
+                  patientChildren.map(child => (
+                    <div 
+                      key={child._id}
+                      onClick={() => handleChildSelection(child)}
+                      className={`p-4 rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                        selectedChild?._id === child._id 
+                          ? "bg-indigo-200 border-2 border-indigo-400" 
+                          : "bg-white border-2 border-gray-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <FiUser className="text-indigo-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold">{child.firstName} {child.lastName}</h3>
+                          <p className="text-sm text-gray-500">Age: {child.age} {child.gender ? `• ${child.gender}` : ''}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full p-8 bg-gray-50 rounded-xl text-center">
+                    <p className="text-gray-500">No children added yet</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Tabs and content for selected child */}
+          {selectedChild && (
             <div className="mt-12">
+              <div className="bg-blue-50 p-4 rounded-lg mb-6 border-l-4 border-blue-500">
+                <h2 className="text-xl font-bold text-blue-700">
+                  Managing: {selectedChild.firstName} {selectedChild.lastName}
+                </h2>
+                <p className="text-blue-600">
+                  Child of {selectedPatient?.firstName} {selectedPatient?.lastName}
+                </p>
+              </div>
+              
               <div className="flex flex-wrap gap-2 mb-6 border-b-2 border-gray-200 pb-2">
                 <TabButton 
                   active={activeTab === "chat"} 
@@ -410,65 +643,65 @@ function PsychologistPatientDashboard() {
 
               {activeTab === "notes" && (
                 <NotesTab 
-                  notes={patientRecords.notes} 
-                  onNotesChange={(value) => setPatientRecords(prev => ({...prev, notes: value}))} 
+                  notes={childRecords.notes} 
+                  onNotesChange={(value) => setChildRecords(prev => ({...prev, notes: value}))} 
                   onSave={saveNotes}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
 
               {activeTab === "prescription" && (
                 <PrescriptionTab 
-                  prescription={patientRecords.prescription} 
-                  onPrescriptionChange={(value) => setPatientRecords(prev => ({...prev, prescription: value}))} 
+                  prescription={childRecords.prescription} 
+                  onPrescriptionChange={(value) => setChildRecords(prev => ({...prev, prescription: value}))} 
                   onSave={savePrescriptionData}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
 
               {activeTab === "followup" && (
                 <FollowUpTab 
-                  followUpDate={patientRecords.followUpDate} 
-                  onDateChange={(value) => setPatientRecords(prev => ({...prev, followUpDate: value}))} 
+                  followUpDate={childRecords.followUpDate} 
+                  onDateChange={(value) => setChildRecords(prev => ({...prev, followUpDate: value}))} 
                   onSave={saveFollowUpDate}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
 
               {activeTab === "mentalhealth" && (
                 <MentalHealthTab 
-                  mentalHealthNotes={patientRecords.mentalHealthNotes} 
-                  onNotesChange={(value) => setPatientRecords(prev => ({...prev, mentalHealthNotes: value}))} 
+                  mentalHealthNotes={childRecords.mentalHealthNotes} 
+                  onNotesChange={(value) => setChildRecords(prev => ({...prev, mentalHealthNotes: value}))} 
                   onSave={saveMentalHealth}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
 
               {activeTab === "labtests" && (
                 <LabTestsTab 
-                  labTests={patientRecords.labTests} 
-                  onLabTestsChange={(value) => setPatientRecords(prev => ({...prev, labTests: value}))} 
+                  labTests={childRecords.labTests} 
+                  onLabTestsChange={(value) => setChildRecords(prev => ({...prev, labTests: value}))} 
                   onSave={saveLabTestData}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
 
               {activeTab === "therapy" && (
                 <TherapySessionsTab 
-                  sessions={patientRecords.therapySessions} 
+                  sessions={childRecords.therapySessions} 
                   onAddSession={addTherapySession}
                   onUpdateSession={updateTherapySession}
                   onSave={saveTherapySessions}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
 
               {activeTab === "diet" && (
                 <DietRestrictionsTab 
-                  dietRestrictions={patientRecords.dietRestrictions} 
-                  onDietChange={(value) => setPatientRecords(prev => ({...prev, dietRestrictions: value}))} 
+                  dietRestrictions={childRecords.dietRestrictions} 
+                  onDietChange={(value) => setChildRecords(prev => ({...prev, dietRestrictions: value}))} 
                   onSave={saveDietRestrictionData}
-                  patient={selectedPatient}
+                  child={selectedChild}
                 />
               )}
             </div>
@@ -662,19 +895,19 @@ const ChatBox = ({
   </div>
 );
 
-const NotesTab = ({ notes, onNotesChange, onSave, patient }) => (
+const NotesTab = ({ notes, onNotesChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiFileText className="text-xl" />
-        Doctor Notes - {patient.firstName} {patient.lastName}
+        Notes for {child.firstName} {child.lastName}
       </h3>
     </div>
     
     <div className="mb-6">
       <textarea
         className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
-        placeholder="Add your clinical notes about the patient here..."
+        placeholder="Add your clinical notes about the child here..."
         value={notes}
         onChange={(e) => onNotesChange(e.target.value)}
       />
@@ -691,12 +924,12 @@ const NotesTab = ({ notes, onNotesChange, onSave, patient }) => (
   </div>
 );
 
-const PrescriptionTab = ({ prescription, onPrescriptionChange, onSave, patient }) => (
+const PrescriptionTab = ({ prescription, onPrescriptionChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiClipboard className="text-xl" />
-        Prescription - {patient.firstName} {patient.lastName}
+        Prescription for {child.firstName} {child.lastName}
       </h3>
     </div>
     
@@ -720,12 +953,12 @@ const PrescriptionTab = ({ prescription, onPrescriptionChange, onSave, patient }
   </div>
 );
 
-const FollowUpTab = ({ followUpDate, onDateChange, onSave, patient }) => (
+const FollowUpTab = ({ followUpDate, onDateChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiCalendar className="text-xl" />
-        Follow-up Schedule - {patient.firstName} {patient.lastName}
+        Follow-up Schedule for {child.firstName} {child.lastName}
       </h3>
     </div>
     
@@ -750,12 +983,12 @@ const FollowUpTab = ({ followUpDate, onDateChange, onSave, patient }) => (
   </div>
 );
 
-const MentalHealthTab = ({ mentalHealthNotes, onNotesChange, onSave, patient }) => (
+const MentalHealthTab = ({ mentalHealthNotes, onNotesChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiActivity className="text-xl" />
-        Mental Health Assessment - {patient.firstName} {patient.lastName}
+        Mental Health Assessment for {child.firstName} {child.lastName}
       </h3>
     </div>
     
@@ -779,12 +1012,12 @@ const MentalHealthTab = ({ mentalHealthNotes, onNotesChange, onSave, patient }) 
   </div>
 );
 
-const LabTestsTab = ({ labTests, onLabTestsChange, onSave, patient }) => (
+const LabTestsTab = ({ labTests, onLabTestsChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiLayers className="text-xl" />
-        Lab Tests - {patient.firstName} {patient.lastName}
+        Lab Tests for {child.firstName} {child.lastName}
       </h3>
     </div>
     
@@ -808,12 +1041,12 @@ const LabTestsTab = ({ labTests, onLabTestsChange, onSave, patient }) => (
   </div>
 );
 
-const TherapySessionsTab = ({ sessions, onAddSession, onUpdateSession, onSave, patient }) => (
+const TherapySessionsTab = ({ sessions, onAddSession, onUpdateSession, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiClock className="text-xl" />
-        Therapy Sessions - {patient.firstName} {patient.lastName}
+        Therapy Sessions for {child.firstName} {child.lastName}
       </h3>
       <button
         onClick={onAddSession}
@@ -877,12 +1110,12 @@ const TherapySessionsTab = ({ sessions, onAddSession, onUpdateSession, onSave, p
   </div>
 );
 
-const DietRestrictionsTab = ({ dietRestrictions, onDietChange, onSave, patient }) => (
+const DietRestrictionsTab = ({ dietRestrictions, onDietChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
     <div className="flex justify-between items-center mb-6">
       <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         <FiCoffee className="text-xl" />
-        Diet Restrictions - {patient.firstName} {patient.lastName}
+        Diet Restrictions for {child.firstName} {child.lastName}
       </h3>
     </div>
     

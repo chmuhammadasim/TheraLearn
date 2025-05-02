@@ -54,5 +54,17 @@ router.post(
   user,
   psychologistpatient.sendMessageToPsychologist
 );
+router.get(
+  "/children",
+  checkAuth,
+  psychologist,
+  psychologistpatient.getPatientChildren
+);
+router.get(
+  "/child-records",
+  checkAuth,
+  psychologist,
+  psychologistpatient.getChildRecords
+);
 
 module.exports = router;

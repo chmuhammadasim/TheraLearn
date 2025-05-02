@@ -282,5 +282,256 @@ psychologistpatient.sendMessageToPsychologist = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+psychologistpatient.getPatientChildren = async (req, res) => {
+  try {
+    const patientId = req.headers.patientid;
+    
+    if (!patientId) {
+      return res.status(400).json({ message: "Patient ID is required" });
+    }
+    
+    const parent = await Parent.findById(patientId).populate('children');
+    
+    if (!parent) {
+      return res.status(404).json({ message: "Parent not found" });
+    }
+    
+    res.status(200).json(parent.children || []);
+  } catch (error) {
+    console.error("Error fetching patient children:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.addChildToPatient = async (req, res) => {
+  try {
+    const patientId = req.headers.patientid;
+    const childData = req.body;
+    
+    if (!patientId) {
+      return res.status(400).json({ message: "Patient ID is required" });
+    }
+    
+    const parent = await Parent.findById(patientId);
+    
+    if (!parent) {
+      return res.status(404).json({ message: "Parent not found" });
+    }
+    
+    const newChild = new Child(childData);
+    await newChild.save();
+    
+    parent.children.push(newChild._id);
+    await parent.save();
+    
+    res.status(201).json({ message: "Child added successfully", child: newChild });
+  } catch (error) {
+    console.error("Error adding child to patient:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.getChildRecords = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    res.status(200).json(child);
+  } catch (error) {
+    console.error("Error fetching child records:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildNotes = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const { notes } = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    child.notes = notes;
+    await child.save();
+    
+    res.status(200).json({ message: "Notes saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child notes:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildPrescription = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const { prescription } = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    child.prescription = prescription;
+    await child.save();
+    
+    res.status(200).json({ message: "Prescription saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child prescription:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildFollowUp = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const followUpData = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    if (!child.followUps) {
+      child.followUps = [];
+    }
+    
+    child.followUps.push(followUpData);
+    await child.save();
+    
+    res.status(200).json({ message: "Follow-up saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child follow-up:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildMentalHealthNotes = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const { mentalHealthNotes } = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    child.mentalHealthNotes = mentalHealthNotes;
+    await child.save();
+    
+    res.status(200).json({ message: "Mental health notes saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child mental health notes:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildLabTests = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const { labTests } = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    child.labTests = labTests;
+    await child.save();
+    
+    res.status(200).json({ message: "Lab tests saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child lab tests:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildTherapySession = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const sessionData = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    if (!child.therapySessions) {
+      child.therapySessions = [];
+    }
+    
+    child.therapySessions.push(sessionData);
+    await child.save();
+    
+    res.status(200).json({ message: "Therapy session saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child therapy session:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+psychologistpatient.saveChildDietRestrictions = async (req, res) => {
+  try {
+    const childId = req.headers.childid;
+    const { dietRestrictions } = req.body;
+    
+    if (!childId) {
+      return res.status(400).json({ message: "Child ID is required" });
+    }
+    
+    const child = await Child.findById(childId);
+    
+    if (!child) {
+      return res.status(404).json({ message: "Child not found" });
+    }
+    
+    child.dietRestrictions = dietRestrictions;
+    await child.save();
+    
+    res.status(200).json({ message: "Diet restrictions saved successfully", child });
+  } catch (error) {
+    console.error("Error saving child diet restrictions:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = psychologistpatient;

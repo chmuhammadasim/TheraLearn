@@ -269,10 +269,27 @@ export const getAssignedPsychologists = async () => {
     throw new Error('Error assigning psychologist');
   }
 };
-export const savePatientNotes = async (patientId, notes) => {
+
+export const getPatientChildren = async (patientId) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-notes`, 
-      { notes }, 
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/children`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'patientid': patientId
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching patient children:', error);
+    throw error;
+  }
+};
+
+export const addChildToPatient = async (patientId, childData) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/add-child`, 
+      childData, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
@@ -283,139 +300,156 @@ export const savePatientNotes = async (patientId, notes) => {
     );
     return response.data;
   } catch (error) {
-    console.error('Error saving patient notes:', error);
+    console.error('Error adding child to patient:', error);
     throw error;
   }
 };
 
-export const savePrescription = async (patientId, prescription) => {
+export const getChildRecords = async (childId) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-prescription`, 
+    const response = await axios.get(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-records`, {
+      headers: {
+        'authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'childid': childId
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching child records:', error);
+    throw error;
+  }
+};
+
+export const saveChildNotes = async (childId, notes) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-notes`, 
+      { notes }, 
+      {
+        headers: {
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'childid': childId
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error saving child notes:', error);
+    throw error;
+  }
+};
+
+export const saveChildPrescription = async (childId, prescription) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-prescription`, 
       { prescription }, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patientid': patientId
+          'childid': childId
         }
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error saving prescription:', error);
+    console.error('Error saving child prescription:', error);
     throw error;
   }
 };
 
-export const scheduleFollowUp = async (patientId, followUpData) => {
+export const saveChildFollowUp = async (childId, followUpData) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/schedule-followup`, 
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-followup`, 
       followUpData, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patientid': patientId
+          'childid': childId
         }
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error scheduling follow-up:', error);
+    console.error('Error saving child follow-up:', error);
     throw error;
   }
 };
 
-export const saveMentalHealthNotes = async (patientId, notes) => {
+export const saveChildMentalHealthNotes = async (childId, mentalHealthNotes) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-mental-health-notes`, 
-      { notes }, 
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-mental-health`, 
+      { mentalHealthNotes }, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patientid': patientId
+          'childid': childId
         }
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error saving mental health notes:', error);
+    console.error('Error saving child mental health notes:', error);
     throw error;
   }
 };
 
-export const saveLabTests = async (patientId, labTests) => {
+export const saveChildLabTests = async (childId, labTests) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-lab-tests`, 
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-lab-tests`, 
       { labTests }, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patientid': patientId
+          'childid': childId
         }
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error saving lab tests:', error);
+    console.error('Error saving child lab tests:', error);
     throw error;
   }
 };
 
-export const saveTherapySession = async (patientId, sessionNotes) => {
+export const saveChildTherapySession = async (childId, sessionData) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-therapy-session`, 
-      { sessionNotes }, 
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-therapy-session`, 
+      sessionData, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patientid': patientId
+          'childid': childId
         }
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error saving therapy session:', error);
+    console.error('Error saving child therapy session:', error);
     throw error;
   }
 };
 
-export const saveDietRestrictions = async (patientId, dietRestrictions) => {
+export const saveChildDietRestrictions = async (childId, dietRestrictions) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-diet-restrictions`, 
+    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/child-diet-restrictions`, 
       { dietRestrictions }, 
       {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'patientid': patientId
+          'childid': childId
         }
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error saving diet restrictions:', error);
-    throw error;
-  }
-};
-export const getPatientRecords = async (patientId, dietRestrictions) => {
-  try {
-    const response = await axios.post(`${process.env.REACT_APP_API_KEY}/psychologistpatient/save-diet-restrictions`, 
-      { dietRestrictions }, 
-      {
-        headers: {
-          'authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'patientid': patientId
-        }
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error saving diet restrictions:', error);
+    console.error('Error saving child diet restrictions:', error);
     throw error;
   }
 };
