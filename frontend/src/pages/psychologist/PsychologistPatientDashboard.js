@@ -116,8 +116,6 @@ function PsychologistPatientDashboard() {
       ]);
       setPsychologist(psychologistData);
       setPatients(patientsData);
-
-      // Count total children across all patients
       let childrenCount = 0;
       for (const patient of patientsData) {
         const children = await getPatientChildren(patient._id);
@@ -143,7 +141,7 @@ function PsychologistPatientDashboard() {
   const fetchChildRecords = async (childId) => {
     try {
       const records = await getChildRecords(childId);
-      console.log("Fetched child records:", records.doctorNotes);
+      console.log("Fetched child records:", records);
       setChildRecords({
         doctorNotes: Array.isArray(records.doctorNotes) ? records.doctorNotes : [{
           date: new Date().toISOString().split("T")[0],
@@ -172,7 +170,6 @@ function PsychologistPatientDashboard() {
       });
     } catch (error) {
       console.error("Error fetching child records:", error);
-      // Initialize with empty values if records don't exist
       setChildRecords({
         doctorNotes: [
           {
@@ -213,7 +210,6 @@ function PsychologistPatientDashboard() {
   const fetchPatientChildren = async (patientId) => {
     try {
       const children = await getPatientChildren(patientId);
-      setPatientChildren(children);
       if (children.length > 0) {
         setSelectedChild(children[0]);
         await fetchChildRecords(children[0]._id);
@@ -898,26 +894,37 @@ const NotesTab = ({ notes, onNotesChange, onSave, child }) => (
       </h3>
     </div>
 
-    <div className="mb-6">
-      <textarea
-        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
-        placeholder="Add your clinical notes about the child here..."
-        value={notes}
-        onChange={(e) => onNotesChange(e.target.value)}
-      />
+    <div className="mb-6 space-y-4">
+      {Array.isArray(notes) && notes.length > 0 ? (
+        notes.map((note, idx) => (
+          <div key={idx}>
+            <label className="block text-gray-700 font-medium mb-1">
+              Date
+            </label>
+            <input
+              type="date"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 mb-2"
+              value={note.date}
+              onChange={(e) => onNotesChange(idx, "date", e.target.value)}
+            />
+            <textarea
+              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[100px]"
+              placeholder="Add your clinical notes about the child here..."
+              value={note.notes}
+              onChange={(e) => onNotesChange(idx, "notes", e.target.value)}
+            />
+          </div>
+        ))):
+        <textarea
+          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[100px]"
+          placeholder="Add your clinical notes about the child here..."
+          value={notes && notes[0] ? notes[0].notes : ""}
+          onChange={(e) => onNotesChange(0, "notes", e.target.value)}
+        /> 
+        }
     </div>
-
-    <div className="flex justify-end">
-      <button
-        onClick={onSave}
-        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
-      >
-        <FiSend /> Save Notes
-      </button>
-    </div>
-  </div>
-);
-
+    </div>)   
+        
 const PrescriptionTab = ({
   prescription,
   onPrescriptionChange,
@@ -932,13 +939,46 @@ const PrescriptionTab = ({
       </h3>
     </div>
 
-    <div className="mb-6">
-      <textarea
-        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
-        placeholder="Enter prescription details here..."
-        value={prescription}
-        onChange={(e) => onPrescriptionChange(e.target.value)}
-      />
+    <div className="mb-6 space-y-4">
+      {Array.isArray(prescription) && prescription.length > 0 ? (
+        prescription.map((item, idx) => (
+          <div key={idx} className="space-y-2">
+            <label className="block text-gray-700 font-medium mb-1">
+              Medication
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+              value={item.medication}
+              onChange={(e) => onPrescriptionChange(idx, "medication", e.target.value)}
+            />
+            <label className="block text-gray-700 font-medium mb-1">
+              Dosage
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+              value={item.dosage}
+              onChange={(e) => onPrescriptionChange(idx, "dosage", e.target.value)}
+            />
+            <label className="block text-gray-700 font-medium mb-1">
+              Instructions
+            </label>
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
+              value={item.instructions}
+              onChange={(e) => onPrescriptionChange(idx, "instructions", e.target.value)}
+            />
+          </div>
+        ))
+      ) : (
+        <textarea
+          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[100px]"
+          placeholder="Enter prescription details here..."
+          value={prescription && prescription.instructions ? prescription.instructions : ""}
+          onChange={(e) => onPrescriptionChange(0, "instructions", e.target.value)}
+        />
+      )}
     </div>
 
     <div className="flex justify-end">
@@ -951,39 +991,6 @@ const PrescriptionTab = ({
     </div>
   </div>
 );
-
-const FollowUpTab = ({ followUpDate, onDateChange, onSave, child }) => (
-  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
-    <div className="flex justify-between items-center mb-6">
-      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
-        <FiCalendar className="text-xl" />
-        Follow-up Schedule for {child.firstName} {child.lastName}
-      </h3>
-    </div>
-
-    <div className="mb-6">
-      <label className="block text-gray-700 text-lg font-medium mb-2">
-        Follow-up Date
-      </label>
-      <input
-        type="date"
-        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 text-lg shadow"
-        value={followUpDate}
-        onChange={(e) => onDateChange(e.target.value)}
-      />
-    </div>
-
-    <div className="flex justify-end">
-      <button
-        onClick={onSave}
-        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
-      >
-        <FiSend /> Schedule Follow-up
-      </button>
-    </div>
-  </div>
-);
-
 const MentalHealthTab = ({
   mentalHealthNotes,
   onNotesChange,
@@ -998,25 +1005,40 @@ const MentalHealthTab = ({
       </h3>
     </div>
 
-    <div className="mb-6">
-      <textarea
-        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
-        placeholder="Add mental health assessment notes, observations, and treatment plans..."
-        value={mentalHealthNotes}
-        onChange={(e) => onNotesChange(e.target.value)}
-      />
-    </div>
+    <div className="mb-6 space-y-4">
+      {Array.isArray(mentalHealthNotes) && mentalHealthNotes.length > 0 ? (
+        mentalHealthNotes.map((note, idx) => (
+          <div key={idx}>
+            <label className="block text-gray-700 font-medium mb-1">
+              Date
+            </label>
+            <input
+              type="date"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 mb-2"
+              value={note.date}
+              onChange={(e) => onNotesChange(idx, "date", e.target.value)}
+            />
+            <textarea
+              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[100px]"
+              placeholder="Add mental health assessment notes, observations, and treatment plans..."
+              value={note.notes}
+              onChange={(e) => onNotesChange(idx, "notes", e.target.value)}
+            />
+          </div>
+        ))
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={onSave}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+            >
+              <FiSend /> Save Assessment
+            </button>
+          </div>
+        </div>
+      );
 
-    <div className="flex justify-end">
-      <button
-        onClick={onSave}
-        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
-      >
-        <FiSend /> Save Assessment
-      </button>
-    </div>
-  </div>
-);
 
 const LabTestsTab = ({ labTests, onLabTestsChange, onSave, child }) => (
   <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
@@ -1027,13 +1049,46 @@ const LabTestsTab = ({ labTests, onLabTestsChange, onSave, child }) => (
       </h3>
     </div>
 
-    <div className="mb-6">
-      <textarea
-        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[300px]"
-        placeholder="Add lab test requirements, results, and observations..."
-        value={labTests}
-        onChange={(e) => onLabTestsChange(e.target.value)}
-      />
+    <div className="mb-6 space-y-4">
+      {Array.isArray(labTests) && labTests.length > 0 ? (
+        labTests.map((test, idx) => (
+          <div key={idx}>
+            <label className="block text-gray-700 font-medium mb-1">
+              Test Name
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 mb-2"
+              value={test.testName}
+              onChange={(e) => onLabTestsChange(idx, "testName", e.target.value)}
+            />
+            <label className="block text-gray-700 font-medium mb-1">
+              Test Date
+            </label>
+            <input
+              type="date"
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 mb-2"
+              value={test.testDate}
+              onChange={(e) => onLabTestsChange(idx, "testDate", e.target.value)}
+            />
+            <label className="block text-gray-700 font-medium mb-1">
+              Results
+            </label>
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
+              value={test.results}
+              onChange={(e) => onLabTestsChange(idx, "results", e.target.value)}
+            />
+          </div>
+        ))
+      ) : (
+        <textarea
+          className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-lg shadow min-h-[100px]"
+          placeholder="Add lab test requirements, results, and observations..."
+          value={labTests && labTests.results ? labTests.results : ""}
+          onChange={(e) => onLabTestsChange(0, "results", e.target.value)}
+        />
+      )}
     </div>
 
     <div className="flex justify-end">
@@ -1042,6 +1097,37 @@ const LabTestsTab = ({ labTests, onLabTestsChange, onSave, child }) => (
         className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
       >
         <FiSend /> Save Lab Tests
+      </button>
+    </div>
+  </div>
+);
+
+
+const FollowUpTab = ({ followUpDate, onDateChange, onSave, child }) => (
+  <div className="p-8 bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-2xl shadow-xl border-2 border-indigo-100">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <FiCalendar className="text-xl" />
+        Schedule Follow-up for {child.firstName} {child.lastName}
+      </h3>
+    </div>
+    <div className="mb-6">
+      <label className="block text-gray-700 font-medium mb-2">
+        Next Follow-up Date
+      </label>
+      <input
+        type="date"
+        className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
+        value={followUpDate}
+        onChange={(e) => onDateChange(e.target.value)}
+      />
+    </div>
+    <div className="flex justify-end">
+      <button
+        onClick={onSave}
+        className="px-6 py-3 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition flex items-center gap-2 font-semibold text-lg"
+      >
+        <FiSend /> Save Follow-up
       </button>
     </div>
   </div>
@@ -1083,7 +1169,7 @@ const TherapySessionsTab = ({
                 <input
                   type="date"
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
-                  value={session.date}
+                  value={session.date ? session.date.split("T")[0] : ""}
                   onChange={(e) =>
                     onUpdateSession(index, "date", e.target.value)
                   }
@@ -1091,14 +1177,14 @@ const TherapySessionsTab = ({
               </div>
               <div>
                 <label className="block text-gray-700 font-medium mb-1">
-                  Duration (minutes)
+                  Type
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-400"
-                  value={session.duration}
+                  value={session.type || ""}
                   onChange={(e) =>
-                    onUpdateSession(index, "duration", parseInt(e.target.value))
+                    onUpdateSession(index, "type", e.target.value)
                   }
                 />
               </div>

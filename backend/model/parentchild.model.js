@@ -140,8 +140,9 @@ const childSchema = new mongoose.Schema({
 
   therapySessions: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "TherapySession",
+      date: { type: Date, default: Date.now },
+      type: { type: String, trim: true },
+      notes: { type: String, trim: true },
     },
   ],
   behavioralIssues: [
