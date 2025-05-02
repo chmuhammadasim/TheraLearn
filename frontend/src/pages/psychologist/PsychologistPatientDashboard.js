@@ -258,6 +258,7 @@ function PsychologistPatientDashboard() {
     }
     try {
       const patientResponse = await getPatientResponse(selectedPatient._id);
+      console.log("Patient response:", patientResponse);
       if (patientResponse.response) {
         setChatHistory((prev) => [
           ...prev,

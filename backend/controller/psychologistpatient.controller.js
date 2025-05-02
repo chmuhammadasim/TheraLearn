@@ -111,8 +111,9 @@ psychologistpatient.sendMessageToPatient = async (req, res) => {
 
 psychologistpatient.getPatientResponse = async (req, res) => {
   try {
+    console.log("Headers:", req.headers);
     const id = req.headers.patientid;
-    const patient = await User.findById(patientId);
+    const patient = await Parent.findById(id);
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
@@ -161,7 +162,7 @@ psychologistpatient.getPatientChat = async (req, res) => {
 psychologistpatient.getPsyChat = async (req, res) => {
   try {
     const from = req.headers.psychologistid;
-    const id = req.userData.userId;
+    const id = req.userData.id;
 
     if (!id) {
       return res.status(400).json({ message: "Patient ID is required" });
@@ -343,7 +344,6 @@ psychologistpatient.getChildRecords = async (req, res) => {
     if (!child) {
       return res.status(404).json({ message: "Child not found" });
     }
-    console.log("Child records:", child);
     res.status(200).json(child);
   } catch (error) {
     console.error("Error fetching child records:", error);
