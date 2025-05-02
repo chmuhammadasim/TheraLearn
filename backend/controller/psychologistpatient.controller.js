@@ -343,7 +343,7 @@ psychologistpatient.getChildRecords = async (req, res) => {
     if (!child) {
       return res.status(404).json({ message: "Child not found" });
     }
-    
+    console.log("Child records:", child);
     res.status(200).json(child);
   } catch (error) {
     console.error("Error fetching child records:", error);
