@@ -27,6 +27,14 @@ const games = [
     image: 'https://images-na.ssl-images-amazon.com/images/I/81FbxXJwZVL.png',
     ageRecommendation: 'Ages 8+',
   },
+  {
+    id: 4,
+    link: "/handposedetector",
+    name: 'Hand Pose Detector',
+    description: 'Detect hand poses and learn about gestures!',
+    image: 'https://th.bing.com/th/id/OIP.RdDbifQVJcsqF7ZDRNxk2wHaFn?rs=1&pid=ImgDetMain',
+    ageRecommendation: 'Ages 10+',
+  }
 ];
 
 function GamePage() {
@@ -43,7 +51,6 @@ function GamePage() {
   }, []);
 
   useEffect(() => {
-    // Filter games based on search query and age selection
     const filtered = games.filter((game) => {
       const matchesQuery = game.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesAge = selectedAge ? game.ageRecommendation.includes(selectedAge) : true;

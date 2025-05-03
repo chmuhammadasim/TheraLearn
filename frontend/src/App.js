@@ -23,6 +23,7 @@ import SuperAdminContentPanel from "./pages/superAdmin/adminContentPanel";
 import PsychologistRoute from "./components/Routes/PsychologistRoute";
 import GamePage from "./pages/Game/Game";
 import NumberGuessingGame from "./pages/Game/Games/Countinggamespeechrecognition/NumberGuessingGame";
+import HandposeDetector from "./pages/Game/Games/HandposeDetector/HandposeDetector"
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
 import PsychologistDetailsPage from "./pages/PsychologistList/PsychologistDetailsPage";
 import PsychologistBlogPage from "./pages/psychologist/PsychologistBlogPage";
@@ -177,6 +178,10 @@ function App() {
               path="/objectguessinggame"
               element={<ObjectGuessingGame />}
             />
+            <Route
+              path="/handposedetector"
+              element={<HandposeDetector />}
+             />
             <Route path="/betteraim" element={<BetterAim />} />
             <Route path="/games" element={<GamePage />} />
             <Route
