@@ -34,7 +34,15 @@ const games = [
     description: 'Detect hand poses and learn about gestures!',
     image: 'https://th.bing.com/th/id/OIP.RdDbifQVJcsqF7ZDRNxk2wHaFn?rs=1&pid=ImgDetMain',
     ageRecommendation: 'Ages 10+',
-  }
+  },
+  {
+    id: 5,
+    link: "/emotiondetection",
+    name: 'Emotion Detection',
+    description: 'Detect emotions and learn about feelings!',
+    image: 'https://th.bing.com/th/id/OIP.9r0v1X2a3bqk4g7x6c8m1wHaE8?pid=ImgDet&rs=1',
+    ageRecommendation: 'Ages 10+',
+  },
 ];
 
 function GamePage() {
