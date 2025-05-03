@@ -1,0 +1,231 @@
+/* Colors */
+:root {
+  --bgColor: #130560;
+  --subMarineColor: #e30449;
+  --lightShadowColor: #ef689e;
+  --lightShadowColor2: #c6003d;
+  --lightShadowColor3: #e92d77;
+  --darkShadowColor: #a10532;
+  --propellerColor: #f7e349;
+  --propellerColor2: #f7ac08;
+  --windowLightColor: #c9e5d9;
+  --lightColor: #817E97;
+  --seaGroundColor1: #0c0051;
+  --seaGroundColor2: #08003b;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bgColor);
+}
+
+.seaContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bgColor);
+  overflow: hidden;
+  z-index: -1;
+}
+
+.submarine__container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 200px;
+  transform: translate(-50%, -50%);
+}
+
+.submarine__body {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 80px;
+  background: var(--subMarineColor);
+  border-radius: 50px;
+  transform: translate(-50%, -50%);
+}
+
+.submarine__propeller {
+  position: absolute;
+  left: 80%;
+  top: 50%;
+  width: 30px;
+  height: 50px;
+  transform: translate(0%, -50%);
+  perspective: 600px;
+}
+
+.propeller__perspective {
+  width: 100%;
+  height: 100%;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+  animation: rotateInfinite 1s linear infinite;
+}
+
+.submarine__propeller-parts {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.darkOne {
+  top: 0;
+  background: var(--propellerColor2);
+  transform: rotateY(180deg) rotateX(225deg);
+}
+
+.lightOne {
+  top: 0;
+  background: var(--propellerColor);
+  transform: rotateX(45deg);
+}
+
+.submarine__sail {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 90px;
+  height: 50px;
+  transform: translate(-50%, -100%);
+  background: var(--lightShadowColor2);
+  clip-path: polygon(0% 0%, 70% 0%, 100% 100%, 0% 100%);
+}
+
+.submarine__window {
+  width: 25px;
+  height: 25px;
+  border-radius: 100%;
+  background-image: linear-gradient(45deg, var(--windowLightColor), #fff);
+  border: 8px solid var(--darkShadowColor);
+  z-index: 10;
+  animation: shadow-change 1s linear infinite;
+}
+
+.one {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+}
+
+.two {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+}
+
+.bubbles__container {
+  position: absolute;
+  top: 50%;
+  left: 55%;
+  width: 100px;
+  height: 50px;
+  transform: translate(100%, -50%);
+}
+
+.bubbles {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: #fff;
+  opacity: 0.8;
+}
+
+.bubble-1 {
+  animation: move-right 1s infinite linear;
+  animation-delay: 0.25s;
+}
+
+.bubble-2 {
+  animation: move-right 1s infinite linear;
+  animation-delay: 0.5s;
+}
+
+.bubble-3 {
+  animation: move-right 1s infinite linear;
+  animation-delay: 0.75s;
+}
+
+.bubble-4 {
+  animation: move-right 1s infinite linear;
+  animation-delay: 1s;
+}
+
+.ground__container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  background: var(--seaGroundColor2);
+}
+
+.ground1 span {
+  background: var(--seaGroundColor1);
+}
+
+.ground2 span {
+  background: var(--seaGroundColor2);
+  width: 80px;
+  height: 80px;
+  transform: translateY(30%);
+}
+
+/* Keyframes */
+@keyframes shadow-change {
+  0%, 100% {
+    background-image: linear-gradient(45deg, var(--windowLightColor) 0%, var(--windowLightColor) 20%, #fff 21%, #fff 39%, var(--windowLightColor) 40%, #fff 41%, #fff 59%, var(--windowLightColor) 60%);
+  }
+  20% {
+    background-image: linear-gradient(45deg, var(--windowLightColor) 20%, var(--windowLightColor) 40%, #fff 41%, #fff 59%, var(--windowLightColor) 60%);
+  }
+  40% {
+    background-image: linear-gradient(45deg, var(--windowLightColor) 40%, var(--windowLightColor) 60%, #fff 61%, #fff 79%, var(--windowLightColor) 80%);
+  }
+}
+
+@keyframes move-right {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+    transform: translate(10%, 10%);
+  }
+  50% {
+    opacity: 0.2;
+    transform: translate(450%, -20%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(500%, -60%);
+  }
+}
+
+@keyframes rotateInfinite {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

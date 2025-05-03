@@ -43,6 +43,15 @@ const games = [
     image: 'https://th.bing.com/th/id/OIP.9r0v1X2a3bqk4g7x6c8m1wHaE8?pid=ImgDet&rs=1',
     ageRecommendation: 'Ages 10+',
   },
+  {
+    id: 6,
+    link: "/magicmemory",
+    name: 'Magic Memory',
+    description: 'Test your memory with fun challenges!',
+    ageRecommendation: 'Ages 8+',
+    image: 'https://th.bing.com/th/id/OIP.0g1X2v4x5k3a7q6m1w8c4wHaE8?pid=ImgDet&rs=1',
+  },
+
 ];
 
 function GamePage() {

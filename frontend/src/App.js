@@ -25,6 +25,7 @@ import GamePage from "./pages/Game/Game";
 import NumberGuessingGame from "./pages/Game/Games/Countinggamespeechrecognition/NumberGuessingGame";
 import HandposeDetector from "./pages/Game/Games/HandposeDetector/HandposeDetector"
 import EmotionDetection from "./pages/Game/Games/EmotionDetection/EmotionDetection";
+import MagicMemory from "./pages/Game/Games/MagicMemory/MagicMemory";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
 import PsychologistDetailsPage from "./pages/PsychologistList/PsychologistDetailsPage";
 import PsychologistBlogPage from "./pages/psychologist/PsychologistBlogPage";
@@ -187,6 +188,10 @@ function App() {
               path="/emotiondetection"
               element={<EmotionDetection />}
             />
+            <Route
+              path="/magicmemory"
+              element={<MagicMemory />}
+            />
             <Route path="/betteraim" element={<BetterAim />} />
             <Route path="/games" element={<GamePage />} />
             <Route
@@ -197,6 +202,7 @@ function App() {
               path="/psychologistsdetail/:id"
               element={<PsychologistDetailsPage />}
             />
+            
             <Route path="/404" element={<NotFound404 />} />
             <Route path="*" element={<NotFound404 />} />
           </Routes>

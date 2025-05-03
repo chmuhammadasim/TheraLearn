@@ -1,0 +1,66 @@
+
+.card {
+  position: relative;
+  transform-origin: center center;
+  transform: scale(1); 
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer; 
+  z-index: 1; 
+  
+}
+
+
+.card img {
+  display: block;
+  width: 100%;
+  border: 2px solid #fff;
+  border-radius: 6px;
+}
+
+/* Front of the Card (Picture) */
+.card .front {
+  transform: rotateY(90deg);
+  transition: transform 0.2s ease-in;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; 
+}
+
+.flipped .front {
+  transform: rotateY(0deg);
+  transition-delay: 0.2s;
+}
+
+/* Back of the Card (Cover) */
+.card .back {
+  transition: transform 0.2s ease-in;
+  transition-delay: 0.2s;
+  backface-visibility: hidden; 
+  transform: rotateY(0deg);
+}
+
+.flipped .back {
+  transform: rotateY(90deg);
+  transition-delay: 0s;
+}
+
+/* Zooming functionality with specific limits */
+.card:hover {
+  transform: scale(1.1); 
+  z-index: 10; 
+}
+
+/* Class to zoom out the card to 75% */
+.card.zoomed-out {
+  transform: scale(0.75); 
+  z-index: 10;
+}
+
+/* Class to zoom in the card to 110% */
+.card.zoomed-in {
+  transform: scale(1.1); 
+  z-index: 10;
+}
