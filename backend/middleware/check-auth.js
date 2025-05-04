@@ -13,6 +13,7 @@ module.exports = async (req, res, next) => {
 
       
       req.userData = decoded;
+    
       next();
     } catch (error) {
       res.status(401);

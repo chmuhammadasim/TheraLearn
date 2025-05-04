@@ -40,7 +40,7 @@ const games = [
     link: "/emotiondetection",
     name: 'Emotion Detection',
     description: 'Detect emotions and learn about feelings!',
-    image: 'https://th.bing.com/th/id/OIP.9r0v1X2a3bqk4g7x6c8m1wHaE8?pid=ImgDet&rs=1',
+    image: 'https://th.bing.com/th/id/OIP.U5SV84m5NYgUe-E2raXGUAAAAA?cb=iwp1&rs=1&pid=ImgDetMain',
     ageRecommendation: 'Ages 10+',
   },
   {

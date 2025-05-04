@@ -13,7 +13,7 @@ function BetterAim() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [lives, setLives] = useState(3);
   const [gameOver, setGameOver] = useState(false);
-  const [combo, setCombo] = useState(0);
+
   const [paused, setPaused] = useState(false);
   const [soundOn, setSoundOn] = useState(true);
   const [activePowerUps, setActivePowerUps] = useState([]);
@@ -27,47 +27,79 @@ function BetterAim() {
   const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
   // Save game state to the database
-  const saveToDatabase = async () => {
-    const token = localStorage.getItem('authToken');
-    const gameData = {
-      gameName: 'BetterAim',
-      score,
-      duration: 30 - timeLeft,
-      level,
-    };
-
+  const saveToDatabase = useCallback(async () => {
     try {
+      const token = localStorage.getItem('authToken');
+      if (!token) throw new Error('No auth token found');
+      const gameData = {
+        gameName: 'BetterAim',
+        score,
+        duration: 30 - timeLeft,
+        level,
+      };
       await axios.post('http://localhost:5000/api/game/saveGameData', gameData, {
         headers: { 
           'Content-Type': 'application/json', 
-          Authorization: `Bearer ${token}` 
+          'authorization': `Bearer ${token}`,
         },
       });
       console.log('Game state saved successfully!');
     } catch (error) {
       console.error('Error saving game state to database:', error);
     }
-  };
+  }, [score, timeLeft, level]);
 
-  const loadFromDatabase = async () => {
-    const token = localStorage.getItem('authToken');
-
+  const loadFromDatabase = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/game/loadGameData/BetterAim', {
-        headers: { 
-          'Content-Type': 'application/json', 
-          Authorization: `Bearer ${token}` 
-        },
-      });
-      const { score, duration, level } = response.data;
-      setScore(score || 0);
-      setLevel(level || 1);
-      setTimeLeft(30 - (duration || 0));
+      let token;
+      try {
+        token = localStorage.getItem('authToken');
+        if (!token) throw new Error('No auth token found');
+      } catch (tokenError) {
+        console.error('Error accessing auth token:', tokenError);
+        return;
+      }
+
+      let response;
+      try {
+        response = await axios.get('http://localhost:5000/api/game/loadGameData/BetterAim', {
+          headers: { 
+            'Content-Type': 'application/json', 
+            'authorization': `Bearer ${token}`,
+          },
+        });
+      } catch (axiosError) {
+        console.error('Error fetching game data from server:', axiosError);
+        return;
+      }
+
+      if (!response || !response.data) {
+        console.error('No data received from server.');
+        return;
+      }
+
+      let score = 0, duration = 0, level = 1;
+      try {
+        score = Number(response.data.score) || 0;
+        duration = Number(response.data.duration) || 0;
+        level = Number(response.data.level) || 1;
+      } catch (parseError) {
+        console.error('Error parsing game data:', parseError);
+      }
+
+      try {
+        setScore(score);
+        setLevel(level);
+        setTimeLeft(30 - duration);
+      } catch (stateError) {
+        console.error('Error setting state from loaded data:', stateError);
+      }
+
       console.log('Game state loaded successfully!');
     } catch (error) {
-      console.error('Error loading game state from database:', error);
+      console.error('Unexpected error loading game state from database:', error);
     }
-  };
+  }, []);
 
   // Generate balloons
   const generateBalloon = useCallback(() => {
@@ -110,23 +142,21 @@ function BetterAim() {
   }, [paused, gameOver, timeLeft]);
 
   // Balloon movement
-  useEffect(() => {
-    if (paused || freezeActive) return;
-    const movementInterval = setInterval(() => {
-      setBalloons((prev) =>
-        prev.map((b) => ({ ...b, y: b.y - b.speed })).filter((b) => {
-          if (b.y <= -10) {
-            loseLife(); // Balloon escapes
-            return false;
-          }
-          return true;
-        })
-      );
-    }, 50);
-    return () => clearInterval(movementInterval);
-  }, [paused, freezeActive]);
+ 
 
-  const loseLife = () => {
+  // Lose life function
+  const saveHighScore = useCallback(() => {
+    if (score > highScore) {
+      setHighScore(score);
+      try {
+        localStorage.setItem('highScore', score);
+      } catch (e) {
+        console.error('Failed to save high score:', e);
+      }
+    }
+  }, [score, highScore]);
+
+  const loseLife = useCallback(() => {
     setLives((prev) => {
       if (prev - 1 <= 0) {
         setGameOver(true);
@@ -135,8 +165,34 @@ function BetterAim() {
       }
       return prev - 1;
     });
-  };
+  }, [saveHighScore]);
 
+  // Advance level function
+  const advanceLevel = useCallback(() => {
+    setLevel((prev) => prev + 1);
+    setSnackbarMessage('⬆️ Level Up!');
+  }, []);
+  useEffect(() => {
+    if (paused || freezeActive) return;
+    const movementInterval = setInterval(() => {
+      setBalloons((prev) =>
+        prev.map((b) => ({ ...b, y: b.y - b.speed })).filter((b) => {
+          if (b.y <= -10) {
+            try {
+              loseLife(); // Balloon escapes
+            } catch (e) {
+              console.error('Error in loseLife:', e);
+            }
+            return false;
+          }
+          return true;
+        })
+      );
+    }, 30);
+    return () => clearInterval(movementInterval);
+  }, [paused, freezeActive, loseLife]);
+
+  // Handle balloon click
   const handleBalloonClick = (id) => {
     const balloon = balloons.find((b) => b.id === id);
     if (!balloon) return;
@@ -146,17 +202,25 @@ function BetterAim() {
       popSoundRef.current.play();
     }
 
-    setBalloons((prev) => prev.filter((b) => b.id !== id));
-    setScore((prev) => prev + (balloon.isBonus ? 20 : 10));
-    handlePowerUp(balloon.type);
+    // Power-up balloon
+    if (balloon.type) {
+      handlePowerUp(balloon.type);
+    }
 
-    setCombo((prev) => {
-      const newCombo = prev + 1;
-      if (newCombo % 10 === 0) advanceLevel();
-      return newCombo;
+    // Advance level every 100 points (10 balloons)
+    setScore((prevScore) => {
+      const newScore = prevScore + (balloon.isBonus ? 20 : 10);
+      if (Math.floor(newScore / 100) > Math.floor(prevScore / 100)) {
+        advanceLevel();
+      }
+      return newScore;
     });
+
+    // Remove balloon after pop
+    setBalloons((prev) => prev.filter((b) => b.id !== id));
   };
 
+  // Handle power-up
   const handlePowerUp = (type) => {
     switch (type) {
       case 'time':
@@ -165,8 +229,8 @@ function BetterAim() {
         break;
       case 'slow':
         setPaused(true);
-        setTimeout(() => setPaused(false), 5000);
         setSnackbarMessage('🐌 Slow Motion for 5 seconds!');
+        setTimeout(() => setPaused(false), 5000);
         break;
       case 'freeze':
         setFreezeActive(true);
@@ -186,41 +250,39 @@ function BetterAim() {
     }
   };
 
-  const advanceLevel = () => {
-    setLevel((prev) => prev + 1);
-    setTimeLeft(30);
-  };
-
-  const saveHighScore = () => {
-    if (score > highScore) {
-      setHighScore(score);
-      localStorage.setItem('highScore', score);
-    }
-  };
-
+  // Restart game
   const restartGame = () => {
     saveHighScore();
     setScore(0);
     setLevel(1);
     setTimeLeft(30);
     setLives(3);
-    setCombo(0);
     setPaused(false);
     setBalloons([]);
     setGameOver(false);
     setActivePowerUps([]);
+    setSnackbarMessage('');
+    setReloadGame(false);
   };
 
-  // Load saved state on mount
-  useEffect(() => {
-    loadFromDatabase();
-  }, []);
-
+  // Start new game (for welcome screen)
   const handleNewGame = () => {
     restartGame();
     setReloadGame(true);
   };
 
+  // Load saved state on mount
+  useEffect(() => {
+    loadFromDatabase();
+  }, [loadFromDatabase]);
+  // Save state on unload
+  useEffect(() => {
+    const handleUnload = () => {
+      saveToDatabase().catch((e) => console.error('Error saving on unload:', e));
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [saveToDatabase]);
   const handleLoadLastSession = async () => {
     await loadFromDatabase();
     setReloadGame(true);
@@ -231,7 +293,7 @@ function BetterAim() {
     const handleUnload = () => saveToDatabase();
     window.addEventListener('beforeunload', handleUnload);
     return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [score, level, timeLeft]);
+  }, [score, level, timeLeft, saveToDatabase]);
 
   return (
     <div className="App">
