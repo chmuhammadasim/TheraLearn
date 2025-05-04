@@ -18,6 +18,7 @@ function Dashboard() {
       try {
         const user = await getUserData();
         setUserData(user.data);
+        console.log(user.data)
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setError('There was an issue retrieving data. Please try again later.');

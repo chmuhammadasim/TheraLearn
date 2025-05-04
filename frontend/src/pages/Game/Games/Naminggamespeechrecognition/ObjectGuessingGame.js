@@ -74,7 +74,13 @@ const ObjectGuessingGame = () => {
   const [highScore, setHighScore] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [reloadGame, setReloadGame] = useState(false);
-
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
+  const gameData = {
+    gameName: "ObjectGuessingGame",
+    score: score,
+    duration: time,
+    level: currentObjectIndex + 1,
+  };
   const {
     listening,
     finalTranscript,
@@ -92,6 +98,7 @@ const ObjectGuessingGame = () => {
           headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
+            'selectedchild': selectedchild,
           },
         })
         .then((res) => {
@@ -138,6 +145,9 @@ const ObjectGuessingGame = () => {
 
   useEffect(() => {
     if (chances <= 0) setGameOver(true);
+    if (gameOver) {
+      saveToDatabase(gameData);
+    }
   }, [chances]);
 
   useEffect(() => {
@@ -175,12 +185,7 @@ const ObjectGuessingGame = () => {
     }
   };
   useEffect(() => {
-    const gameData = {
-      gameName: "ObjectGuessingGame",
-      score: score,
-      duration: time,
-      level: currentObjectIndex + 1,
-    };
+
     const handleUpload = (event) => {
       saveToDatabase(gameData);
     };

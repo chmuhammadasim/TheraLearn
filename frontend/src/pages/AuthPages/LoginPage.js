@@ -65,6 +65,7 @@ function LoginPage() {
 
   const handleChildSelection = (child) => {
     localStorage.setItem('selectedChild', JSON.stringify(child));
+    localStorage.setItem('selectedChildId', JSON.stringify(child._id));
     setShowChildPopup(false);
     window.location.href = "/";
   };

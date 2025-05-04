@@ -73,7 +73,7 @@ gameController.getGameById = async (req, res) => {
 
 gameController.saveGameData = async (req, res) => {
   console.log("saveGameData called");
-  const userId = req.userData.id;
+  const userId = req.headers.selectedchild;
   try {
     const { gameName, level, score, duration } = req.body;
 
@@ -107,7 +107,8 @@ gameController.saveGameData = async (req, res) => {
 gameController.getGameData = async (req, res) => {
   try {
     const { gameName } = req.params;
-    const userId = req.userData && (req.userData.id || req.userData.userId);
+    const selectedChild = req.headers.selectedchild;
+    const userId = req.userData && (selectedChild || req.selectedChild);
     if (!userId || !gameName) {
       return res.status(400).json({ error: "User ID and Game Name are required." });
     }

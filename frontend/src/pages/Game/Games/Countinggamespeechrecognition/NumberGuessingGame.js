@@ -38,6 +38,7 @@ const NumberGuessingGame = () => {
   const [highScore, setHighScore] = useState(0);
   const [isListening, setIsListening] = useState(false);
   const [reloadGame, setReloadGame] = useState(false);
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
 
   const {
     listening,
@@ -54,7 +55,8 @@ const NumberGuessingGame = () => {
       const response = await axios.post( `http://localhost:5000/api/game/saveGameData`,data, {
           headers: { 
             "Content-Type": "application/json", 
-            'authorization': `Bearer ${token}`
+            'authorization': `Bearer ${token}`,
+            'selectedchild': selectedchild,
           },
         }
       ).then((res) => {
@@ -75,6 +77,7 @@ const NumberGuessingGame = () => {
           headers: {
             "Content-Type": "application/json",
             'authorization': `Bearer ${token}`,
+            'selectedchild': selectedchild,
           },
         }
       );
@@ -145,6 +148,10 @@ const NumberGuessingGame = () => {
     const handleUpload = (event) => {
       saveToDatabase(gameData);
     }
+    if (gameOver) {
+      saveToDatabase(gameData);
+    }
+    // Save game data to the database when the user leaves the page
     window.addEventListener('beforeunload', handleUpload);
     return () => {
       window.removeEventListener('beforeunload', handleUpload);

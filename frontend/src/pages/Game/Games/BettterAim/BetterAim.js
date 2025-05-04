@@ -26,10 +26,12 @@ function BetterAim() {
 
   const randomInRange = (min, max) => Math.random() * (max - min) + min;
 
-  // Save game state to the database
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
+
   const saveToDatabase = useCallback(async () => {
     try {
       const token = localStorage.getItem('authToken');
+
       if (!token) throw new Error('No auth token found');
       const gameData = {
         gameName: 'BetterAim',
@@ -41,19 +43,20 @@ function BetterAim() {
         headers: { 
           'Content-Type': 'application/json', 
           'authorization': `Bearer ${token}`,
+          'selectedChild': selectedchild,
         },
       });
-      console.log('Game state saved successfully!');
     } catch (error) {
       console.error('Error saving game state to database:', error);
     }
-  }, [score, timeLeft, level]);
+  }, [score, timeLeft, level, selectedchild]);
 
   const loadFromDatabase = useCallback(async () => {
     try {
       let token;
       try {
         token = localStorage.getItem('authToken');
+        
         if (!token) throw new Error('No auth token found');
       } catch (tokenError) {
         console.error('Error accessing auth token:', tokenError);
@@ -66,6 +69,7 @@ function BetterAim() {
           headers: { 
             'Content-Type': 'application/json', 
             'authorization': `Bearer ${token}`,
+            'selectedChild': selectedchild,
           },
         });
       } catch (axiosError) {
@@ -134,7 +138,13 @@ function BetterAim() {
 
   // Timer countdown
   useEffect(() => {
-    if (timeLeft <= 0) setGameOver(true);
+    if (timeLeft <= 0)
+       setGameOver(true);
+    if (gameOver){
+      saveToDatabase();
+    }
+      
+    
     if (!paused && !gameOver) {
       const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
       return () => clearInterval(timer);
@@ -275,7 +285,7 @@ function BetterAim() {
   useEffect(() => {
     loadFromDatabase();
   }, [loadFromDatabase]);
-  // Save state on unload
+
   useEffect(() => {
     const handleUnload = () => {
       saveToDatabase().catch((e) => console.error('Error saving on unload:', e));
