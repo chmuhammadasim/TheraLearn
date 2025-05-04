@@ -7,6 +7,8 @@ import {
   FaSave,
   FaPlus,
   FaTrash,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import {
   MdEmail,
@@ -15,8 +17,9 @@ import {
   MdLocationOn,
   MdLock,
   MdCalendarToday,
-  MdCheckCircle,
   MdMedicalServices,
+  MdHealthAndSafety,
+  MdInfo,
 } from "react-icons/md";
 import { getUserData, updateUserData } from "../../services/userService";
 
@@ -29,35 +32,70 @@ const InputField = ({
   onChange,
   disabled = false,
   className = "",
+  placeholder = "",
+  required = false,
 }) => (
   <div className="mt-4">
-    <label className="block text-gray-700 font-semibold">{label}</label>
-    <div className="flex items-center mt-1 border rounded-md px-3 py-2 transition hover:shadow-sm">
+    <label className="block text-gray-700 font-semibold mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <div className={`flex items-center mt-1 border rounded-md px-3 py-2 transition ${disabled ? 'bg-gray-50' : 'hover:shadow-md focus-within:shadow-md focus-within:border-blue-400'}`}>
       {icon}
       <input
         type={type}
         name={name}
-        value={value}
+        value={value || ""}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full ml-2 focus:outline-none focus:ring-2 focus:ring-blue-300 ${className}`}
+        placeholder={placeholder}
+        className={`w-full ml-2 focus:outline-none ${disabled ? 'text-gray-500' : ''} ${className}`}
       />
     </div>
   </div>
 );
 
-const TextAreaField = ({ label, name, value, onChange, disabled = false }) => (
+const TextAreaField = ({ 
+  label, 
+  name, 
+  value, 
+  onChange, 
+  disabled = false, 
+  placeholder = "",
+  required = false 
+}) => (
   <div className="mt-4">
-    <label className="block text-gray-700 font-semibold">{label}</label>
+    <label className="block text-gray-700 font-semibold mb-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
     <textarea
       name={name}
-      value={value}
+      value={value || ""}
       onChange={onChange}
       disabled={disabled}
-      className="w-full border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-300 transition hover:shadow-sm"
+      placeholder={placeholder}
+      className={`w-full border rounded-md px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${disabled ? 'bg-gray-50 text-gray-500' : 'hover:shadow-md'}`}
+      rows={3}
     />
   </div>
 );
+
+const SectionCard = ({ title, icon, children, isOpen = true, toggleOpen }) => {
+  return (
+    <div className="mt-6 border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+      <div 
+        className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 flex justify-between items-center cursor-pointer"
+        onClick={toggleOpen}
+      >
+        <div className="flex items-center">
+          {icon}
+          <h3 className="text-xl font-semibold ml-2 text-blue-800">{title}</h3>
+        </div>
+        {toggleOpen && (isOpen ? <FaChevronUp /> : <FaChevronDown />)}
+      </div>
+      {isOpen && <div className="p-4 bg-white">{children}</div>}
+    </div>
+  );
+};
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -84,10 +122,20 @@ const ProfilePage = () => {
     medicalHistory: "",
   });
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [openSections, setOpenSections] = useState({
+    personal: true,
+    medical: true,
+    children: true,
+    physician: true,
+    insurance: true
+  });
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await getUserData();
         setFormData({
@@ -99,12 +147,21 @@ const ProfilePage = () => {
         const storedRole =
           localStorage.getItem("authrole") || res.data.role || "parent";
         setRole(storedRole);
-      } catch {
+      } catch (err) {
         setError("Failed to fetch user data. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  const toggleSection = (section) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type: inputType, checked } = e.target;
@@ -133,9 +190,15 @@ const ProfilePage = () => {
     }
   };
 
-  const handleEditToggle = () => setIsEditing(!isEditing);
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+    setError(null);
+    setSuccess(null);
+  };
 
   const handleSaveChanges = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const updatedData = {
         ...formData,
@@ -146,23 +209,29 @@ const ProfilePage = () => {
       };
       await updateUserData(updatedData);
       setIsEditing(false);
-      alert("Profile updated successfully!");
-    } catch {
-      alert("Failed to update profile.");
+      setSuccess("Profile updated successfully!");
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      setError("Failed to update profile. Please check your information and try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5000000) { // 5MB limit
+        setError("Image size should be less than 5MB");
+        return;
+      }
       setSelectedImage(URL.createObjectURL(file));
       setFormData({ ...formData, profilePictureUrl: file });
     }
   };
 
   const addChild = () => {
-    const storedRole = localStorage.getItem("authrole");
-    if (storedRole === "parent") {
+    if (role === "parent") {
       setFormData((prev) => ({
         ...prev,
         children: [
@@ -180,14 +249,13 @@ const ProfilePage = () => {
           },
         ],
       }));
-    } else if (storedRole === "psychologist") {
+    } else {
       setError("You do not have permission to add children.");
     }
   };
 
   const removeChild = (index) => {
-    const storedRole = localStorage.getItem("authrole");
-    if (storedRole !== "parent") {
+    if (role !== "parent") {
       setError("You do not have permission to remove children.");
       return;
     }
@@ -200,6 +268,19 @@ const ProfilePage = () => {
     updatedChildren[index][field] = value;
     setFormData({ ...formData, children: updatedChildren });
   };
+
+  if (loading && !formData.firstName) {
+    return (
+      <div className="min-h-screen bg-gradient-to-tr pt-20 from-blue-200 via-green-200 to-blue-300 py-10 px-5 flex justify-center items-center">
+        <div className="text-center">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-blue-600 border-t-transparent" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2 text-blue-800 font-medium">Loading profile data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-tr pt-20 from-blue-200 via-green-200 to-blue-300 py-10 px-5">
@@ -217,10 +298,9 @@ const ProfilePage = () => {
                 alt="Profile"
               />
               {isEditing && (
-                <FaCamera
-                  className="absolute bottom-1 right-1 bg-white p-1 rounded-full text-blue-700"
-                  size={24}
-                />
+                <div className="absolute bottom-1 right-1 bg-white p-1 rounded-full text-blue-700">
+                  <FaCamera size={24} />
+                </div>
               )}
             </label>
             <input
@@ -229,186 +309,250 @@ const ProfilePage = () => {
               accept="image/*"
               className="hidden"
               onChange={handleProfilePictureChange}
+              disabled={!isEditing}
             />
             <div className="ml-4">
-              <h2 className="text-2xl font-bold">{`${formData.firstName} ${formData.lastName}`}</h2>
+              <h2 className="text-2xl font-bold">{`${formData.firstName || 'New'} ${formData.lastName || 'User'}`}</h2>
               <p className="text-gray-100 text-sm">
                 {formData.username || "No username"}
               </p>
+              <div className="mt-1 bg-blue-800 px-3 py-1 rounded-full text-xs inline-block">
+                {role.charAt(0).toUpperCase() + role.slice(1)}
+              </div>
             </div>
           </div>
           <button
             onClick={handleEditToggle}
             className="w-full sm:w-auto bg-yellow-500 px-4 py-2 text-sm sm:text-base rounded-md text-white shadow-md hover:bg-yellow-600 flex items-center justify-center transition"
+            disabled={loading}
           >
             <FaUserEdit className="mr-2" />
-            {isEditing ? "Cancel" : "Edit Profile"}
+            {isEditing ? "Cancel Editing" : "Edit Profile"}
           </button>
         </div>
 
         <div className="p-6 space-y-4">
-          {error && <div className="text-red-600 mb-2">{error}</div>}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              label="Username"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdPerson className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="Email"
-              name="email"
-              value={formData.email}
-              type="email"
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdEmail className="text-xl text-blue-700" />}
-            />
-            <div>
-              <label className="block text-gray-700 font-semibold mt-4">
-                Password
-              </label>
-              <div className="flex items-center mt-1 border rounded-md px-3 py-2 transition hover:shadow-sm">
-                <MdLock className="text-xl text-blue-700" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  className="w-full ml-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="ml-2 text-gray-600 hover:text-gray-800"
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
+          {error && (
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow-sm">
+              <div className="flex">
+                <div className="py-1"><MdInfo className="text-xl text-red-500" /></div>
+                <div className="ml-3">
+                  <p className="font-medium">Error</p>
+                  <p>{error}</p>
+                </div>
               </div>
             </div>
-            <InputField
-              label="First Name"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdPerson className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="Last Name"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdPerson className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdLocationOn className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="City"
-              name="city"
-              value={formData.city}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdLocationOn className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="Country"
-              name="country"
-              value={formData.country}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdLocationOn className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="Contact"
-              name="contact"
-              value={formData.contact}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdPhone className="text-xl text-blue-700" />}
-            />
-            <TextAreaField
-              label="Medical History (comma-separated)"
-              name="medicalHistory"
-              value={formData.medicalHistory}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
-            <InputField
-              label="Insurance Provider"
-              name="insuranceProvider"
-              value={formData.insuranceProvider}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdMedicalServices className="text-xl text-blue-700" />}
-            />
-            <InputField
-              label="Preferred Hospital"
-              name="preferredHospital"
-              value={formData.preferredHospital}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              icon={<MdLocationOn className="text-xl text-blue-700" />}
-            />
-          </div>
+          )}
 
-          <div className="mt-2 flex items-center space-x-2">
-            <input
-              type="checkbox"
-              name="emergencyAuthorization"
-              checked={formData.emergencyAuthorization}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-            />
-            <label className="text-gray-700 font-semibold">
-              Emergency Authorization
-            </label>
-          </div>
+          {success && (
+            <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded shadow-sm">
+              <div className="flex">
+                <div className="py-1"><MdInfo className="text-xl text-green-500" /></div>
+                <div className="ml-3">
+                  <p className="font-medium">Success</p>
+                  <p>{success}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <SectionCard 
+            title="Personal Information" 
+            icon={<MdPerson className="text-xl text-blue-700" />}
+            isOpen={openSections.personal}
+            toggleOpen={() => toggleSection('personal')}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                label="Username"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdPerson className="text-xl text-blue-700" />}
+                placeholder="Enter username"
+                required
+              />
+              <InputField
+                label="Email"
+                name="email"
+                value={formData.email}
+                type="email"
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdEmail className="text-xl text-blue-700" />}
+                placeholder="Enter email address"
+                required
+              />
+              <div>
+                <label className="block text-gray-700 font-semibold mb-1">
+                  Password {isEditing && <span className="text-red-500">*</span>}
+                </label>
+                <div className={`flex items-center border rounded-md px-3 py-2 transition ${!isEditing ? 'bg-gray-50' : 'hover:shadow-md'}`}>
+                  <MdLock className="text-xl text-blue-700" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password || ""}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    placeholder={isEditing ? "Enter new password" : "••••••••"}
+                    className={`w-full ml-2 focus:outline-none ${!isEditing ? 'text-gray-500' : ''}`}
+                  />
+                  {isEditing && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="ml-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  )}
+                </div>
+              </div>
+              <InputField
+                label="First Name"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdPerson className="text-xl text-blue-700" />}
+                placeholder="Enter first name"
+                required
+              />
+              <InputField
+                label="Last Name"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdPerson className="text-xl text-blue-700" />}
+                placeholder="Enter last name"
+                required
+              />
+              <InputField
+                label="Contact Number"
+                name="contact"
+                value={formData.contact}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdPhone className="text-xl text-blue-700" />}
+                placeholder="Enter contact number"
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+              <InputField
+                label="Address"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdLocationOn className="text-xl text-blue-700" />}
+                placeholder="Enter address"
+              />
+              <InputField
+                label="City"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdLocationOn className="text-xl text-blue-700" />}
+                placeholder="Enter city"
+              />
+              <InputField
+                label="Country"
+                name="country"
+                value={formData.country}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdLocationOn className="text-xl text-blue-700" />}
+                placeholder="Enter country"
+              />
+            </div>
+          </SectionCard>
+
+          <SectionCard 
+            title="Medical Information" 
+            icon={<MdHealthAndSafety className="text-xl text-blue-700" />}
+            isOpen={openSections.medical}
+            toggleOpen={() => toggleSection('medical')}
+          >
+            <div className="grid grid-cols-1 gap-4">
+              <TextAreaField
+                label="Medical History (comma-separated)"
+                name="medicalHistory"
+                value={formData.medicalHistory}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                placeholder="e.g., Asthma, Diabetes, High blood pressure"
+              />
+              <InputField
+                label="Preferred Hospital"
+                name="preferredHospital"
+                value={formData.preferredHospital}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                icon={<MdLocationOn className="text-xl text-blue-700" />}
+                placeholder="Enter preferred hospital"
+              />
+              <div className="mt-2 flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="emergencyAuthorization"
+                  name="emergencyAuthorization"
+                  checked={formData.emergencyAuthorization}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="emergencyAuthorization" className="text-gray-700 font-semibold">
+                  Emergency Authorization
+                </label>
+              </div>
+            </div>
+          </SectionCard>
 
           {/* Show children section only if role is parent */}
           {role === "parent" && (
-            <div className="mt-6">
-              <h3 className="text-xl font-semibold">Children</h3>
+            <SectionCard 
+              title="Children" 
+              icon={<MdPerson className="text-xl text-blue-700" />}
+              isOpen={openSections.children}
+              toggleOpen={() => toggleSection('children')}
+            >
               {formData.children.length > 0 ? (
                 formData.children.map((child, index) => (
                   <div
                     key={index}
-                    className="border border-gray-200 p-4 rounded-md mt-4 flex flex-col transition hover:shadow-sm"
+                    className="border border-gray-200 p-4 rounded-md mt-4 flex flex-col transition hover:shadow-sm bg-blue-50"
                   >
-                    <div className="flex justify-between">
-                      <div>
-                        <p>
-                          <strong>Role:</strong> {child.role}
-                        </p>
-                        <p>
-                          <strong>Name:</strong> {child.firstName}{" "}
-                          {child.lastName}
-                        </p>
-                        <p>
-                          <strong>Birthdate:</strong> {child.dateOfBirth}
-                        </p>
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center">
+                        <div className="rounded-full bg-blue-100 p-2 mr-2">
+                          <MdPerson className="text-xl text-blue-700" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">
+                            {child.firstName ? `${child.firstName} ${child.lastName}` : `Child #${index + 1}`}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            {child.dateOfBirth ? `DOB: ${child.dateOfBirth}` : "No birthdate set"}
+                          </p>
+                        </div>
                       </div>
                       {isEditing && (
                         <button
                           onClick={() => removeChild(index)}
-                          className="text-red-500 hover:text-red-700"
+                          className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition"
+                          title="Remove child"
                         >
                           <FaTrash />
                         </button>
                       )}
                     </div>
+                    
                     {isEditing && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-white p-3 rounded-lg">
                         <InputField
                           label="First Name"
                           name="firstName"
@@ -420,8 +564,10 @@ const ProfilePage = () => {
                               e.target.value
                             )
                           }
-                          disabled={!isEditing}
+                          disabled={false}
                           icon={<MdPerson className="text-xl text-blue-700" />}
+                          placeholder="Enter first name"
+                          required
                         />
                         <InputField
                           label="Last Name"
@@ -430,8 +576,10 @@ const ProfilePage = () => {
                           onChange={(e) =>
                             handleChildChange(index, "lastName", e.target.value)
                           }
-                          disabled={!isEditing}
+                          disabled={false}
                           icon={<MdPerson className="text-xl text-blue-700" />}
+                          placeholder="Enter last name"
+                          required
                         />
                         <InputField
                           label="Date of Birth"
@@ -445,7 +593,7 @@ const ProfilePage = () => {
                               e.target.value
                             )
                           }
-                          disabled={!isEditing}
+                          disabled={false}
                           icon={
                             <MdCalendarToday className="text-xl text-blue-700" />
                           }
@@ -457,8 +605,9 @@ const ProfilePage = () => {
                           onChange={(e) =>
                             handleChildChange(index, "gender", e.target.value)
                           }
-                          disabled={!isEditing}
+                          disabled={false}
                           icon={<MdPerson className="text-xl text-blue-700" />}
+                          placeholder="Enter gender"
                         />
                         <InputField
                           label="Blood Type"
@@ -471,13 +620,14 @@ const ProfilePage = () => {
                               e.target.value
                             )
                           }
-                          disabled={!isEditing}
+                          disabled={false}
                           icon={
                             <MdMedicalServices className="text-xl text-blue-700" />
                           }
+                          placeholder="e.g., A+, B-, O+"
                         />
                         <TextAreaField
-                          label="Medical Conditions (comma-separated)"
+                          label="Medical Conditions"
                           name="medicalConditions"
                           value={child.medicalConditions}
                           onChange={(e) =>
@@ -487,10 +637,11 @@ const ProfilePage = () => {
                               e.target.value
                             )
                           }
-                          disabled={!isEditing}
+                          disabled={false}
+                          placeholder="e.g., Asthma, ADHD"
                         />
                         <TextAreaField
-                          label="Allergies (comma-separated)"
+                          label="Allergies"
                           name="allergies"
                           value={child.allergies}
                           onChange={(e) =>
@@ -500,10 +651,11 @@ const ProfilePage = () => {
                               e.target.value
                             )
                           }
-                          disabled={!isEditing}
+                          disabled={false}
+                          placeholder="e.g., Peanuts, Penicillin"
                         />
                         <TextAreaField
-                          label="Medications (comma-separated)"
+                          label="Medications"
                           name="medications"
                           value={child.medications}
                           onChange={(e) =>
@@ -513,31 +665,36 @@ const ProfilePage = () => {
                               e.target.value
                             )
                           }
-                          disabled={!isEditing}
+                          disabled={false}
+                          placeholder="e.g., Albuterol inhaler, Concerta"
                         />
                       </div>
                     )}
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600 mt-2">No children added.</p>
+                <p className="text-gray-600 mt-2 p-4 bg-gray-50 rounded-lg text-center">No children added yet.</p>
               )}
               {isEditing && (
                 <button
                   onClick={addChild}
-                  className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md flex items-center transition"
+                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center justify-center transition shadow-sm"
                 >
                   <FaPlus className="mr-2" /> Add Child
                 </button>
               )}
-            </div>
+            </SectionCard>
           )}
+
+          {/* Show primary care physician only if role is parent */}
           {role === "parent" && (
-            <div>
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold">
-                  Primary Care Physician
-                </h3>
+            <SectionCard 
+              title="Primary Care Physician" 
+              icon={<MdMedicalServices className="text-xl text-blue-700" />}
+              isOpen={openSections.physician}
+              toggleOpen={() => toggleSection('physician')}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputField
                   label="Name"
                   name="primaryCarePhysicianName"
@@ -545,6 +702,7 @@ const ProfilePage = () => {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                   icon={<MdPerson className="text-xl text-blue-700" />}
+                  placeholder="Enter physician name"
                 />
                 <InputField
                   label="Contact"
@@ -553,6 +711,7 @@ const ProfilePage = () => {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                   icon={<MdPhone className="text-xl text-blue-700" />}
+                  placeholder="Enter contact number"
                 />
                 <InputField
                   label="Hospital"
@@ -561,10 +720,30 @@ const ProfilePage = () => {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                   icon={<MdLocationOn className="text-xl text-blue-700" />}
+                  placeholder="Enter hospital name"
                 />
               </div>
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold">Insurance Policy</h3>
+            </SectionCard>
+          )}
+
+          {/* Show insurance policy only if role is parent */}
+          {role === "parent" && (
+            <SectionCard 
+              title="Insurance Information" 
+              icon={<MdHealthAndSafety className="text-xl text-blue-700" />}
+              isOpen={openSections.insurance}
+              toggleOpen={() => toggleSection('insurance')}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InputField
+                  label="Insurance Provider"
+                  name="insuranceProvider"
+                  value={formData.insuranceProvider}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  icon={<MdMedicalServices className="text-xl text-blue-700" />}
+                  placeholder="Enter insurance provider"
+                />
                 <InputField
                   label="Policy Number"
                   name="insurancePolicyPolicynumber"
@@ -572,14 +751,7 @@ const ProfilePage = () => {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                   icon={<MdLock className="text-xl text-blue-700" />}
-                />
-                <InputField
-                  label="Coverage Details"
-                  name="insurancePolicyCoveragedetails"
-                  value={formData.insurancePolicy.coverageDetails}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  icon={<MdLock className="text-xl text-blue-700" />}
+                  placeholder="Enter policy number"
                 />
                 <InputField
                   label="Valid Until"
@@ -590,17 +762,37 @@ const ProfilePage = () => {
                   disabled={!isEditing}
                   icon={<MdCalendarToday className="text-xl text-blue-700" />}
                 />
+                <TextAreaField
+                  label="Coverage Details"
+                  name="insurancePolicyCoveragedetails"
+                  value={formData.insurancePolicy.coverageDetails}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  placeholder="Describe coverage details"
+                />
               </div>
-            </div>
+            </SectionCard>
           )}
 
           {isEditing && (
-            <button
-              onClick={handleSaveChanges}
-              className="w-full sm:w-auto mt-6 bg-green-600 text-white px-4 py-2 text-sm sm:text-base rounded-md hover:bg-green-700 flex items-center justify-center transition"
-            >
-              <FaSave className="mr-2" /> Save Changes
-            </button>
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={handleSaveChanges}
+                className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 flex items-center justify-center transition shadow-md disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="spinner-border animate-spin inline-block w-4 h-4 border-2 rounded-full border-white border-t-transparent mr-2"></div>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <FaSave className="mr-2" /> Save Profile Changes
+                  </>
+                )}
+              </button>
+            </div>
           )}
         </div>
       </div>
