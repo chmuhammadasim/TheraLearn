@@ -326,11 +326,11 @@ function Dashboard() {
               <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-4 flex items-center gap-2 border-b-4 border-green-400 pb-2">
                 <FaChild className="text-green-400" /> Children
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[600px] overflow-y-auto pr-2">
                 {userData.children.map((child, idx) => (
                   <motion.div
                     key={child._id}
-                    className="bg-white border-l-8 border-blue-300 p-6 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer flex flex-col gap-2 relative"
+                    className="bg-white border-l-8 border-blue-300 p-6 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all cursor-pointer flex flex-col gap-2 relative min-h-[320px]"
                     whileHover={{ y: -4 }}
                     onClick={() => setSelectedChildIndex(idx)}
                   >
@@ -344,23 +344,135 @@ function Dashboard() {
                       <span className="text-lg font-semibold">{child.firstName} {child.lastName}</span>
                     </div>
                     <div className="flex flex-wrap gap-2 text-sm text-gray-600">
-                      <span className="flex items-center gap-1"><FaBirthdayCake className="text-pink-400" /> {new Date(child.dateOfBirth).toLocaleDateString()}</span>
-                      <span className="flex items-center gap-1">{child.gender}</span>
-                      <span className="flex items-center gap-1">Blood: {child.bloodType || 'N/A'}</span>
-                      <span className="flex items-center gap-1">School: {child.school || 'N/A'}</span>
-                      <span className="flex items-center gap-1">Grade: {child.grade || 'N/A'}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="flex items-center gap-1 truncate max-w-[180px]" title={child.dateOfBirth}><FaBirthdayCake className="text-pink-400" /> {new Date(child.dateOfBirth).toLocaleDateString()}</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.gender}>Gender: {child.gender}</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.bloodType}>Blood: {child.bloodType || 'N/A'}</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.school}>School: {child.school || 'N/A'}</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.grade}>Grade: {child.grade || 'N/A'}</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.height}>Height: {child.height || 'N/A'} cm</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.weight}>Weight: {child.weight || 'N/A'} kg</span>
+                      <span className="flex items-center gap-1 truncate max-w-[120px]" title={child.bmi}>BMI: {child.bmi || 'N/A'}</span>
+                      <span className="flex items-center gap-1 truncate max-w-[220px]" title={child.emergencyContact?.name ? `${child.emergencyContact.name} (${child.emergencyContact.relationship}) ${child.emergencyContact.phone}` : 'N/A'}>
+                        Emergency Contact: {child.emergencyContact?.name || 'N/A'} ({child.emergencyContact?.relationship || 'N/A'}) {child.emergencyContact?.phone || ''}
+                      </span>
+                      <span className="flex items-center gap-1 truncate max-w-[160px]" title={child.specialNeeds}>Special Needs: {child.specialNeeds || 'N/A'}</span>
+                    <div className="flex flex-wrap gap-2 mt-2 max-h-16 overflow-y-auto">
                       {child.medicalConditions?.length > 0 && (
-                        <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">Medical: {child.medicalConditions.join(', ')}</span>
+                        <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.medicalConditions.join(', ')}>Medical: {child.medicalConditions.join(', ')}</span>
                       )}
                       {child.allergies?.length > 0 && (
-                        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">Allergies: {child.allergies.join(', ')}</span>
+                        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.allergies.join(', ')}>Allergies: {child.allergies.join(', ')}</span>
                       )}
-                      {child.specialNeeds && (
-                        <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-semibold">Special Needs</span>
+                      {child.medications?.length > 0 && (
+                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.medications.join(', ')}>Medications: {child.medications.join(', ')}</span>
+                      )}
+                      {child.geneticDisorders?.length > 0 && (
+                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.geneticDisorders.join(', ')}>Genetic Disorders: {child.geneticDisorders.join(', ')}</span>
+                      )}
+                      {child.familyMedicalHistory?.length > 0 && (
+                        <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.familyMedicalHistory.join(', ')}>Family History: {child.familyMedicalHistory.join(', ')}</span>
+                      )}
+                      {child.behavioralIssues?.length > 0 && (
+                        <span className="bg-pink-100 text-pink-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.behavioralIssues.join(', ')}>Behavioral Issues: {child.behavioralIssues.join(', ')}</span>
+                      )}
+                      {child.developmentalMilestones?.length > 0 && (
+                        <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.developmentalMilestones.join(', ')}>Milestones: {child.developmentalMilestones.join(', ')}</span>
+                      )}
+                      {child.dietRestrictions?.length > 0 && (
+                        <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.dietRestrictions.join(', ')}>Diet: {child.dietRestrictions.join(', ')}</span>
+                      )}
+                      {child.activityPreferences?.length > 0 && (
+                        <span className="bg-teal-100 text-teal-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.activityPreferences.join(', ')}>Activities: {child.activityPreferences.join(', ')}</span>
+                      )}
+                      {child.hobbies?.length > 0 && (
+                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.hobbies.join(', ')}>Hobbies: {child.hobbies.join(', ')}</span>
+                      )}
+                      {child.favoriteSubjects?.length > 0 && (
+                        <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.favoriteSubjects.join(', ')}>Favorite Subjects: {child.favoriteSubjects.join(', ')}</span>
+                      )}
+                      {child.extracurricularActivities?.length > 0 && (
+                        <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.extracurricularActivities.join(', ')}>Extracurricular: {child.extracurricularActivities.join(', ')}</span>
+                      )}
+                      {child.languageSpoken?.length > 0 && (
+                        <span className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.languageSpoken.join(', ')}>Languages: {child.languageSpoken.join(', ')}</span>
+                      )}
+                      {child.parentalConcerns?.length > 0 && (
+                        <span className="bg-red-200 text-red-800 px-2 py-1 rounded-full text-xs font-semibold truncate" title={child.parentalConcerns.join(', ')}>Parental Concerns: {child.parentalConcerns.join(', ')}</span>
                       )}
                     </div>
+                      
+                    </div>
+                    {/* Doctor Notes */}
+                    {child.doctorNotes?.length > 0 && (
+                      <div className="mt-2 w-full">
+                        <strong>Doctor Notes:</strong>
+                        <ul className="list-disc ml-6 text-xs">
+                          {child.doctorNotes.map((note, i) => (
+                            <li key={i}>
+                              {note.prescriptions?.length > 0 && (
+                                <span> | Prescriptions: {note.prescriptions.map((p) => `${p.medication} (${p.dosage})`).join(', ')}</span>
+                              )}
+                                <span> | Prescriptions: {note.prescriptions.map((p, idx) => `${p.medication} (${p.dosage})`).join(', ')}</span>
+                              
+                              {note.followUpDate && <span> | Follow Up: {new Date(note.followUpDate).toLocaleDateString()}</span>}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {/* Mental Health Notes */}
+                    {child.mentalHealthNotes?.length > 0 && (
+                        <ul className="list-disc ml-6 text-xs max-h-16 overflow-y-auto">
+                          {child.mentalHealthNotes.map((note, i) => (
+                            <li key={i}>
+                              <span>Date: {note.date ? new Date(note.date).toLocaleDateString() : 'N/A'}</span>
+                              {note.notes && <span> | Notes: <span className="truncate inline-block max-w-[120px]" title={note.notes}>{note.notes}</span></span>}
+                            </li>
+                          ))}
+                        </ul>
+                        
+                        
+                      
+                    )}
+                    {/* Hospital Visits */}
+                    {child.hospitalVisits?.length > 0 && (
+                        <ul className="list-disc ml-6 text-xs max-h-16 overflow-y-auto">
+                          {child.hospitalVisits.map((visit, i) => (
+                            <li key={i}>
+                              <span>Date: {visit.date ? new Date(visit.date).toLocaleDateString() : 'N/A'}</span>
+                              {visit.hospital && <span> | Hospital: <span className="truncate inline-block max-w-[100px]" title={visit.hospital}>{visit.hospital}</span></span>}
+                              {visit.reason && <span> | Reason: <span className="truncate inline-block max-w-[100px]" title={visit.reason}>{visit.reason}</span></span>}
+                            </li>
+                          ))}
+                        </ul>
+                         
+                    )}
+                    {/* Lab Tests */}
+                    {child.labTests?.length > 0 && (
+                        <ul className="list-disc ml-6 text-xs max-h-16 overflow-y-auto">
+                          {child.labTests.map((test, i) => (
+                            <li key={i}>
+                              <span>Date: {test.date ? new Date(test.date).toLocaleDateString() : 'N/A'}</span>
+                              {test.testName && <span> | Test: <span className="truncate inline-block max-w-[100px]" title={test.testName}>{test.testName}</span></span>}
+                              {test.result && <span> | Result: <span className="truncate inline-block max-w-[100px]" title={test.result}>{test.result}</span></span>}
+                            </li>
+                          ))}
+                        </ul>
+                          
+                    )}
+                    {/* Therapy Sessions */}
+                    {child.therapySessions?.length > 0 && (
+                        <ul className="list-disc ml-6 text-xs max-h-16 overflow-y-auto">
+                          {child.therapySessions.map((session, i) => (
+                            <li key={i}>
+                              <span>Date: {session.date ? new Date(session.date).toLocaleDateString() : 'N/A'}</span>
+                              {session.type && <span> | Type: <span className="truncate inline-block max-w-[100px]" title={session.type}>{session.type}</span></span>}
+                              {session.notes && <span> | Notes: <span className="truncate inline-block max-w-[100px]" title={session.notes}>{session.notes}</span></span>}
+                            </li>
+                          ))}
+                        </ul>
+                         
+                    )}
                   </motion.div>
                 ))}
               </div>
