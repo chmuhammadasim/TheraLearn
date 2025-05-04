@@ -293,6 +293,7 @@ function BetterAim() {
     window.addEventListener('beforeunload', handleUnload);
     return () => window.removeEventListener('beforeunload', handleUnload);
   }, [saveToDatabase]);
+  
   const handleLoadLastSession = async () => {
     await loadFromDatabase();
     setReloadGame(true);

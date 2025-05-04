@@ -3,6 +3,7 @@ import * as handpose from "@tensorflow-models/handpose";
 import Webcam from "react-webcam";
 import { drawHand } from "./utilities";
 import * as fp from "fingerpose";
+import axios from 'axios'; 
 import {
   ThumbsUpGesture,
   ThumbsDownGesture,
@@ -38,7 +39,6 @@ const images = [
 ];
 
 const GAME_NAME = "HandPoseDetector";
-const API_URL = "https://your-api-url.com/api"; // Replace with your actual API endpoint
 
 function HandposeDetector() {
   const webcamRef = useRef(null);
@@ -50,21 +50,18 @@ function HandposeDetector() {
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showStartOptions, setShowStartOptions] = useState(false);
-  const [previousSessionExists, setPreviousSessionExists] = useState(false);
+  const [showStartOptions, setShowStartOptions] = useState(true);
+  const [previousSessionExists, setPreviousSessionExists] = useState(true);
   const [authToken, setAuthToken] = useState(localStorage.getItem("authToken") || "");
   const [error, setError] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(true);
-
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
+  const token = localStorage.getItem('authToken');
   useEffect(() => {
-    // Check if user has an auth token
-    if (authToken) {
-      setIsAuthenticated(true);
-      checkForPreviousSession();
-    } else {
+
+
       setShowStartOptions(true);
       setLoading(false);
-    }
 
     const runHandpose = async () => {
       setLoading(true);
@@ -95,94 +92,56 @@ function HandposeDetector() {
     return () => clearInterval(timer);
   }, [showStartOptions, gameOver, error]);
 
-  // Save progress whenever score changes
-  useEffect(() => {
-    if (isAuthenticated && score > 0) {
-      saveProgress();
-    }
-  }, [score, isAuthenticated]);
 
-  const checkForPreviousSession = async () => {
-    try {
-      const response = await fetch(`${API_URL}/progress`, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.gameName === GAME_NAME && data.currentLevel > 0) {
-          setPreviousSessionExists(true);
-          setShowStartOptions(true);
-        } else {
-          setShowStartOptions(false);
-        }
-      } else {
-        if (response.status === 401) {
-          // Token expired or invalid
-          handleLogout();
-          setError("Your session has expired. Please log in again.");
-        } else {
-          console.error("Error response:", response.status);
-          setShowStartOptions(false);
-        }
-      }
-    } catch (error) {
-      console.error("Error checking previous session:", error);
-      setError("Failed to connect to the server. Please check your internet connection.");
-      setShowStartOptions(false);
-    }
-    setLoading(false);
-  };
+    useEffect(() => {
+      const handleUnload = () => saveProgress();
+      window.addEventListener('beforeunload', handleUnload);
+      return () => window.removeEventListener('beforeunload', handleUnload);
+    }, [score, currentLevel, time]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    setAuthToken("");
-    setIsAuthenticated(false);
-    setShowStartOptions(true);
-  };
+
 
   const saveProgress = async () => {
     if (!isAuthenticated) return;
+    const gameData = {
+      gameName: GAME_NAME,
+      score,
+      time,
+      currentLevel,
+    };
     
     try {
-      const response = await fetch(`${API_URL}/progress`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+      await axios.post('http://localhost:5000/api/game/saveGameData', gameData, {
+        headers: { 
+          'Content-Type': 'application/json', 
+          'authorization': `Bearer ${token}`,
+          'selectedChild': selectedchild,
         },
-        body: JSON.stringify({
-          gameName: GAME_NAME,
-          currentLevel,
-          score,
-          time,
-          timestamp: new Date().toISOString()
-        })
-      });
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          handleLogout();
-          setError("Your session has expired. Please log in again.");
+      }).then((response) => {
+        if (response.status === 200) {
+          setFeedback("Progress saved successfully!");
+          setTimeout(() => setFeedback(""), 3000);
         } else {
-          throw new Error(`Server responded with status: ${response.status}`);
+          setFeedback("Failed to save progress. Please try again.");
+          setTimeout(() => setFeedback(""), 3000);
         }
-      }
+      });
     } catch (error) {
       console.error("Error saving progress:", error);
       setFeedback("Failed to save progress. Will try again later.");
       setTimeout(() => setFeedback(""), 3000);
     }
   };
-
+  
   const loadPreviousSession = async () => {
+    let response;
     try {
-      const response = await fetch(`${API_URL}/progress`, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+      response = await axios.get('http://localhost:5000/api/game/loadGameData/HandPoseDetector', {
+        headers: { 
+          'Content-Type': 'application/json', 
+          'authorization': `Bearer ${token}`,
+          'selectedChild': selectedchild,
+        },
       });
       
       if (response.ok) {
@@ -193,14 +152,7 @@ function HandposeDetector() {
           setTime(data.time);
           setShowStartOptions(false);
         }
-      } else {
-        if (response.status === 401) {
-          handleLogout();
-          setError("Your session has expired. Please log in again.");
-        } else {
-          throw new Error(`Server responded with status: ${response.status}`);
-        }
-      }
+      } 
     } catch (error) {
       console.error("Error loading previous session:", error);
       setError("Failed to load your previous session. Starting a new game.");
@@ -220,34 +172,6 @@ function HandposeDetector() {
     setShowStartOptions(false);
   };
 
-  const handleLogin = async (credentials) => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAuthToken(data.token);
-        localStorage.setItem('authToken', data.token);
-        setIsAuthenticated(true);
-        checkForPreviousSession();
-      } else {
-        const errorData = await response.json().catch(() => ({ message: "Login failed" }));
-        setError(errorData.message || "Login failed. Please check your credentials.");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      setError("Failed to connect to authentication service. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const detect = async (net) => {
     if (!webcamRef.current || !canvasRef.current) {
@@ -352,6 +276,14 @@ function HandposeDetector() {
     setGameOver(false);
     setError(null);
   };
+  
+    useEffect(() => {
+      const handleUnload = () => {
+        saveProgress().catch((e) => console.error('Error saving on unload:', e));
+      };
+      window.addEventListener('beforeunload', handleUnload);
+      return () => window.removeEventListener('beforeunload', handleUnload);
+    }, [saveProgress]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);

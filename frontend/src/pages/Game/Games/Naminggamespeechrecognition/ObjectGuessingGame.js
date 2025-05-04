@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -75,6 +75,7 @@ const ObjectGuessingGame = () => {
   const [isListening, setIsListening] = useState(false);
   const [reloadGame, setReloadGame] = useState(false);
   let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
+  
   const gameData = {
     gameName: "ObjectGuessingGame",
     score: score,
@@ -88,29 +89,30 @@ const ObjectGuessingGame = () => {
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
 
-  const saveToDatabase = async (data) => {
+
+
+  const saveToDatabase = useCallback(async (data) => {
     const token = localStorage.getItem("authToken");
     console.log(data);
 
     try {
-      const response = await axios
-        .post(`http://localhost:5000/api/game/saveGameData`, data, {
+      const response = await axios.post(
+        `http://localhost:5000/api/game/saveGameData`,
+        data,
+        {
           headers: {
             "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
             'selectedchild': selectedchild,
           },
-        })
-        .then((res) => {
-          console.log(res.data);
-        });
-
-      if (!response.ok) throw new Error("Failed to save data.");
+        }
+      );
+      console.log(response.data);
       console.log("Game state saved successfully!");
     } catch (error) {
       console.error("Error saving game state to database:", error);
     }
-  };
+  }, [selectedchild]);
 
   const loadFromDatabase = async (gameName) => {
     const token = localStorage.getItem("authToken");
@@ -148,7 +150,7 @@ const ObjectGuessingGame = () => {
     if (gameOver) {
       saveToDatabase(gameData);
     }
-  }, [chances]);
+  }, [chances, gameData, gameOver, saveToDatabase]);
 
   useEffect(() => {
     if (gameOver && score > highScore) setHighScore(score);
