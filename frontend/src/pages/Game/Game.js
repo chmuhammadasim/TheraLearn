@@ -49,7 +49,7 @@ const games = [
     name: 'Magic Memory',
     description: 'Test your memory with fun challenges!',
     ageRecommendation: 'Ages 8+',
-    image: 'https://th.bing.com/th/id/OIP.0g1X2v4x5k3a7q6m1w8c4wHaE8?pid=ImgDet&rs=1',
+    image: 'https://th.bing.com/th/id/OIP.wPNnaIim3l8Q-qiruLzs9QAAAA?cb=iwp1&rs=1&pid=ImgDetMain',
   },
 
 ];

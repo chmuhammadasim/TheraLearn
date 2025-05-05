@@ -121,19 +121,27 @@ function Game() {
       setGameStarted(true); // Start the game
     } catch (error) {
       console.error('Error fetching latest session:', error);
-      setGameStarted(true); // Start the game even if no session is found
+      setGameStarted(true); 
     }
   };
 
   const shuffleCards = () => {
-    const currentLevelCards = levels[level];
-    const shuffledCards = [...currentLevelCards, ...currentLevelCards]
-      .sort(() => Math.random() - 0.5)
-      .map((card) => ({ ...card, id: Math.random() }));
+    const safeLevel = Math.max(0, Math.min(level, levels.length - 1));
+    const currentLevelCards = levels[safeLevel];
+
+    const duplicatedCards = currentLevelCards.map(card => ({ ...card }));
+    const allCards = [...duplicatedCards, ...duplicatedCards].map((card, idx) => ({
+      ...card,
+      id: `${safeLevel}-${idx}-${Date.now()}-${Math.random()}`
+    }));
+    for (let i = allCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
+    }
 
     setChoiceOne(null);
     setChoiceTwo(null);
-    setCards(shuffledCards);
+    setCards(allCards);
     setTurns(0);
     setLevelTime(0);
     setLevelStartTime(Date.now());
@@ -199,19 +207,10 @@ function Game() {
     }
   };
 
-  const fetchHistory = async () => {
-    try {
-      const response = await axios.get('/api/sessions');
-      setHistory(response.data);
-    } catch (error) {
-      console.error('Error fetching history:', error);
-    }
-  };
 
   useEffect(() => {
     if (gameStarted) {
-      fetchHistory(); // Fetching history when the game starts
-      shuffleCards(); // Shuffle cards for the current level
+      shuffleCards();
     }
   }, [gameStarted, level]);
 
@@ -255,97 +254,104 @@ function Game() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto my-8 mt-20 p-4 sm:p-8 bg-gradient-to-br from-white via-purple-50 to-pink-100 rounded-3xl shadow-2xl border-4 border-purple-200 relative z-10 overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 rounded-t-2xl" />
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-pink-200 opacity-30 rounded-full blur-xl" />
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-200 opacity-30 rounded-full blur-xl" />
+    <div className="relative min-h-screen pt-20 bg-gradient-to-br from-purple-300 via-pink-200 to-yellow-100 flex flex-col items-center justify-start py-12 overflow-x-hidden">
+      {/* Floating Puzzle Pieces */}
+      <div className="absolute top-0 left-0 w-32 h-32 bg-pink-300 opacity-40 rounded-3xl rotate-12 blur-2xl animate-float-slow z-0" />
+      <div className="absolute top-10 right-0 w-24 h-24 bg-purple-300 opacity-30 rounded-2xl -rotate-12 blur-2xl animate-float-fast z-0" />
+      <div className="absolute bottom-0 left-10 w-28 h-28 bg-yellow-200 opacity-30 rounded-2xl rotate-6 blur-2xl animate-float-mid z-0" />
+      <div className="absolute bottom-10 right-10 w-36 h-36 bg-pink-200 opacity-30 rounded-3xl blur-2xl animate-float-slow z-0" />
 
       {/* Music & Title */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 z-10 w-full max-w-5xl">
         <MusicComponent />
         <div className="flex-1">
-          <h1 className="text-4xl sm:text-6xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-pink-500 to-purple-700 drop-shadow-lg tracking-tight">
-            Magic Match
+          <h1 className="text-5xl sm:text-7xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-800 via-pink-500 to-yellow-500 drop-shadow-2xl tracking-tight mb-2">
+            Puzzle Memory
           </h1>
-          <p className="text-center text-purple-600 font-medium mt-1 text-sm">Match cards to complete the level</p>
+          <p className="text-center text-purple-700 font-medium mt-1 text-lg tracking-wide">Flip and match all the puzzle cards!</p>
         </div>
       </div>
 
       {/* Controls & Score */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6  w-full max-w-4xl z-10">
         <button
-          className="bg-gradient-to-r from-purple-600 to-pink-500 border-2 border-white px-6 py-3 rounded-xl text-white font-bold cursor-pointer text-lg shadow-lg hover:from-pink-500 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 hover:shadow-xl w-full md:w-auto"
+          className="bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-500 border-2 border-white px-8 py-3 rounded-2xl text-white font-bold cursor-pointer text-xl shadow-xl hover:from-pink-500 hover:to-yellow-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center gap-2"
           onClick={shuffleCards}
         >
-          <span className="inline-block mr-2 animate-spin-slow">🔄</span> Restart Level
+          <span className="inline-block text-2xl animate-spin-slow">🧩</span> Restart Level
         </button>
-        <div className="score flex flex-wrap gap-4 sm:gap-8 text-base sm:text-xl font-semibold text-purple-800 bg-white/90 backdrop-blur-sm px-5 sm:px-7 py-3 rounded-xl shadow-md justify-center">
+        <div className="score flex flex-wrap gap-6 text-lg sm:text-2xl font-semibold text-purple-900 bg-white/80 backdrop-blur-md px-8 py-4 rounded-2xl shadow-lg justify-center border-2 border-pink-200">
           <p className="flex flex-col items-center">
-            <span className="font-bold text-pink-600">Level</span> 
-            <span className="text-2xl">{level + 1}</span>
+            <span className="font-bold text-pink-600">Level</span>
+            <span className="text-3xl">{level + 1}</span>
           </p>
           <p className="flex flex-col items-center">
-            <span className="font-bold text-pink-600">Score</span> 
-            <span className="text-2xl">{score}</span>
+            <span className="font-bold text-yellow-500">Score</span>
+            <span className="text-3xl">{score}</span>
           </p>
           <p className="flex flex-col items-center">
-            <span className="font-bold text-pink-600">Turns</span> 
-            <span className="text-2xl">{turns}</span>
+            <span className="font-bold text-purple-600">Turns</span>
+            <span className="text-3xl">{turns}</span>
           </p>
           <p className="flex flex-col items-center">
-            <span className="font-bold text-pink-600">Time</span> 
-            <span className="text-2xl">{levelTime}s</span>
+            <span className="font-bold text-pink-500">Time</span>
+            <span className="text-3xl">{levelTime}s</span>
           </p>
         </div>
       </div>
 
       {/* Card Grid */}
-      <div className="card-grid mt-8 grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 px-1 sm:px-0">
-        {cards.map((card) => (
-          <div key={card.id} className="flex justify-center transform hover:scale-102 transition-transform">
-            <SingleCard
-              card={card}
-              handleChoice={handleChoice}
-              flipped={card === choiceOne || card === choiceTwo || card.matched}
-              disabled={disabled || transitioning}
-            />
-          </div>
-        ))}
+      <div className="relative z-10 w-full max-w-5xl">
+        <div className="card-grid mt-8 grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6 px-1 sm:px-0 justify-center">
+          {cards.map((card) => (
+            <div
+              key={card.id}
+              className="flex justify-center items-center transform hover:scale-105 transition-transform duration-200"
+            >
+              <div className="bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100 rounded-2xl shadow-xl border-4 border-white p-1 sm:p-2 transition-all duration-200 hover:border-yellow-400">
+                <SingleCard
+                  card={card}
+                  handleChoice={handleChoice}
+                  flipped={card === choiceOne || card === choiceTwo || card.matched}
+                  disabled={disabled || transitioning}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Completion Message */}
       {completionMessage && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 backdrop-blur-sm">
-          <div className="bg-gradient-to-br from-pink-600 via-purple-600 to-pink-600 text-white px-10 py-12 rounded-2xl text-2xl sm:text-3xl text-center shadow-2xl border-4 border-white animate-pulse max-w-xs sm:max-w-md mx-auto">
-            <div className="animate-bounce inline-block mb-4 text-5xl">🎉</div>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-500 text-white px-12 py-16 rounded-3xl text-3xl sm:text-4xl text-center shadow-2xl border-4 border-white animate-pulse max-w-xs sm:max-w-md mx-auto flex flex-col items-center">
+            <div className="animate-bounce inline-block mb-6 text-6xl">🧩🎉</div>
             <div>{completionMessage}</div>
           </div>
         </div>
       )}
 
       {/* Game History */}
-      <div className="history mt-16 bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-md">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-pink-600 text-center">Game History</h2>
-        
+      {/* <div className="history mt-20 bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border-2 border-purple-200 w-full max-w-3xl z-10">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-pink-600 to-yellow-500 text-center tracking-tight">Game History</h2>
         {history.length === 0 ? (
           <p className="text-center text-purple-600 italic">No game history yet. Complete levels to see your progress!</p>
         ) : (
           <div className="overflow-x-auto">
-            <ul className="space-y-3 min-w-[320px]">
+            <ul className="space-y-4 min-w-[320px]">
               {history.map((session, index) => (
                 <li
                   key={index}
-                  className="bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-xl px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-sm sm:text-base shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-gradient-to-r from-yellow-100 via-pink-100 to-purple-100 rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-base sm:text-lg shadow-md hover:shadow-xl transition-shadow border-2 border-pink-100"
                 >
                   <div>
                     <span className="font-semibold text-purple-700">Level:</span> {session.level}
                   </div>
                   <div>
-                    <span className="font-semibold text-pink-600">Score:</span> {session.score}
+                    <span className="font-semibold text-yellow-600">Score:</span> {session.score}
                   </div>
                   <div>
-                    <span className="font-semibold text-purple-700">Status:</span> 
+                    <span className="font-semibold text-purple-700">Status:</span>
                     <span className={`ml-1 ${session.status === 'completed' ? 'text-green-600 font-medium' : 'text-orange-500'}`}>
                       {session.status}
                     </span>
@@ -359,7 +365,16 @@ function Game() {
             </ul>
           </div>
         )}
-      </div>
+      </div> */}
+
+      <style>{`
+        @keyframes float-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes float-fast { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-40px); } }
+        @keyframes float-mid { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+        .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
+        .animate-float-fast { animation: float-fast 4s ease-in-out infinite; }
+        .animate-float-mid { animation: float-mid 5.5s ease-in-out infinite; }
+      `}</style>
     </div>
   );
 }

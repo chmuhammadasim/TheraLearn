@@ -78,7 +78,7 @@ function HandposeDetector() {
   // Save progress on unload
   const saveProgress = useCallback(async () => {
     if (!token) return;
-    const gameData = { gameName: GAME_NAME, score, time, currentLevel };
+    const gameData = { gameName: GAME_NAME, score:score, duration:time, level:currentLevel };
     try {
       const response = await axios.post('http://localhost:5000/api/game/saveGameData', gameData, {
         headers: { 
