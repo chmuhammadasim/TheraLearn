@@ -51,6 +51,14 @@ const games = [
     ageRecommendation: 'Ages 8+',
     image: 'https://th.bing.com/th/id/OIP.wPNnaIim3l8Q-qiruLzs9QAAAA?cb=iwp1&rs=1&pid=ImgDetMain',
   },
+  {
+    id: 7,
+    link: "/countthefish",
+    name: 'Count The Fish',
+    description: 'Count the fish and improve your math skills!',
+    ageRecommendation: 'Ages 7+',
+    image: 'https://th.bing.com/th/id/OIP.0g1v2r3x4qkX5a7m6b8c9wHaE8?pid=ImgDet&w=300&h=300&rs=1',
+  },
 
 ];
 

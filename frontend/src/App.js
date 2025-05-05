@@ -25,6 +25,7 @@ import GamePage from "./pages/Game/Game";
 import NumberGuessingGame from "./pages/Game/Games/Countinggamespeechrecognition/NumberGuessingGame";
 import HandposeDetector from "./pages/Game/Games/HandposeDetector/HandposeDetector"
 import EmotionDetection from "./pages/Game/Games/EmotionDetection/EmotionDetection";
+import CountTheFish from "./pages/Game/Games/CountTheFish/CountTheFish";
 import MagicMemory from "./pages/Game/Games/MagicMemory/MagicMemory";
 import PsychologistListPage from "./pages/PsychologistList/PsychologistList";
 import PsychologistDetailsPage from "./pages/PsychologistList/PsychologistDetailsPage";
@@ -191,6 +192,10 @@ function App() {
             <Route
               path="/magicmemory"
               element={<MagicMemory />}
+            />
+            <Route
+              path="/countthefish"
+              element={<CountTheFish />}
             />
             <Route path="/betteraim" element={<BetterAim />} />
             <Route path="/games" element={<GamePage />} />

@@ -1,0 +1,151 @@
+/* src/App.css */
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.app {
+  position: relative;
+  z-index: 2; 
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1e1261;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0px 20px 0px 0px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  font-family: 'Arial', sans-serif;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.rectangle {
+  width: 70%;
+  height: 70%;
+  display: flex;
+}
+
+.left-side {
+  background-color: rgba(47, 49, 155, 0.381);
+  width: 60%;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.right-side {
+  background-color: rgb(232, 187, 38);
+  width: 40%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: calc(50% - 20px); /* Adjust width to fit 4 boxes */
+}
+
+.box-image {
+  width: 50px;
+  height: auto;
+}
+
+.count-input {
+  width: 50px;
+  text-align: center;
+  border: 2px solid gray;
+  padding: 5px;
+}
+
+.feedback {
+  font-size: 20px;
+  width: 30px;
+}
+
+.message {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: green;
+}
+
+/* Adjusted fish animation and positioning for dynamic placement */
+.fish {
+  position: absolute;
+  max-width: 30%;
+  animation: swim 15s linear infinite;
+}
+
+@keyframes swim {
+  0% {
+    transform: translateY(0) translateX(100%);
+  }
+  50% {
+    transform: translateY(-20px) translateX(50%);
+  }
+  100% {
+    transform: translateY(0) translateX(-100%);
+  }
+}
+
+/* Specific fish animations can be kept or overridden by inline styles */
+.fish-1 {
+  animation-duration: 18s;
+}
+
+.fish-2 {
+  animation-duration: 14s;
+}
+
+.fish-3 {
+  animation-duration: 20s;
+}
+
+.fish-4 {
+  animation-duration: 22s;
+}
+
+.fish-5 {
+  animation-duration: 16s;
+}
+
+.fish-6 {
+  animation-duration: 24s;
+}
+
+.fish-7 {
+  animation-duration: 26s;
+}
+
+.fish-8 {
+  animation-duration: 28s;
+}
