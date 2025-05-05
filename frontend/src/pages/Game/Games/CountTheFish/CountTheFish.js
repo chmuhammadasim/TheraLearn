@@ -1,6 +1,6 @@
 import React from 'react';
 import Game from './components/game.js';
-import WaveAnimation from './components/WavesAnimation.js';
+// import WaveAnimation from './components/WavesAnimation.js';
 
 
 function CountTheFish() {
