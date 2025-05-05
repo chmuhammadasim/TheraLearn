@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { logInUser } from '../../services/authService';
+import { logInUser, forgotPassword } from '../../services/authService';
 import Loading from '../../components/Loading';
 import { motion } from 'framer-motion';
 import { AuthContext } from "../../components/AuthContext/AuthContext";
@@ -13,6 +13,10 @@ function LoginPage() {
   const [errors, setErrors] = useState({});
   const [children, setChildren] = useState([]);
   const [showChildPopup, setShowChildPopup] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotMessage, setForgotMessage] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
   const { login } = useContext(AuthContext);
 
   useEffect(() => {
@@ -43,7 +47,6 @@ function LoginPage() {
     try {
       const credentials = { email, password };
       const data = await logInUser(credentials);
-      console.log(data);
       setMessage('Login successful');
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('authRole', data.role);
@@ -59,7 +62,6 @@ function LoginPage() {
       setMessage(error.message || 'Something went wrong, please try again.');
     } finally {
       setLoggingIn(false);
-      
     }
   };
 
@@ -68,6 +70,24 @@ function LoginPage() {
     localStorage.setItem('selectedChildId', JSON.stringify(child._id));
     setShowChildPopup(false);
     window.location.href = "/";
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setForgotMessage('');
+    if (!forgotEmail || !/\S+@\S+\.\S+/.test(forgotEmail)) {
+      setForgotMessage('Please enter a valid email address.');
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      await forgotPassword(forgotEmail);
+      setForgotMessage('Password reset instructions sent to your email.');
+    } catch (err) {
+      setForgotMessage(err.message || 'Failed to send reset instructions.');
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   if (loading) {
@@ -105,53 +125,96 @@ function LoginPage() {
           </motion.p>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label className="block text-left text-lg font-medium mb-1 text-blue-700">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-blue-50 ${errors.email ? 'border-red-400' : 'border-blue-200'}`}
-              placeholder="you@email.com"
-              autoComplete="username"
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
-          </div>
-          <div>
-            <label className="block text-left text-lg font-medium mb-1 text-blue-700">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-blue-50 ${errors.password ? 'border-red-400' : 'border-blue-200'}`}
-              placeholder="Your password"
-              autoComplete="current-password"
-            />
-            {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
-          </div>
-          <button
-            type="submit"
-            disabled={loggingIn}
-            className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 disabled:opacity-60"
-          >
-            {loggingIn ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                </svg>
-                Logging in...
-              </span>
-            ) : (
-              'Login'
+        {!showForgot ? (
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-left text-lg font-medium mb-1 text-blue-700">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-blue-50 ${errors.email ? 'border-red-400' : 'border-blue-200'}`}
+                placeholder="you@email.com"
+                autoComplete="username"
+              />
+              {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+            </div>
+            <div>
+              <label className="block text-left text-lg font-medium mb-1 text-blue-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={`w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-blue-50 ${errors.password ? 'border-red-400' : 'border-blue-200'}`}
+                placeholder="Your password"
+                autoComplete="current-password"
+              />
+              {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
+            </div>
+            <button
+              type="submit"
+              disabled={loggingIn}
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 disabled:opacity-60"
+            >
+              {loggingIn ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                  </svg>
+                  Logging in...
+                </span>
+              ) : (
+                'Login'
+              )}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleForgotPassword} className="space-y-6">
+            <div>
+              <label className="block text-left text-lg font-medium mb-1 text-blue-700">Enter your email</label>
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                required
+                className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-blue-50 border-blue-200"
+                placeholder="you@email.com"
+                autoComplete="username"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={forgotLoading}
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 disabled:opacity-60"
+            >
+              {forgotLoading ? 'Sending...' : 'Send Reset Link'}
+            </button>
+            {forgotMessage && (
+              <div className={`text-sm mt-2 ${forgotMessage.includes('sent') ? 'text-green-600' : 'text-red-500'}`}>
+                {forgotMessage}
+              </div>
             )}
-          </button>
-        </form>
+            <button
+              type="button"
+              onClick={() => { setShowForgot(false); setForgotMessage(''); }}
+              className="mt-2 text-blue-600 hover:underline text-sm"
+            >
+              Back to Login
+            </button>
+          </form>
+        )}
+
         <div className="mt-6 flex justify-between text-sm text-blue-600">
-          <a href="/forgot-password" className="hover:underline">Forgot password?</a>
+          <button
+            type="button"
+            className="hover:underline"
+            onClick={() => { setShowForgot(true); setForgotMessage(''); setForgotEmail(''); }}
+          >
+            Forgot password?
+          </button>
           <a href="/register" className="hover:underline">Create account</a>
         </div>
       </motion.div>

@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 
 export const signUpUser = async (userData) => {
     try {
@@ -38,5 +40,25 @@ export const signUpUser = async (userData) => {
       return await response.json();
     } catch (error) {
       throw new Error(error.message || 'An error occurred during login');
+    }
+  };
+  export const forgotPassword = async (email) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_KEY}/auth/forgetpassword`,
+        { email: email },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'An error occurred during Forget Password';
+      throw new Error(errorMessage);
     }
   };

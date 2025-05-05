@@ -4,6 +4,7 @@ const { Psychologist } = require("../model/user.model");
 const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
+const nodemailer = require("nodemailer");
 const AuthController = {};
 
 AuthController.Checkapi = (_req, res) => {
@@ -151,6 +152,60 @@ AuthController.LogInUser = async (req, res) => {
       message: "An error occurred during login",
       detail: error.message,
     });
+  }
+};
+AuthController.ForgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    let user = await Parent.findOne({ email });
+    let userType = "parent";
+    if (!user) {
+      user = await Psychologist.findOne({ email });
+      userType = "psychologist";
+    }
+    if (!user) {
+      return res.status(404).json({ message: "No user found with this email." });
+    }
+
+    // Generate reset token
+    const resetToken = jsonwebtoken.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" }
+    );
+
+    // Construct reset link (adjust frontend URL as needed)
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password?token=${resetToken}`;
+
+    // Send email using nodemailer
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE || "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset Request",
+      html: `<p>Hello,</p>
+        <p>You requested a password reset. Click the link below to reset your password:</p>
+        <a href="${resetLink}">${resetLink}</a>
+        <p>If you did not request this, please ignore this email.</p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Password reset link sent to your email." });
+  } catch (error) {
+    console.error("Error in forgot password:", error);
+    res.status(500).json({ message: "An error occurred", detail: error.message });
   }
 };
 
