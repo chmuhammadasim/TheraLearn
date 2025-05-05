@@ -57,7 +57,7 @@ const games = [
     name: 'Count The Fish',
     description: 'Count the fish and improve your math skills!',
     ageRecommendation: 'Ages 7+',
-    image: 'https://th.bing.com/th/id/OIP.0g1v2r3x4qkX5a7m6b8c9wHaE8?pid=ImgDet&w=300&h=300&rs=1',
+    image: 'https://th.bing.com/th/id/OIP.Jvrw_JrfxGyy9Cdxu7xXlQHaEK?cb=iwp1&w=2048&h=1152&rs=1&pid=ImgDetMain',
   },
 
 ];
