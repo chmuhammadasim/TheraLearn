@@ -22,6 +22,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const xssprotection = require("./middleware/xss-protection");
 const mongoSanitize = require("express-mongo-sanitize");
+app.set('trust proxy', 1);
 const clientOptions = {
   serverApi: { version: "1", strict: true, deprecationErrors: true },
 };
