@@ -57,9 +57,14 @@ if (process.env.NODE_ENV !== "test") {
     });
 }
 app.use(xssprotection);
-app.get("/api", function (req, res) {
+app.get("/", function (req, res) {
   res.status(200).send({
     message: "Express backend server",
+  });
+});
+app.get("/api", function (req, res) {
+  res.status(200).send({
+    message: "Express backend server api is working",
   });
 });
 app.use(
