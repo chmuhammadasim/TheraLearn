@@ -33,30 +33,69 @@ function ContactUsPage() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = 'Name is required';
+    // Validate name
+    if (!formData.name) {
+      newErrors.name = 'Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    } else if (formData.name.trim().length > 100) {
+      newErrors.name = 'Name is too long (max 100 characters)';
+    }
+    
+    // Validate email
     if (!formData.email) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
       newErrors.email = 'Email is invalid';
+    } else if (formData.email.length > 255) {
+      newErrors.email = 'Email is too long (max 255 characters)';
     }
-    if (!formData.message) newErrors.message = 'Message is required';
+    
+    // Validate message
+    if (!formData.message) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+    } else if (formData.message.trim().length > 1000) {
+      newErrors.message = 'Message is too long (max 1000 characters)';
+    }
+    
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    setErrors({});
-
+    
     try {
-      await submitQuery(formData);
+      // Form validation
+      const validationErrors = validateForm();
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
+      setErrors({});
+
+      // Show loading state
+      setIsLoading(true);
+      
+      // Submit form data
+      const response = await submitQuery(formData);
+      
+      // Check if response is successful
+      if (!response || response.error) {
+        throw new Error(response?.error || 'Failed to submit form');
+      }
+      
       setSubmitted(true);
     } catch (error) {
-      console.error('Error submitting form', error);
+      console.error('Error submitting form:', error);
+      // Add appropriate error handling for users
+      setErrors({
+        submit: error.message || 'Something went wrong. Please try again later.'
+      });
+    } finally {
+      // Always turn off loading state
+      setIsLoading(false);
     }
   };
 

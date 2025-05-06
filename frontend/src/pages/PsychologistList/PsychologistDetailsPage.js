@@ -111,6 +111,7 @@ function PsychologistDetailsPage() {
       }
 
       if (!psychologistData) throw new Error("Psychologist data not found");
+      console.log("Psychologist data:", psychologistData);
       setPsychologist(psychologistData);
       setIsDoctorSelected(!!storedId && storedId === psychologistData._id);
 
@@ -395,6 +396,58 @@ function PsychologistDetailsPage() {
                   </span>
                 </p>
               </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="bg-gray-50 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
+          >
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <FiUserCheck className="text-indigo-600" />
+              Family Details
+            </h2>
+            <div className="space-y-6">
+              {psychologist.patients && psychologist.patients.length > 0 ? (
+                psychologist.patients.map((parent, index) => (
+                  <div key={index} className="bg-white p-5 rounded-lg shadow-sm">
+                    <h3 className="text-lg font-medium text-indigo-700 mb-3">
+                      Parent: {parent.firstName} {parent.lastName || ""}
+                    </h3>
+                    <div className="border border-gray-200 p-3 rounded-md mb-4">
+                      <p className="font-medium">{parent.firstName} {parent.lastName || ""}</p>
+                      <p className="text-sm text-gray-600">
+                        {parent.role || "Relationship not specified"}
+                      </p>
+                      {parent.contact && <p className="text-sm text-gray-500">{parent.contact}</p>}
+                    </div>
+                    
+                    {/* Children related to this parent */}
+                    {parent.children && parent.children.length > 0 ? (
+                      <div>
+                        <h4 className="text-md font-medium text-gray-700 mb-2">Children</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {parent.children.map((child, childIndex) => (
+                            <div key={childIndex} className="border border-gray-200 p-3 rounded-md">
+                              <p className="font-medium">{child.firstName} {child.lastName || ""}</p>
+                              <p className="text-sm text-gray-600">Age: {child.age || "Not specified"}</p>
+                              {child.notes && (
+                                <p className="text-sm text-gray-500 mt-1">{child.notes}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 italic">No children information available</p>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 italic text-center">No family information available</p>
+              )}
             </div>
           </motion.div>
           {isDoctorSelected && (

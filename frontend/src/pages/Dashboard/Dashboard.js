@@ -16,12 +16,20 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const user = await getUserData();
-        setUserData(user.data);
-        console.log(user.data)
+        
+        if (!user || !user.data) {
+          throw new Error('Invalid response data');
+        }
+        setUserData(user.data.data);
+        setError(null);
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setError('There was an issue retrieving data. Please try again later.');
+        setUserData(null);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -35,25 +43,49 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (userData) {
-      const allSessions = [];
-      userData.children?.forEach((child) => {
-        child.games?.forEach((game) => {
-          game.sessions?.forEach((s) => allSessions.push(s));
+    try {
+      if (userData) {
+        const allSessions = [];
+        userData.children?.forEach((child) => {
+          if (child?.games) {
+            child.games.forEach((game) => {
+              if (game?.sessions) {
+                game.sessions.forEach((s) => {
+                  if (s && s.datePlayed && s.score !== undefined) {
+                    allSessions.push(s);
+                  }
+                });
+              }
+            });
+          }
         });
-      });
-      const byDate = {};
-      allSessions.forEach((s) => {
-        const d = new Date(s.datePlayed).toLocaleDateString();
-        if (!byDate[d]) byDate[d] = [];
-        byDate[d].push(s.score);
-      });
-      const labels = Object.keys(byDate).sort((a, b) => new Date(a) - new Date(b));
-      const data = labels.map((d) => {
-        const scores = byDate[d];
-        return scores.reduce((p, c) => p + c, 0) / scores.length;
-      });
-      setOverallTrend({ labels, data });
+        
+        if (allSessions.length > 0) {
+          const byDate = {};
+          allSessions.forEach((s) => {
+            try {
+              const d = new Date(s.datePlayed).toLocaleDateString();
+              if (!byDate[d]) byDate[d] = [];
+              byDate[d].push(Number(s.score) || 0);
+            } catch (error) {
+              console.error('Error processing session:', error);
+            }
+          });
+          
+          const labels = Object.keys(byDate).sort((a, b) => new Date(a) - new Date(b));
+          const data = labels.map((d) => {
+            const scores = byDate[d];
+            return scores.length ? scores.reduce((p, c) => p + c, 0) / scores.length : 0;
+          });
+          
+          setOverallTrend({ labels, data });
+        } else {
+          setOverallTrend({ labels: [], data: [] });
+        }
+      }
+    } catch (error) {
+      console.error('Error calculating overall trend:', error);
+      setOverallTrend({ labels: [], data: [] });
     }
   }, [userData]);
 
@@ -82,27 +114,71 @@ function Dashboard() {
     })) || [];
 
   const compareGames = {};
-  allChildrenSessions.forEach((childItem) => {
-    childItem.games.forEach((game) => {
-      game.sessions?.forEach((session) => {
-        const { gameName, datePlayed, score } = session;
-        if (!compareGames[gameName]) compareGames[gameName] = [];
-        let existingChild = compareGames[gameName].find(
-          (c) => c.childName === childItem.childName
-        );
-        if (!existingChild) {
-          existingChild = {
-            childName: childItem.childName,
-            labels: [],
-            scores: [],
-          };
-          compareGames[gameName].push(existingChild);
+  try {
+    allChildrenSessions.forEach((childItem) => {
+      if (!childItem || !Array.isArray(childItem.games)) {
+        console.warn('Invalid child item or missing games array:', childItem);
+        return; // Skip this child
+      }
+      
+      childItem.games.forEach((game) => {
+        if (!game || !Array.isArray(game.sessions)) {
+          console.warn('Invalid game or missing sessions array:', game);
+          return; // Skip this game
         }
-        existingChild.labels.push(new Date(datePlayed).toLocaleDateString());
-        existingChild.scores.push(score);
+        
+        game.sessions.forEach((session) => {
+          try {
+            if (!session || !session.gameName || !session.datePlayed || session.score === undefined) {
+              console.warn('Invalid session data:', session);
+              return; // Skip this session
+            }
+            
+            const { gameName, datePlayed, score } = session;
+            
+            // Validate score is a number
+            const numericScore = Number(score);
+            if (isNaN(numericScore)) {
+              console.warn(`Invalid score value for ${gameName}:`, score);
+              return; // Skip this session
+            }
+            
+            // Validate date
+            const dateObj = new Date(datePlayed);
+            if (isNaN(dateObj.getTime())) {
+              console.warn(`Invalid date for ${gameName}:`, datePlayed);
+              return; // Skip this session
+            }
+            
+            if (!compareGames[gameName]) compareGames[gameName] = [];
+            
+            let existingChild = compareGames[gameName].find(
+              (c) => c.childName === childItem.childName
+            );
+            
+            if (!existingChild) {
+              existingChild = {
+                childName: childItem.childName,
+                labels: [],
+                scores: [],
+              };
+              compareGames[gameName].push(existingChild);
+            }
+            
+            const formattedDate = dateObj.toLocaleDateString();
+            existingChild.labels.push(formattedDate);
+            existingChild.scores.push(numericScore);
+          } catch (sessionError) {
+            console.error('Error processing session:', sessionError);
+          }
+        });
       });
     });
-  });
+  } catch (error) {
+    console.error('Error processing game comparison data:', error);
+    // Initialize empty object to prevent errors in chart rendering
+    Object.keys(compareGames).length === 0 && console.warn('No valid comparison data available');
+  }
 
   const chartOptions = {
     responsive: true,
@@ -229,15 +305,42 @@ function Dashboard() {
   const singleChildGames = {};
   if (singleChild) {
     singleChild.games?.forEach((game) => {
+      if (!game || !Array.isArray(game.sessions)) {
+        return; // Skip if game is invalid or sessions is not an array
+      }
+      
       game.sessions?.forEach((session) => {
-        const { gameName, datePlayed, score } = session;
-        if (!singleChildGames[gameName]) {
-          singleChildGames[gameName] = { labels: [], scores: [] };
+        try {
+          if (!session || !session.gameName || !session.datePlayed || session.score === undefined) {
+            console.warn('Invalid session data:', session);
+            return; // Skip invalid session
+          }
+          
+          const { gameName, datePlayed, score } = session;
+          
+          // Validate score is a number
+          const numericScore = Number(score);
+          if (isNaN(numericScore)) {
+            console.warn(`Invalid score value for ${gameName}:`, score);
+            return; // Skip session with invalid score
+          }
+          
+          // Validate date
+          const dateObj = new Date(datePlayed);
+          if (isNaN(dateObj.getTime())) {
+            console.warn(`Invalid date for ${gameName}:`, datePlayed);
+            return; // Skip session with invalid date
+          }
+          
+          if (!singleChildGames[gameName]) {
+            singleChildGames[gameName] = { labels: [], scores: [] };
+          }
+          
+          singleChildGames[gameName].labels.push(dateObj.toLocaleDateString());
+          singleChildGames[gameName].scores.push(numericScore);
+        } catch (sessionError) {
+          console.error('Error processing child session:', sessionError);
         }
-        singleChildGames[gameName].labels.push(
-          new Date(datePlayed).toLocaleDateString()
-        );
-        singleChildGames[gameName].scores.push(score);
       });
     });
   }

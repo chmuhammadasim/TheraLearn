@@ -45,21 +45,67 @@ function LoginPage() {
     setMessage('');
 
     try {
-      const credentials = { email, password };
-      const data = await logInUser(credentials);
-      setMessage('Login successful');
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('authRole', data.role);
-      if(data.role === 'parent') {
-        localStorage.setItem('authUser', JSON.stringify(data.parent));
-        localStorage.setItem('authChildren', JSON.stringify(data.children));
-        localStorage.setItem('assignedDoctor', JSON.stringify(data.assignedDoctor));
-        setChildren(data.children);
-        setShowChildPopup(true);
+      // Validate inputs again as a safety measure
+      if (!email || !password) {
+        throw new Error('Email and password are required');
       }
-      login(data.token, data.role);
+
+      const credentials = { email, password };
+      
+      // Handle network errors with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      try {
+        const data = await logInUser(credentials, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (!data) throw new Error('No response received from server');
+        if (!data.token) throw new Error('Authentication failed: No token received');
+        
+        setMessage('Login successful');
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('authRole', data.role || 'user');
+        
+        if (data.role === 'parent') {
+          // Ensure all expected data is available
+          if (!data.parent) throw new Error('User data incomplete');
+          
+          localStorage.setItem('authUser', JSON.stringify(data.parent));
+          localStorage.setItem('authChildren', JSON.stringify(data.children || []));
+          localStorage.setItem('assignedDoctor', JSON.stringify(data.assignedDoctor || null));
+          
+          setChildren(data.children || []);
+          if (data.children && data.children.length > 0) {
+            setShowChildPopup(true);
+          } else {
+            // Handle case when parent has no children
+            setMessage('Login successful. No children profiles found.');
+          }
+        }
+        
+        login(data.token, data.role);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError;
+      }
     } catch (error) {
-      setMessage(error.message || 'Something went wrong, please try again.');
+      // Handle specific error cases
+      if (error.name === 'AbortError') {
+        setMessage('Login request timed out. Please check your connection and try again.');
+      } else if (error.status === 401) {
+        setMessage('Invalid email or password.');
+      } else if (error.status === 403) {
+        setMessage('Your account has been locked. Please contact support.');
+      } else if (!navigator.onLine) {
+        setMessage('You appear to be offline. Please check your internet connection.');
+      } else {
+        setMessage(error.message || 'Something went wrong, please try again.');
+      }
+      
+      // Clear any potentially sensitive data
+      localStorage.removeItem('authToken');
+      console.error('Login error:', error);
     } finally {
       setLoggingIn(false);
     }

@@ -139,9 +139,10 @@ const App = () => {
   };
 
   const validate = () => {
-    // Same validation logic as before
     const newErrors = {};
-    const requiredFields = [
+    
+    // Validate simple required fields
+    const simpleRequiredFields = [
       "username",
       "email",
       "password",
@@ -149,36 +150,58 @@ const App = () => {
       "firstName",
       "lastName",
       "dateOfBirth",
-      "emergencyContact",
     ];
 
-    requiredFields.forEach((field) => {
+    simpleRequiredFields.forEach((field) => {
       if (!formData[field])
         newErrors[field] = `${capitalizeFirstLetter(field)} is required`;
     });
 
+    // Validate nested objects
+    if (!formData.emergencyContact || !formData.emergencyContact.name || !formData.emergencyContact.contact) {
+      newErrors.emergencyContact = { 
+        name: !formData.emergencyContact?.name ? "Emergency contact name is required" : "",
+        contact: !formData.emergencyContact?.contact ? "Emergency contact number is required" : "" 
+      };
+    }
+
+    // Password validation
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords must match";
-    } else if (formData.password.length < 8) {
+    } else if (formData.password && formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long";
     }
 
+    // Email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailPattern.test(formData.email)) {
       newErrors.email = "Email is not valid";
     }
 
-    if (
-      formData.children.some(
-        (child) => !child.firstName || !child.lastName || !child.dateOfBirth
-      )
-    ) {
-      newErrors.children =
-        "Each child must have a first name, last name, and date of birth";
+    // Phone number validation
+    const phonePattern = /^\+?[\d\s-()]{7,}$/;
+    if (formData.contact && !phonePattern.test(formData.contact)) {
+      newErrors.contact = "Please enter a valid phone number";
+    }
+
+    // Children validation
+    if (formData.children && formData.children.length > 0) {
+      if (
+        formData.children.some(
+          (child) => !child.firstName || !child.lastName || !child.dateOfBirth
+        )
+      ) {
+        newErrors.children =
+          "Each child must have a first name, last name, and date of birth";
+      }
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Check if there are any top-level errors or nested errors
+    const hasNestedErrors = Object.values(newErrors).some(
+      value => typeof value === 'object' && Object.values(value).some(v => v)
+    );
+    return Object.keys(newErrors).length === 0 && !hasNestedErrors;
   };
 
   const handleSubmit = async (e) => {
@@ -204,32 +227,75 @@ const App = () => {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "ml_default");
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setMessage("Invalid file type. Please upload a JPEG, PNG, GIF, or WEBP image.");
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      setMessage("File is too large. Maximum size is 5MB.");
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "ml_default");
 
-      setIsUploading(true);
-      try {
-        const res = await fetch(
-          `https://api.cloudinary.com/v1_1/do7z15tdv/upload`,
-          { method: "POST", body: formData }
-        );
-        const data = await res.json();
-        if (data.secure_url) {
-          setUploadedImage(data.secure_url);
-          setFormData((prev) => ({
-            ...prev,
-            profilePictureUrl: data.secure_url,
-          }));
-        } else {
-          setMessage("Image upload failed, please try again.");
-        }
-      } catch (error) {
-        setMessage("Image upload failed, please try again.");
-      } finally {
-        setIsUploading(false);
+    setIsUploading(true);
+    setMessage("");
+    
+    try {
+      // Check network connection first
+      if (!navigator.onLine) {
+        throw new Error("No internet connection. Please check your network.");
       }
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/do7z15tdv/upload`,
+        { 
+          method: "POST", 
+          body: formData,
+          signal: controller.signal
+        }
+      );
+      
+      clearTimeout(timeoutId);
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `Server responded with status: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      if (data.secure_url) {
+        setUploadedImage(data.secure_url);
+        setFormData((prev) => ({
+          ...prev,
+          profilePictureUrl: data.secure_url,
+        }));
+      } else {
+        throw new Error("Image upload failed - no URL returned from server");
+      }
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        setMessage("Upload timed out. Please try again with a smaller image or check your connection.");
+      } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        setMessage("Connection failed. Please check your internet and try again.");
+      } else {
+        console.error("Image upload error:", error);
+        setMessage(`Upload failed: ${error.message || "Please try again later."}`);
+      }
+    } finally {
+      setIsUploading(false);
     }
   };
 

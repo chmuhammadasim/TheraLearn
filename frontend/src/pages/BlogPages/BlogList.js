@@ -12,29 +12,76 @@ const BlogList = () => {
   const [category, setCategory] = useState('all');
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchBlogs = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/all`);
-        if (response.data.data.length === 0) {
+        if (!process.env.REACT_APP_API_KEY) {
+          throw new Error('API endpoint not configured');
+        }
+        
+        const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/all`, {
+          timeout: 10000 // 10 second timeout
+        });
+        
+        if (!isMounted) return;
+        
+        if (!response.data || !response.data.data) {
+          setError('Invalid response format received from server.');
+        } else if (response.data.data.length === 0) {
           setError('No blogs found.');
         } else {
           setBlogs(response.data.data);
+          setError('');
         }
       } catch (err) {
-        setError('Failed to load blogs. Please try again later.');
+        if (!isMounted) return;
+        
+        if (err.code === 'ECONNABORTED') {
+          setError('Request timed out. Please try again.');
+        } else if (err.response) {
+          // Server responded with an error status code
+          setError(`Server error: ${err.response.status}. Please try again later.`);
+        } else if (err.request) {
+          // Request was made but no response received
+          setError('No response from server. Please check your connection.');
+        } else {
+          // Other errors
+          setError(`Failed to load blogs: ${err.message}`);
+        }
+        console.error('Blog fetching error:', err);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchBlogs();
+    
+    // Cleanup function to prevent state updates after component unmounts
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleBlogClick = async (blogId) => {
+    if (!blogId) {
+      console.error('Error: Blog ID is undefined or null');
+      return;
+    }
+    
     try {
-      await axios.post(`${process.env.REACT_APP_API_KEY}/blog/increment-views/${blogId}`);
+      const endpoint = `${process.env.REACT_APP_API_KEY}/blog/increment-views/${blogId}`;
+      await axios.post(endpoint, {}, {
+        timeout: 5000, // 5 second timeout
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
     } catch (err) {
-      console.error('Error incrementing view count:', err);
+      console.error('Error incrementing view count:', err.message || 'Unknown error');
+      // Continue navigation even if view count fails - non-critical operation
     }
   };
 

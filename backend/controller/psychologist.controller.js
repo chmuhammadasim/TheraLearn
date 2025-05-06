@@ -36,17 +36,43 @@ psychologistController.getAllPsychologists = async (_req, res) => {
 psychologistController.getPsychologistById = async (req, res) => {
   const id = req.headers.psychologistid;
   try {
-    const psychologist = await (Psychologist.User ? Psychologist.User.findById(id) : Psychologist.findById(id));
+    const psychologist = await (Psychologist.User ? Psychologist.User.findById(id) : Psychologist.findById(id))
+      .populate({
+        path: 'patients',
+        populate: {
+          path: 'children',
+          select: '-password'
+        }
+      });
+      
     if (!psychologist) {
       return res.status(404).json({ message: "Psychologist not found." });
     }
+    
     if (psychologist.role !== "psychologist") {
       return res
         .status(400)
         .json({ message: "The user is not a psychologist." });
     }
-    res.status(200).json(psychologist);
+    
+    const response = {
+      ...psychologist.toObject(),
+      userInfo: psychologist.userInfo
+    };
+    
+    // Include patients with their children information
+    if (psychologist.patients && psychologist.patients.length > 0) {
+      response.patients = psychologist.patients.map(patient => ({
+        ...patient.toObject(),
+        children: patient.children || []
+      }));
+    }
+    
+    // Remove sensitive data
+    delete response.password;
+    res.status(200).json(response);
   } catch (error) {
+    console.error("Error fetching psychologist:", error);
     if (error.kind === "ObjectId") {
       return res.status(400).json({ message: "Invalid psychologist ID." });
     }

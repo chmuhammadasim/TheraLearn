@@ -34,43 +34,147 @@ const BlogDetail = () => {
   }, [id]);
 
   const handleLike = async () => {
-    if (token) {
-      try {
-        setBlog((prevBlog) => ({ ...prevBlog, likes: prevBlog.likes + 1 }));
-        await likeBlog(id);
-      } catch (error) {
-        setError("Error liking blog.");
+    if (!token) {
+      setError("You must be logged in to like a blog post.");
+      return;
+    }
+    
+    try {
+      // Save original likes count in case we need to revert
+      const originalLikes = blog.likes;
+      
+      // Optimistically update UI
+      setBlog((prevBlog) => ({ 
+        ...prevBlog, 
+        likes: prevBlog.likes + 1 
+      }));
+      
+      // Make API call
+      await likeBlog(id);
+    } catch (error) {
+      // Revert UI change if API call fails
+      setBlog((prevBlog) => ({ 
+        ...prevBlog, 
+        likes: prevBlog.likes - 1 
+      }));
+      
+      // Handle different error types
+      if (error.response) {
+        // Server responded with an error
+        setError(`Error liking blog: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        // Request made but no response received
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        // Something else went wrong
+        setError(`Error liking blog: ${error.message || "Unknown error occurred"}`);
       }
+      console.error("Like error:", error);
     }
   };
 
   const handleDislike = async () => {
-    if (token) {
-      try {
-        setBlog((prevBlog) => ({
-          ...prevBlog,
-          dislikes: prevBlog.dislikes + 1,
-        }));
-        await dislikeBlog(id);
-      } catch (error) {
-        setError("Error disliking blog.");
+    if (!token) {
+      setError("You must be logged in to dislike a blog post.");
+      return;
+    }
+    
+    try {
+      // Save original dislikes count in case we need to revert
+      const originalDislikes = blog.dislikes;
+      
+      // Optimistically update UI
+      setBlog((prevBlog) => ({ 
+        ...prevBlog, 
+        dislikes: prevBlog.dislikes + 1 
+      }));
+      
+      // Make API call
+      await dislikeBlog(id);
+    } catch (error) {
+      // Revert UI change if API call fails
+      setBlog((prevBlog) => ({ 
+        ...prevBlog, 
+        dislikes: prevBlog.dislikes - 1 
+      }));
+      
+      // Handle different error types
+      if (error.response) {
+        // Server responded with an error
+        setError(`Error disliking blog: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        // Request made but no response received
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        // Something else went wrong
+        setError(`Error disliking blog: ${error.message || "Unknown error occurred"}`);
       }
+      console.error("Dislike error:", error);
     }
   };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (token && comment.trim()) {
-      try {
-        const newComment = await submitComment(id, comment);
-        setBlog((prevBlog) => ({
-          ...prevBlog,
-          comments: [...prevBlog.comments, newComment],
-        }));
-        setComment("");
-      } catch (error) {
-        setError("Error submitting comment.");
+    
+    // Validate user is logged in
+    if (!token) {
+      setError("You must be logged in to comment.");
+      return;
+    }
+    
+    // Validate comment isn't empty
+    if (!comment.trim()) {
+      setError("Comment cannot be empty.");
+      return;
+    }
+    
+    try {
+      // Store original comments in case we need to revert
+      const originalComments = [...blog.comments];
+      
+      // Optimistically update UI with new comment
+      const tempComment = {
+        comment: comment,
+        date: new Date().toISOString(),
+        id: 'temp-id', // Temporary ID until we get the real one from the server
+      };
+      
+      setBlog((prevBlog) => ({
+        ...prevBlog,
+        comments: [...prevBlog.comments, tempComment],
+      }));
+      
+      // Clear comment field early for better UX
+      setComment("");
+      
+      // Make the API call
+      const newComment = await submitComment(id, comment);
+      
+      // Update with the actual comment from the server
+      setBlog((prevBlog) => ({
+        ...prevBlog,
+        comments: [...originalComments, newComment],
+      }));
+      
+    } catch (error) {
+      // Revert to original comments if API call fails
+      setBlog((prevBlog) => ({
+        ...prevBlog,
+        comments: [...prevBlog.comments.filter(c => c.id !== 'temp-id')],
+      }));
+      
+      // Reset comment field with original value
+      setComment(comment);
+      
+      // Handle different error types
+      if (error.response) {
+        setError(`Comment submission failed: ${error.response.data.message || error.response.statusText}`);
+      } else if (error.request) {
+        setError("Network error. Please check your connection and try again.");
+      } else {
+        setError(`Error submitting comment: ${error.message || "Unknown error occurred"}`);
       }
+      console.error("Comment submission error:", error);
     }
   };
 
