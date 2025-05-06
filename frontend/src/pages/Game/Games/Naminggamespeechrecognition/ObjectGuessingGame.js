@@ -97,7 +97,7 @@ const ObjectGuessingGame = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/game/saveGameData`,
+        `${process.env.REACT_APP_API_KEY}/game/saveGameData`,
         data,
         {
           headers: {
@@ -119,7 +119,7 @@ const ObjectGuessingGame = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/game/loadGameData/${gameName}`,
+        `${process.env.REACT_APP_API_KEY}/game/loadGameData/${gameName}`,
         {
           headers: {
             "Content-Type": "application/json",

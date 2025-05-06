@@ -139,7 +139,7 @@ const ProfilePage = () => {
       try {
         const res = await getUserData();
         setFormData({
-          ...res.data,
+          ...res.data.data,
           medicalHistory: Array.isArray(res.data.medicalHistory)
             ? res.data.medicalHistory.join(", ")
             : "",

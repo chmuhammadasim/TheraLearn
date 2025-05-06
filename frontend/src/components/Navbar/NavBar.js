@@ -74,7 +74,7 @@ export default function Navbar() {
           className={`
             group
             ${isMobile
-              ? "block px-4 py-2 rounded-xl text-base font-semibold"
+              ? "block px-2 py-2 rounded-xl text-base font-semibold"
               : "px-3 py-2 mx-1 rounded-xl text-md font-semibold"
             }
             transition duration-200 ease-in-out
@@ -120,7 +120,7 @@ export default function Navbar() {
     >
       {({ open: isMobileMenuOpen }) => (
         <>
-          <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
+          <div className="mx-auto px-4 sm:px-8 lg:px-12">
             <div className="relative flex h-20 items-center justify-between">
               {/* Logo and Name */}
               <div className="flex items-center space-x-4">

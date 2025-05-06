@@ -80,7 +80,7 @@ function HandposeDetector() {
     if (!token) return;
     const gameData = { gameName: GAME_NAME, score:score, duration:time, level:currentLevel };
     try {
-      const response = await axios.post('http://localhost:5000/api/game/saveGameData', gameData, {
+      const response = await axios.post(`${process.env.REACT_APP_API_KEY}/game/saveGameData`, gameData, {
         headers: { 
           'Content-Type': 'application/json', 
           'authorization': `Bearer ${token}`,

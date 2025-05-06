@@ -39,7 +39,7 @@ function BetterAim() {
         duration: 30 - timeLeft,
         level,
       };
-      await axios.post('http://localhost:5000/api/game/saveGameData', gameData, {
+      await axios.post(`${process.env.REACT_APP_API_KEY}/game/saveGameData`, gameData, {
         headers: { 
           'Content-Type': 'application/json', 
           'authorization': `Bearer ${token}`,
@@ -65,7 +65,7 @@ function BetterAim() {
 
       let response;
       try {
-        response = await axios.get('http://localhost:5000/api/game/loadGameData/BetterAim', {
+        response = await axios.get(`${process.env.REACT_APP_API_KEY}game/loadGameData/BetterAim`, {
           headers: { 
             'Content-Type': 'application/json', 
             'authorization': `Bearer ${token}`,

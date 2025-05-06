@@ -34,6 +34,8 @@ const PsychologistBlogPage = lazy(() => import("./pages/psychologist/Psychologis
 const PsychologistPatientDashboard = lazy(() => import("./pages/psychologist/PsychologistPatientDashboard"));
 const BetterAim = lazy(() => import("./pages/Game/Games/BettterAim/BetterAim"));
 const ObjectGuessingGame = lazy(() => import("./pages/Game/Games/Naminggamespeechrecognition/ObjectGuessingGame"));
+const MatchFigure = lazy(() => import("./pages/Game/Games/MatchFigure/MatchFigure.js"));
+const MathGame = lazy(() => import("./pages/Game/Games/MathGame/MathGame.js"));
 const ProtectedRoute = lazy(() => import("./components/Routes/ProtectedRoute"));
 const AuthRoute = lazy(() => import("./components/Routes/AuthRoute"));
 const SuperAdminRoute = lazy(() => import("./components/Routes/SuperAdminRoute"));
@@ -226,8 +228,10 @@ function App() {
                   <Route path="/handposedetector" element={<HandposeDetector />} />
                   <Route path="/emotiondetection" element={<EmotionDetection />} />
                   <Route path="/magicmemory" element={<MagicMemory />} />
+                  <Route path="/mathgame" element={<MathGame />} />
                   <Route path="/countthefish" element={<CountTheFish />} />
                   <Route path="/betteraim" element={<BetterAim />} />
+                  <Route path="/matchfigures" element={<MatchFigure />} />
                   <Route path="/games" element={<GamePage />} />
                   <Route path="/psychologistslist" element={<PsychologistListPage />} />
                   <Route path="/psychologistsdetail/:id" element={<PsychologistDetailsPage />} />

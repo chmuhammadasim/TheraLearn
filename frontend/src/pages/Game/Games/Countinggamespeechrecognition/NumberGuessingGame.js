@@ -52,7 +52,7 @@ const NumberGuessingGame = () => {
     console.log(data);
     
     try {
-      const response = await axios.post( `http://localhost:5000/api/game/saveGameData`,data, {
+      const response = await axios.post( `${process.env.REACT_APP_API_KEY}/game/saveGameData`,data, {
           headers: { 
             "Content-Type": "application/json", 
             'authorization': `Bearer ${token}`,
@@ -61,9 +61,10 @@ const NumberGuessingGame = () => {
         }
       ).then((res) => {
         console.log(res.data);
+        return res;
       });
       
-      if (!response.ok) throw new Error("Failed to save data.");
+      if (!response) throw new Error("Failed to save data.");
       console.log("Game state saved successfully!");
     } catch (error) {
       console.error("Error saving game state to database:", error);
@@ -73,7 +74,7 @@ const NumberGuessingGame = () => {
   const loadFromDatabase = async (gameName) => {
     const token = localStorage.getItem("authToken");
     try {
-      const response = await axios.get( `http://localhost:5000/api/game/loadGameData/${gameName}`,{
+      const response = await axios.get( `${process.env.REACT_APP_API_KEY}/game/loadGameData/${gameName}`,{
           headers: {
             "Content-Type": "application/json",
             'authorization': `Bearer ${token}`,

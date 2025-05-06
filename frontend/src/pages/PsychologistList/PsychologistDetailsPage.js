@@ -24,6 +24,7 @@ import {
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 
+
 // Notification component
 function Notification({ message, isSuccess, onClose }) {
   if (!message) return null;

@@ -59,7 +59,22 @@ const games = [
     ageRecommendation: 'Ages 7+',
     image: 'https://th.bing.com/th/id/OIP.Jvrw_JrfxGyy9Cdxu7xXlQHaEK?cb=iwp1&w=2048&h=1152&rs=1&pid=ImgDetMain',
   },
-
+  {
+    id: 8,
+    link: "/matchfigures",
+    name: 'Match Figures',
+    description: 'Match the figures and improve your memory!',
+    ageRecommendation: 'Ages 8+',
+    image: 'https://as1.ftcdn.net/v2/jpg/04/27/71/50/1000_F_427715094_sIy7ScpRicX1bh4kpdFPtxW2MsNUL1F4.jpg',
+  },
+  {
+    id: 9,
+    link: "/mathgame",
+    name: 'Math Game',
+    description: 'Solve math problems and improve your skills!',
+    ageRecommendation: 'Ages 9+',
+    image: 'https://th.bing.com/th/id/OIP.zLHJ1XV48-4G8WyKWJKZiwHaD4?cb=iwp1&rs=1&pid=ImgDetMain',
+  },
 ];
 
 function GamePage() {
@@ -93,7 +108,7 @@ function GamePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#FF057C] via-[#8D0B93] to-[#321575] px-6 py-20 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-r from-[#FF057C] via-[#8D0B93] to-[#321575] px-6 py-20 mt-6 relative overflow-hidden">
       {/* Background Effects */}
       <motion.div
         className="absolute inset-0 pointer-events-none"

@@ -206,7 +206,7 @@ const GameScreen = ({ onGameOver }) => {
       const saveData = async () => {
         try {
           const response = await axios.post(
-            `http://localhost:5000/api/game/saveGameData`,
+            `${process.env.REACT_APP_API_KEY}/game/saveGameData`,
             gameData,
             {
               headers: { 
