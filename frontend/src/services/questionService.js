@@ -7,6 +7,7 @@ export const getQuestions = async (userId) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching questions:', error);
-    throw error;
+    // Return a safe fallback value to prevent app failure
+    return [];
   }
 };

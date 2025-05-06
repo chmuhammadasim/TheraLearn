@@ -9,7 +9,10 @@ export const AuthProvider = ({ children }) => {
 
   const checkTokenValidity = (token) => {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!token || typeof token !== "string" || !token.includes(".")) return false;
+      const payloadPart = token.split('.')[1];
+      if (!payloadPart) return false;
+      const payload = JSON.parse(atob(payloadPart));
       const isExpired = payload.exp && Date.now() >= payload.exp * 1000;
       return !isExpired;
     } catch (err) {
@@ -25,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
       if (token && checkTokenValidity(token)) {
         setIsLoggedIn(true);
-        setRole(userRole);
+        setRole(userRole || null);
       } else {
         setIsLoggedIn(false);
         setRole(null);
@@ -41,7 +44,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    checkLoginStatus();
+    try {
+      checkLoginStatus();
+    } catch (err) {
+      console.error("useEffect error:", err);
+      setError("An error occurred during authentication initialization.");
+      setIsLoggedIn(false);
+      setRole(null);
+    }
   }, [checkLoginStatus]);
 
   const logout = useCallback(() => {
@@ -57,11 +67,14 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Logout error:", err);
       setError("An error occurred during logout.");
+      setIsLoggedIn(false);
+      setRole(null);
     }
   }, []);
 
   const login = useCallback((token, userRole) => {
     try {
+      if (!token || !userRole) throw new Error("Missing token or user role.");
       if (checkTokenValidity(token)) {
         localStorage.setItem("authToken", token);
         localStorage.setItem("authRole", userRole);
@@ -76,13 +89,20 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Login error:", err);
       setError("Login failed. Invalid token.");
-      logout();
+      setIsLoggedIn(false);
+      setRole(null);
+      try {
+        logout();
+      } catch (logoutErr) {
+        console.error("Logout after login error:", logoutErr);
+      }
     }
   }, [logout]);
 
-  
-
-  const authContextValue = useMemo(() => ({ isLoggedIn, role, login, logout, error }), [isLoggedIn, role, login, logout, error]);
+  const authContextValue = useMemo(
+    () => ({ isLoggedIn, role, login, logout, error }),
+    [isLoggedIn, role, login, logout, error]
+  );
 
   return (
     <AuthContext.Provider value={authContextValue}>

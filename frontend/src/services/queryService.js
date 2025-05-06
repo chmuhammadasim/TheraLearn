@@ -12,6 +12,11 @@ export const submitQuery = async (formData) => {
     return response.data;
   } catch (error) {
     console.error('Error in submitQuery service:', error);
-    throw error;
+    // Return a consistent error object instead of throwing
+    return {
+      success: false,
+      message: error?.response?.data?.message || error.message || 'An unknown error occurred.',
+      error: error
+    };
   }
 };

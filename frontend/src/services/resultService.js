@@ -7,6 +7,7 @@ export const getResult = async (userId) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching results:', error);
-    throw error;
+    // Return a default value or structured error object instead of throwing
+    return { success: false, error: error?.message || 'Unknown error', data: null };
   }
 };

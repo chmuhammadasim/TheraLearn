@@ -4,6 +4,11 @@ import axios from 'axios';
 export const getUserGames = async () => {
   const token = localStorage.getItem('authToken');
   
+  if (!token) {
+    console.error('No auth token found in localStorage.');
+    return [];
+  }
+
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/game/getbyid`, {
       headers: {
@@ -13,6 +18,7 @@ export const getUserGames = async () => {
     });
     return response.data;
   } catch (error) {
-    throw new Error('Failed to fetch user data: ' + error.message);
+    console.error('Failed to fetch user data:', error);
+    return [];
   }
 };

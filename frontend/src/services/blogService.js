@@ -3,7 +3,6 @@ import axios from "axios";
 const token = localStorage.getItem("authToken");
 // Fetch all blogs
 export const getBlogs = async () => {
-
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/all`, {
       headers: {
@@ -15,13 +14,13 @@ export const getBlogs = async () => {
 
     return Array.isArray(response.data.data) ? response.data.data : [];
   } catch (error) {
-    throw new Error("Failed to fetch blogs: " + error.message);
+    console.error("Failed to fetch blogs:", error);
+    return [];
   }
 };
 
 // Delete a blog by ID
 export const deleteBlog = async (blogId) => {
-
   try {
     const response = await axios.delete(`${process.env.REACT_APP_API_KEY}/blog/delete/${blogId}`, {
       headers: {
@@ -32,7 +31,8 @@ export const deleteBlog = async (blogId) => {
 
     return response.data;
   } catch (error) {
-    throw new Error("Failed to delete blog: " + error.message);
+    console.error("Failed to delete blog:", error);
+    return { success: false, message: error.message };
   }
 };
 
@@ -42,7 +42,7 @@ export const updateBlogStatus = async (blogId, status) => {
     return response.data;
   } catch (error) {
     console.error("Error updating blog status", error);
-    throw error;
+    return { success: false, message: error.message };
   }
 };
 
@@ -54,18 +54,18 @@ export const toggleBlogActiveStatus = async (blogId, isActive) => {
     return response.data;
   } catch (error) {
     console.error("Error toggling blog active status", error);
-    throw error;
+    return { success: false, message: error.message };
   }
 };
 export const getBlogById = async (id) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_API_KEY}/blog/getbyid/${id}`);
     console.log(response.data.data);
-    
+
     return response.data.data;
   } catch (error) {
     console.error("Error fetching blog:", error);
-    throw error;
+    return null;
   }
 };
 
@@ -78,9 +78,10 @@ export const likeBlog = async (id) => {
         headers: { authorization: `Bearer ${token}` },
       }
     );
+    return { success: true };
   } catch (error) {
     console.error("Error liking blog:", error);
-    throw error;
+    return { success: false, message: error.message };
   }
 };
 
@@ -93,12 +94,12 @@ export const dislikeBlog = async (id) => {
         headers: { authorization: `Bearer ${token}` },
       }
     );
+    return { success: true };
   } catch (error) {
     console.error("Error disliking blog:", error);
-    throw error;
+    return { success: false, message: error.message };
   }
 };
-
 export const submitComment = async (id, comment) => {
   try {
     const response = await axios.post(
@@ -111,6 +112,7 @@ export const submitComment = async (id, comment) => {
     return response.data.comment;
   } catch (error) {
     console.error("Error submitting comment:", error);
-    throw error;
+    return null;
   }
 };
+
