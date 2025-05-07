@@ -12,6 +12,7 @@ export default function gameover(citySfx) {
     k.anchor("center"),
   ]);
 
+
   k.add([
     k.text(`Score: ${score}`, { size: 48, font: "mania" }),
     k.pos(960, 320),

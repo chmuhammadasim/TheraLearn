@@ -2,6 +2,7 @@ import k from "../kaplayCtx";
 import { makeSonic } from "../entities/sonic";
 import { makeMotoBug } from "../entities/motobug";
 import { makeRing } from "../entities/ring";
+import { saveToDatabase } from "../api/gameData";
 
 export default function game({ time = 0, bestScore = 0 }) {
   k.setData("time", time);
@@ -60,7 +61,16 @@ export default function game({ time = 0, bestScore = 0 }) {
     k.play("hurt", { volume: 0.3 });
     k.setData("score", score);
     k.setData("time", Math.floor(k.getData("time")));
-    k.go("gameover", citySfx);
+    k.go("gameover", citySfx)
+    try {
+      k.go("gameover", citySfx);
+      const score = k.getData("score") || 0;
+      const time = k.getData("time") || 0;
+      saveToDatabase(score, time);
+    } catch (error) {
+      console.error("Error loading gameover scene:", error);
+    }
+    
   });
 
   sonic.onCollide("ring", (ring) => {

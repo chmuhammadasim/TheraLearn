@@ -3,7 +3,7 @@ import k from "./kaplayCtx";
 import game from "./scenes/game";
 import gameover from "./scenes/gameover";
 import mainMenu from "./scenes/main-menu";
-import {  loadFromDatabase,saveToDatabase } from "./api/gameData";
+import {  loadFromDatabase } from "./api/gameData";
 
 export default function EndlessRunner() {
   const containerRef = useRef(null);
@@ -59,14 +59,7 @@ export default function EndlessRunner() {
       game({ time, bestScore });
     });
 
-    k.scene("gameover", gameover).then(() => {
-      const score = k.getData("score") || 0;
-      const time = k.getData("time") || 0;
-      saveToDatabase(score, time);
-    }).catch(error => {
-      console.error("Error loading gameover scene:", error);
-    });
-
+    k.scene("gameover", gameover)
     loadFromDatabase().then(({ time, bestScore }) => {
       k.setData("time", time || 0);
       k.setData("bestScore", bestScore || 0);
