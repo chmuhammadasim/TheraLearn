@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import "./game.css";
 import backgroundImage from "./assets/background.png";
 import MusicComponent from './music.js';
@@ -10,6 +10,8 @@ import Fish5 from "./assets/Fish5.png";
 import Fish6 from "./assets/Fish6.png";
 import Fish7 from "./assets/Fish7.png";
 import Fish8 from "./assets/Fish8.png";
+import axios from "axios";
+
 
 const levelsData = [
   [
@@ -89,6 +91,7 @@ const levelsData = [
 ];
 
 
+
 // Helper function to generate random positions
 const getRandomPosition = (maxLeft, maxTop) => {
   const x = Math.random() * maxLeft;
@@ -107,6 +110,35 @@ function Game() {
   const [wrongGuesses, setWrongGuesses] = useState(0);
   const [maxWrongGuesses, setMaxWrongGuesses] = useState(5);
   const [isLevelComplete, setIsLevelComplete] = useState(false);
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
+  const gameData = {
+    gameName: "Count the Fish",
+    score: score,
+    duration: time,
+    level: level,
+  };
+  const saveToDatabase = useCallback(async (data) => {
+    const token = localStorage.getItem("authToken");
+    console.log(data);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_KEY}/game/saveGameData`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+            'selectedchild': selectedchild,
+          },
+        }
+      );
+      console.log(response.data);
+      console.log("Game state saved successfully!");
+    } catch (error) {
+      console.error("Error saving game state to database:", error);
+    }
+  }, [selectedchild]);
 
   // Timer: Increment time every second
   useEffect(() => {
@@ -199,6 +231,7 @@ function Game() {
           setLevel((prevLevel) => prevLevel + 1);
         } else {
           setMessage("🏆 Awesome! You have completed all levels.");
+          saveToDatabase(gameData);
         }
       }, 1500);
     }
@@ -212,6 +245,16 @@ function Game() {
       }, 2000);
     }
   };
+  useEffect(() => {
+
+    const handleUpload = (event) => {
+      saveToDatabase(gameData);
+    };
+    window.addEventListener("beforeunload", handleUpload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUpload);
+    };
+  });
 
   const handleRestart = () => {
     setLevel(1);

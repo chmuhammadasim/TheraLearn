@@ -75,6 +75,15 @@ const games = [
     ageRecommendation: 'Ages 9+',
     image: 'https://th.bing.com/th/id/OIP.zLHJ1XV48-4G8WyKWJKZiwHaD4?cb=iwp1&rs=1&pid=ImgDetMain',
   },
+  {
+    id: 10,
+    link: "/endlessrunner",
+    name: 'Endless Runner',
+    description: 'Run, jump, and collect coins in this endless runner game!',
+    ageRecommendation: 'Ages 10+',
+    image: 'https://th.bing.com/th/id/OIP.9g0r1v2x4X3q5j7G6k8Y4wHaEK?cb=iwp1&rs=1&pid=ImgDetMain',
+  },
+
 ];
 
 function GamePage() {

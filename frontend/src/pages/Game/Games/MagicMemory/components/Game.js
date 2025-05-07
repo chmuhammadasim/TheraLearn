@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useCallback } from 'react';
 import SingleCard from './SingleCard';
 import axios from 'axios';
 import MusicComponent from './music.js';
@@ -99,6 +99,7 @@ function Game() {
   const [completionMessage, setCompletionMessage] = useState('');
   const [transitioning, setTransitioning] = useState(false);
   const [gameStarted, setGameStarted] = useState(false); // State to track if the game has started
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
 
   // Function to handle username submission
   const handleUsernameSubmit = async (e) => {
@@ -175,7 +176,12 @@ function Game() {
     setTurns((prevTurns) => prevTurns + 1);
     setDisabled(false);
   };
-
+  const gameData = {
+    gameName: "ObjectGuessingGame",
+    score: score,
+    duration: time,
+    level: level + 1,
+  };
   useEffect(() => {
     if (cards.length && cards.every(card => card.matched)) {
       if (level < levels.length - 1) {
@@ -186,26 +192,33 @@ function Game() {
           setCompletionMessage('');
         }, 2000);
       } else {
-        saveSession(); // Save session when the game is completed
+        saveToDatabase(gameData); // Pass gameData to saveToDatabase
       }
     }
   }, [cards]);
 
-  const saveSession = async () => {
+  const saveToDatabase = useCallback(async (data) => {
+    const token = localStorage.getItem("authToken");
+    console.log(data);
+
     try {
-      const response = await axios.post('/api/sessions', {
-        username: username,
-        level: level + 1,
-        score: score,
-        turns: turns,
-        duration: time,
-        status: 'completed',
-      });
-      setHistory([...history, response.data]); // Appending session data to history
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_KEY}/game/saveGameData`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+            'selectedchild': selectedchild,
+          },
+        }
+      );
+      console.log(response.data);
+      console.log("Game state saved successfully!");
     } catch (error) {
-      console.error('Error saving session:', error);
+      console.error("Error saving game state to database:", error);
     }
-  };
+  }, [selectedchild]);
 
 
   useEffect(() => {

@@ -279,7 +279,7 @@ const MatchFigure = () => {
     const token = localStorage.getItem("authToken");
     try {
       const response = await axios.get(
-        `https://theralearn.onrender.com/api/game/loadGameData/MatchingFiguresGame`,
+        `${process.env.REACT_APP_API_KEY}/game/loadGameData/MatchingFiguresGame`,
         {
           headers: {
             "Content-Type": "application/json",

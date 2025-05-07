@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { Star, Heart, Trophy, Volume2, Home, RefreshCw } from "lucide-react";
+import axios from "axios";
 
 const OPERATORS = {
   1: ["+"],
@@ -93,6 +94,7 @@ const Game = () => {
   const [showMenu, setShowMenu] = useState(true);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  let selectedchild = (localStorage.getItem('selectedChildId') || '').replace(/^"|"$/g, '');
 
   const generateQuestion = (level, questionIndex) => {
     const operator = OPERATORS[level][0];
@@ -134,6 +136,35 @@ const Game = () => {
       visualAid: generateVisualAid(answer),
     };
   };
+  
+  const gameData = {
+    gameName: "Math Game",
+    score: score,
+    duration: 0,
+    level: currentQuestionIndex + 1,
+  };
+  const saveToDatabase = useCallback(async (data) => {
+    const token = localStorage.getItem("authToken");
+    console.log(data);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_KEY}/game/saveGameData`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+            'selectedchild': selectedchild,
+          },
+        }
+      );
+      console.log(response.data);
+      console.log("Game state saved successfully!");
+    } catch (error) {
+      console.error("Error saving game state to database:", error);
+    }
+  }, [selectedchild]);
 
   const generateOptions = (answer, level, questionIndex) => {
     const options = [answer];
@@ -187,7 +218,6 @@ const Game = () => {
 
       setTimeout(() => {
         if (currentQuestionIndex === 9) {
-          // Completed all questions in the level
           setShowCelebration(true);
           speak("Amazing! You've completed this level!");
           setTimeout(() => {
@@ -196,6 +226,7 @@ const Game = () => {
               setLevel((prev) => prev + 1);
               setCurrentQuestionIndex(0);
             } else {
+              saveToDatabase(gameData);
               setShowMenu(true); // Return to menu if all levels complete
             }
           }, 3000);
@@ -213,6 +244,16 @@ const Game = () => {
       }, 1500);
     }
   };
+  useEffect(() => {
+
+    const handleUpload = (event) => {
+      saveToDatabase(gameData);
+    };
+    window.addEventListener("beforeunload", handleUpload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUpload);
+    };
+  });
 
   const resetGame = () => {
     setLevel(1);
