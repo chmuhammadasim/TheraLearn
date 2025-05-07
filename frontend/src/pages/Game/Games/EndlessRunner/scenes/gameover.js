@@ -1,5 +1,4 @@
 import k from "../kaplayCtx";
-import saveToDatabase from "../api/gameData";
 
 export default function gameover(citySfx) {
   const score = k.getData("score") || 0;
@@ -25,10 +24,9 @@ export default function gameover(citySfx) {
     k.anchor("center"),
   ]);
 
-  saveToDatabase(score, time);
 
   k.wait(3, () => {
-    // Clear old scene entities and reset game state
+    
     k.setData("time", 0);
     k.setData("score", 0);
     k.go("main-menu");

@@ -9,7 +9,7 @@ const token = localStorage.getItem("authToken");
 export const saveToDatabase = async ({ time, bestScore }) => {
   try {
     await axios.post(
-      "http://localhost:5000/api/game/saveGameData",
+      `${process.env.REACT_APP_API_KEY}/game/saveGameData`,
       {
         gameName: "SonicRunnerGame",
         duration: time,
@@ -33,7 +33,7 @@ export const saveToDatabase = async ({ time, bestScore }) => {
 export const loadFromDatabase = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5000/api/game/loadGameData/SonicRunnerGame",
+      `${process.env.REACT_APP_API_KEY}/game/loadGameData/SonicRunnerGame`,
       {
         headers: {
           "Content-Type": "application/json",
