@@ -81,7 +81,7 @@ const games = [
     name: 'Endless Runner',
     description: 'Run, jump, and collect coins in this endless runner game!',
     ageRecommendation: 'Ages 10+',
-    image: 'https://th.bing.com/th/id/OIP.9g0r1v2x4X3q5j7G6k8Y4wHaEK?cb=iwp1&rs=1&pid=ImgDetMain',
+    image: 'https://th.bing.com/th/id/OIP.OVU-3OgVpdvHZHEiRQchUgHaEK?o=7&cb=iwp1rm=3&rs=1&pid=ImgDetMain',
   },
 
 ];

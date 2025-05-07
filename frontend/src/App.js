@@ -8,7 +8,6 @@ import { AuthProvider } from "./components/AuthContext/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import Loading from "./components/Loading";
 
-// Lazy load components to improve performance
 const ContactUsPage = lazy(() => import("./pages/ContactUs/ContactUs"));
 const AboutUsPage = lazy(() => import("./pages/AboutUs/AboutUs"));
 const LoginPage = lazy(() => import("./pages/AuthPages/LoginPage"));
@@ -36,6 +35,7 @@ const BetterAim = lazy(() => import("./pages/Game/Games/BettterAim/BetterAim"));
 const ObjectGuessingGame = lazy(() => import("./pages/Game/Games/Naminggamespeechrecognition/ObjectGuessingGame"));
 const MatchFigure = lazy(() => import("./pages/Game/Games/MatchFigure/MatchFigure.js"));
 const MathGame = lazy(() => import("./pages/Game/Games/MathGame/MathGame.js"));
+const EndlessRunner = lazy(() => import("./pages/Game/Games/EndlessRunner/EndlessRunner.js"));
 const ProtectedRoute = lazy(() => import("./components/Routes/ProtectedRoute"));
 const AuthRoute = lazy(() => import("./components/Routes/AuthRoute"));
 const SuperAdminRoute = lazy(() => import("./components/Routes/SuperAdminRoute"));
@@ -231,6 +231,7 @@ function App() {
                   <Route path="/mathgame" element={<MathGame />} />
                   <Route path="/countthefish" element={<CountTheFish />} />
                   <Route path="/betteraim" element={<BetterAim />} />
+                  <Route path="/endlessrunner" element={<EndlessRunner />} />
                   <Route path="/matchfigures" element={<MatchFigure />} />
                   <Route path="/games" element={<GamePage />} />
                   <Route path="/psychologistslist" element={<PsychologistListPage />} />
