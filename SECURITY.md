@@ -111,7 +111,7 @@ We follow **coordinated disclosure**, meaning:
 
 ## 📞 Contact & Acknowledgments
 
-- Security Contact: **security@theralearn.example.com** *(please replace with your real email for security reports)*  
+- Security Contact: **muhammadasimchattha@gmail.com**   
 - For general questions or reports, you may also open an issue labeled `security` or mailing list as applicable  
 
 Thanks to everyone helping with TheraLearn’s security 👍
